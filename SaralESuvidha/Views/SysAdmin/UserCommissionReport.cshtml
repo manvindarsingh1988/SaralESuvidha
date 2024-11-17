@@ -1,0 +1,111 @@
+﻿@model SaralESuvidha.ViewModel.MarginPlan;
+@{
+    Layout = "_LayoutSysAdmin";
+    ViewData["title"] = "SysAdmin - User Commission Report";
+}
+
+
+<form id="frmMain" name="frmMain" asp-action="" asp-controller="SysAdmin">
+    <h5>User Commission Report</h5>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="form-group">
+                        <label class="form-label">User Type</label>
+                        <select id="UserType" class="form-control" data-style="btn-default">
+                            <option value="7">Master Distributor</option>
+                            <option value="6">Distributor</option>
+                            <option value="5">Retailer</option>
+                            <option value="9">White Label</option>
+                            <option value="10">All</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">From Date<span class="text-danger">*</span></label>
+                    <input name="txtReportFromDate" id="txtReportFromDate" type="text" class="form-control flatpickr-date required">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">To Date<span class="text-danger">*</span></label>
+                    <input name="txtReportToDate" id="txtReportToDate" type="text" class="form-control flatpickr-date required">
+                </div>
+                <div class="col-lg-2 form-group d-none">
+                    <label class="form-label">&nbsp;</label>
+                    <select id="UserType" class="form-control" data-style="btn-default">
+                        <option value="Record">Record</option>
+                        <option value="Summary">Summary</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="LoadReport();">Load Summary</button>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="Export();">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h6 class="card-header alert-primary" id="lblReport">
+            Report
+        </h6>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-adminreport" data-url="">
+                <thead>
+                    <tr>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+
+    function LoadReport() {
+        $('#lblReport').html('Getting report ...');
+        if ($.fn.DataTable.isDataTable('#datatable-adminreport')) {
+            $('#datatable-adminreport').DataTable().destroy();
+        }
+        $('#datatable-adminreport tbody').empty();
+        $('#datatable-adminreport thead').empty();
+
+        var $table = $('#datatable-adminreport');
+        $table.dataTable({
+            iDisplayLength: 10,
+            bAutoWidth: true,
+            sAjaxSource: '@Url.Action("CommissionReportResult","CommonAuthAction")?dateFrom=' + a2hex($('#txtReportFromDate').val()) + '&dateTo=' + a2hex($('#txtReportToDate').val()) + '&x=1&userType=' + $('#UserType  option:selected').val() + '&export=0',
+            cache: false,
+            order: [[7, "asc"], [8, "asc"]],
+            columns: [
+                { data: "Id", title: "Id", visible: false }, { data: "OrderNo", title: "OrderNo" }, { data: "RetailerName", title: "RetailerName" },
+                { data: "RetailerType", title: "RetailerType" }, { data: "FromDate", title: "FromDate", render: function (data) { return moment(data).format('MM-DD-YYYY'); } }, 
+                { data: "ToDate", title: "ToDate", render: function (data) { return moment(data).format('MM-DD-YYYY'); } },
+                { data: "Commission", title: "Commission" }, { data: "ToDateBalance", title: "ToDateBalance" }, { data: "ParentId", title: "ParentId" }, 
+                { data: "Mobile", title: "Mobile" }, { data: "Address", title: "Address" }
+            ]
+        });
+
+        $('#lblReport').html('Commission report between ' + $('#txtReportFromDate').val() + ' and ' + $('#txtReportToDate').val() + ' of Users - ' + $('#UserType option:selected').text());
+    }
+    
+    function Export(){
+        $('#lblReport').html('Getting report in excel');
+        $.get('@Url.Action("CommissionReportResult","CommonAuthAction")?dateFrom=' + a2hex($('#txtReportFromDate').val()) + '&dateTo=' + a2hex($('#txtReportToDate').val()) + '&x=1&userType=' + $('#UserType  option:selected').val() + '&export=1',
+        function(data) {
+            if (data.indexOf('Errors:') > -1) {
+                $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
+            } else {
+                $('#lblReport').html('Excel of ' + $('#UserType option:selected').text() + '. ' + data);
+            }
+        });
+    }
+
+
+</script>
+

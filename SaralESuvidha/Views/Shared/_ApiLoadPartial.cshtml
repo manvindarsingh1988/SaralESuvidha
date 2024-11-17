@@ -1,0 +1,51 @@
+<form id="frmReport" method="post" action="#">
+    <div class="card">
+        <h6 class="card-header">Retail User Fund Report <span id="InfoDetail" name="InfoDetail"></span></h6>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">From Date<span class="text-danger">*</span></label>
+                    <input name="txtReportFromDate" id="txtReportFromDate" type="text" class="form-control flatpickr-date required">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">To Date<span class="text-danger">*</span></label>
+                    <input name="txtReportToDate" id="txtReportToDate" type="text" class="form-control flatpickr-date required">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="ExportExcel();">Excel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h6 class="card-header alert-primary" id="lblReport">
+            Report
+        </h6>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-adminreport" data-url="">
+                <thead>
+                    <tr>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    
+    function ExportExcel() {
+        $.get('@Url.Action("RTranApiLoadByDate","CommonAuthAction")?dateFrom=' + a2hex($('#txtReportFromDate').val()) + '&dateTo=' + a2hex($('#txtReportToDate').val()),
+        function(data) {
+            if (data.indexOf('Errors:') > -1) {
+                $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
+            } else {
+                $('#lblReport').html('Api Load report between ' +
+                $('#txtReportFromDate').val() +' and ' + $('#txtReportToDate').val() + ' - '  + data).removeClass('text-danger').addClass('text-success');
+            }
+        });
+    }
+
+</script>

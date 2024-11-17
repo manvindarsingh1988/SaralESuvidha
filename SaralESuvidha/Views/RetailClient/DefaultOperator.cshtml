@@ -1,0 +1,61 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    Layout = "_LayoutRetailClient";
+    ViewData["title"] = "Set Default Operator";
+}
+
+<form id="frmReport" method="post" action="">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 form-group">
+                    <label class="label" for="">Select Default Operator</label>
+                    <select id="selectEOperator" name="selectEOperator" class="form-control" data-style="btn-default"></select>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="btn btn-outline-primary shadowed btn-block" onclick="Update();">Save</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 form-group" id="ActionMessage">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<script type="text/javascript">
+
+    function Update() {
+        $('#ActionMessage').html('Updating default operator ' + loaderImgInner);
+
+        $.get("@Url.Action("UpdateDefaultOperator", "RetailUserCommon")?op=" + $('#selectEOperator').val(),
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#ActionMessage').html('<span class="text-danger">' + data + '</span>');
+                } else {
+                    $('#ActionMessage').html('<span class="text-success">' + data + '</span>');
+                }
+            });
+    }
+
+    function LoadEOperatorDdl() {
+        $.getJSON("@Url.Action("ActiveOperatorList", "Common")" + "?o=" + a2hex('Electricity') + '&_t=' + $.now(),
+            function (data) {
+                $("#selectEOperator").empty();
+                $.each(data,
+                    function (index, value) {
+                        $('#selectEOperator').append('<option value="' + value.OperatorName + '" data-info1="' + value.AdditionalInfo1 + '" data-info2="' + value.AdditionalInfo2 + '">' + value.DetailedOperatorName + '</option>');
+                    });
+                $('#selectEOperator option[value="@Context.Session.GetString("DefaultUtilityOperator")"]').prop('selected', true);
+            });
+
+    }
+
+    $(document).ready(function () {
+        LoadEOperatorDdl();
+    });
+
+</script>

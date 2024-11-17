@@ -1,0 +1,56 @@
+﻿@{
+    Layout = "_LayoutBillPay";
+}
+
+<section class="container">
+    <div class="bg-white shadow-md rounded p-4">
+        <div class="row g-4">
+
+            <!-- Metro Card Recharge
+            ============================================= -->
+            <div class="col-lg-4 col-xxl-5">
+                <h2 class="text-4 mb-3">Metro Card Recharge</h2>
+                <form id="metroCardRecharge" method="post">
+                    <div class="mb-3">
+                        <select class="form-select" id="operator" required="">
+                            <option value="">Select Your Operator</option>
+                            <option>Lucknow Metro</option>
+                            <option>Delhi Metro</option>
+                            <option>Ahmedabad Metro</option>
+                            <option>Bangalore Metro</option>
+                            <option>Gurgaon Rapid Metro</option>
+                            <option>Hyderabad Metro</option>
+                            <option>Mumbai Metro</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" data-bv-field="number" id="cardNumber" required placeholder="Enter Card Number">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">&#8377;</span>
+                        <input class="form-control" id="amount" placeholder="Enter Amount" required type="text">
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-primary" type="submit">Continue to Recharge</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Metro Card Recharge end -->
+            <!-- Slideshow
+            ============================================= -->
+            <div class="col-lg-8 col-xxl-7">
+                <div class="owl-carousel owl-theme single-slider" data-animateout="fadeOut" data-animatein="fadeIn" data-autoplay="true" data-loop="true" data-autoheight="true" data-nav="true" data-items="1">
+                    <div class="item"><a href="#"><img class="img-fluid" src="~/images/slider/banner-9.jpg" alt="banner 8" /></a></div>
+                    <div class="item"><a href="#"><img class="img-fluid" src="~/images/slider/banner-7.jpg" alt="banner 7" /></a></div>
+                    <div class="item"><a href="#"><img class="img-fluid" src="~/images/slider/banner-10.jpg" alt="banner 10" /></a></div>
+                </div>
+            </div>
+            <!-- Slideshow end -->
+
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+$('#metro').addClass('active');
+</script>

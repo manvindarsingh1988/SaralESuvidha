@@ -1,0 +1,196 @@
+﻿@using SaralESuvidha.ViewModel
+@using Microsoft.AspNetCore.Http
+@{
+
+}
+
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-collapsed">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <title>SaralESuvidha - @ViewData["title"]</title>
+
+    <!-- Main font -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900" rel="stylesheet">
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="~/assets/vendor/fonts/fontawesome.css">
+    <link rel="stylesheet" href="~/assets/vendor/fonts/ionicons.css">
+    <link rel="stylesheet" href="~/assets/vendor/fonts/linearicons.css">
+    <!-- <link rel="stylesheet" href="assets/vendor/fonts/open-iconic.css"> -->
+    <!-- <link rel="stylesheet" href="assets/vendor/fonts/pe-icon-7-stroke.css"> -->
+    <!-- Core stylesheets -->
+    <link rel="stylesheet" href="~/assets/vendor/css/bootstrap.css">
+    <link rel="stylesheet" href="~/assets/vendor/css/appwork.css">
+    <link rel="stylesheet" href="~/assets/vendor/css/theme-corporate.css">
+    <link rel="stylesheet" href="~/assets/vendor/css/colors.css">
+    <link rel="stylesheet" href="~/assets/vendor/css/uikit.css">
+    <link rel="stylesheet" href="~/assets/vendor/libs/smartwizard/smartwizard.css">
+    <link rel="stylesheet" href="~/assets/vendor/libs/bootstrap-select/bootstrap-select.css">
+    <link rel="stylesheet" href="~/assets/vendor/libs/select2/select2.css">
+    <link rel="stylesheet" href="~/assets/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.css">
+    <link rel="stylesheet" href="~/assets/vendor/libs/flatpickr/flatpickr.css">
+    <link rel="stylesheet" href="~/assets/css/main.css?8878">
+
+    <!-- Load polyfills -->
+    <script src="~/assets/vendor/js/polyfills.js"></script>
+    <script>document['documentMode'] === 10 && document.write('<script src="https://polyfill.io/v3/polyfill.min.js?features=Intl.~locale.en"><\/script>')</script>
+
+    <!-- Layout helpers -->
+    <script src="~/assets/vendor/js/layout-helpers.js"></script>
+
+    <!-- Libs -->
+    <script src="~/assets/vendor/js/jquery.min.js"></script>
+    <script src="~/assets/vendor/libs/validate/validate.js"></script>
+    <script src="~/assets/js/gvars.js"></script>
+
+    <!-- `perfect-scrollbar` library required by SideNav plugin -->
+    <link rel="stylesheet" href="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css">
+    <link rel="stylesheet" href="~/assets/vendor/libs/datatables/datatables.css">
+</head>
+
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-1">
+        <!-- Layout inner -->
+        <div class="layout-inner">
+
+            <!-- Layout navbar -->
+            <nav class="layout-navbar navbar navbar-expand-lg align-items-lg-center bg-navbar-theme container-p-x" id="layout-navbar">
+                <a asp-controller="Distributor" asp-action="Index" class="navbar-brand"><small>@StaticData.FirstString(Context.Session.GetString("RetailerName")) <span id="BalMessage" name="BalMessage"></span></small></a>
+
+                <!-- Sidenav toggle -->
+                <div class="layout-sidenav-toggle navbar-nav align-items-lg-center mr-auto mr-lg-4">
+                    <a class="nav-item nav-link px-0 ml-2" href="javascript:void(0)">
+                        <i class="ion ion-md-menu text-large align-middle"></i>
+                    </a>
+                </div>
+
+                <!-- Navbar toggle -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#layout-navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="layout-navbar-collapse">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-item nav-link" asp-controller="Distributor" asp-action="Index"><i class="sidenav-icon ion ion-ios-appstore"></i>Dashboard</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" data-trigger="hover"><i class="sidenav-icon ion ion-md-body"></i>Retailer</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="CreateRetailer"><i class="sidenav-icon ion ion-md-key"></i>Create Retailer</a>
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="ListRetailer"><i class="sidenav-icon ion ion-md-key"></i>List Retailer</a>
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="SetMargin"><i class="sidenav-icon ion ion-md-key"></i>Margin Update</a>
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="MarginSheetDownline"><i class="sidenav-icon ion ion-md-key"></i>Downline Margin Sheet</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" data-trigger="hover"><i class="sidenav-icon ion ion-md-globe"></i>Account</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="DailyDownlineSales"><i class="sidenav-icon ion ion-md-key"></i>Daily Downline Sales</a>
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="AccountStatement"><i class="sidenav-icon ion ion-md-key"></i>Account Statement</a>
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="RetailerRechargeReport"><i class="sidenav-icon ion ion-md-key"></i>Retailer Recharge Report</a>
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="RetailerStatementReport"><i class="sidenav-icon ion ion-md-key"></i>Retailer Statement Report</a>
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="TransferFund"><i class="sidenav-icon ion ion-md-key"></i>Fund Transfer</a>
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="FundReport"><i class="sidenav-icon ion ion-md-arrow-down"></i>Fund Report</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" data-trigger="hover"><i class="sidenav-icon ion ion-md-globe"></i>Report</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="MarginSheet"><i class="sidenav-icon ion ion-md-key"></i>Margin Sheet</a>
+                                <a class="dropdown-item" asp-controller="Distributor" asp-action="MarginReport"><i class="sidenav-icon ion ion-md-key"></i>Margin Report</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" data-trigger="hover"><i class="sidenav-icon ion ion-md-globe"></i>Setting</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href=""><i class="sidenav-icon ion ion-md-key"></i>Change Password</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-item nav-link" asp-area="" asp-controller="RetailUserCommon" asp-action="Logout"><i class="sidenav-icon ion ion-ios-log-out"></i>Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- / Layout navbar -->
+
+            <div class="layout-container">
+
+                <div class="layout-content">
+
+                    <!-- Page content -->
+                    <div class="container-fluid flex-grow-1 container-p-y">
+                        @RenderBody()
+                    </div>
+                    <!-- / Page content -->
+                    <!-- Layout footer -->
+                    <nav class="layout-footer footer bg-footer-theme">
+                        <div class="container-fluid container-p-x pb-3">
+                            <span class="footer-link pt-3" style="color: black; padding-right: 10px;">Message: </span><span id="InfoMessage"></span>
+                        </div>
+                    </nav>
+                    <!-- / Layout footer -->
+
+                </div>
+            </div>
+
+        </div>
+        <!-- Layout inner -->
+
+        <div class="layout-overlay layout-sidenav-toggle"></div>
+
+        <!-- Modal template -->
+        <div class="modal fade" id="modals-info">
+            <div class="modal-dialog">
+                <form class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Information</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+                    </div>
+                    <div id="modals-info-message" class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Modal template End -->
+
+    </div>
+    <!-- / Layout wrapper -->
+    <!-- Core scripts -->
+    <script src="~/assets/vendor/libs/popper/popper.js"></script>
+    <script src="~/assets/vendor/js/bootstrap.js"></script>
+    <script src="~/assets/vendor/js/sidenav.js"></script>
+
+    <!-- Libs -->
+    <script src="~/assets/vendor/js/dropdown-hover.js"></script>
+    <script src="~/assets/vendor/libs/smartwizard/smartwizard.js"></script>
+    <script src="~/assets/vendor/libs/bootstrap-select/bootstrap-select.js"></script>
+    <script src="~/assets/vendor/libs/select2/select2.js"></script>
+    <script src="~/assets/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+    <script src="~/assets/vendor/libs/flatpickr/flatpickr.js"></script>
+
+    <!-- `perfect-scrollbar` library required by SideNav plugin -->
+    <script src="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="~/assets/vendor/libs/datatables/datatables.js"></script>
+    <script src="~/assets/vendor/libs/moment/moment.js"></script>
+
+    <!-- Main script -->
+    <script src="~/assets/js/main.js"></script>
+    <script src="~/js/site.js"></script>
+
+    @{await Html.RenderPartialAsync("_ScriptRetailUserBalancePartial");}
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+</body>
+</html>

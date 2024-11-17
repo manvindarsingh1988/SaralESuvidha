@@ -1,0 +1,183 @@
+﻿@{
+    Layout = "_LayoutRetailClient";
+    ViewData["title"] = "Retailer Dashboard - Search Transaction";
+}
+<form id="frmReport" method="post" action="">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 form-group">
+                    <label class="form-label">Mobile/Account Number</label>
+                    <input class="form-control required" type="number" id="txtNumber" name="txtNumber" placeholder="Enter mobile/account number to search" />
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">Date<span class="text-danger">*</span></label>
+                    <input name="txtReportFromDate" id="txtReportFromDate" type="text" class="form-control flatpickr-date required">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="SearchNumber();">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h6 class="card-header alert-primary" id="lblReport">
+            Report
+        </h6>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-adminreport" data-url="">
+                <thead>
+                    <tr>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modals-update">
+        <div class="modal-dialog editDialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Recharge Refund Request Ticket - <span id="updateRecordId"></span> - <span class="text-info" id="updateOperator"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+                </div>
+                <div id="modals-update-message" class="modal-body">
+                    <div id="updateMessage">
+
+                    </div>
+                    <div id="updateAction" style="padding-bottom: 10px;">
+                        <input name="txtRemarks" maxlength="150" id="txtRemarks" type="text" class="form-control" placeholder="ENTER REMARKS (OPTIONAL)" style="display: inline; width: 400px;" />
+                        <button type="button" class="btn btn-primary" onclick="SendRequest();">SEND REQUEST</button>
+                        <input type="hidden" name="txtUpdateClientId" id="txtUpdateClientId" />
+                        <input type="hidden" name="txtUpdateRechargeNumber" id="txtUpdateRechargeNumber" />
+                        <input type="hidden" name="txtUpdateAmount" id="txtUpdateAmount" />
+                        <input type="hidden" name="txtUpdateId" id="txtUpdateId" />
+                        <input type="hidden" name="txtUpdateClientApiUserReference" id="txtUpdateClientApiUserReference" />
+                        <input type="hidden" name="txtUpdateStatus" id="txtUpdateStatus" />
+                    </div>
+                    <table class="table table-bordered fixed-table-body editDialog">
+                        <tr>
+                            <td>Recharge Number</td>
+                            <td>Amount</td>
+                            <td>Request Date</td>
+                            <td>Current Status</td>
+                        </tr>
+                        <tr>
+                            <td id="updateRechargeNumber"></td>
+                            <td id="updateAmount"></td>
+                            <td id="updateRequestDate"></td>
+                            <td class="text-facebook" id="updateCurrentStatus"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<script type="text/javascript">
+        function SearchNumber() {
+            if ($.fn.DataTable.isDataTable('#datatable-adminreport')) {
+                $('#datatable-adminreport').DataTable().destroy();
+            }
+            $('#datatable-adminreport tbody').empty();
+            $('#datatable-adminreport thead').empty();
+
+            var $table = $('#datatable-adminreport');
+            $table.dataTable({
+                iDisplayLength: 10,
+                bAutoWidth: true,
+                sAjaxSource: '@Url.Action("SearchNumberResult","RetailClient")?rDate=' + a2hex($('#txtReportFromDate').val()) + '&rNumber=' + a2hex($('#txtNumber').val()),
+                cache: false,
+                order: [[10, "asc"], [11, "asc"]],
+                rowId: 'Rid',
+                columns: [
+                    { data: "Rid", title: "Id", visible: false },
+                    { data: "RefundId", title: "Ref Id", visible: false }, { data: "OperatorName", title: "Operator" },
+                    { data: "RechargeNumber", title: "Number" }, { data: "RechargeStatus", title: "RStatus" },
+                    { data: "Amount", title: "Amount" }, { data: "Debit", title: "Debit" }, { data: "Credit", title: "Credit" },
+                    { data: "LiveId", title: "LiveId" }, { data: "CreateDate", title: "Date", render: function (data) { return moment(data).format('MM-DD-YYYY'); } },
+                    { data: "CreateDate", title: "Time", render: function (data) { return moment(data).format('HH:mm:ss'); } },
+                    {
+                        data: null, title: "Action", visible: true,
+                        defaultContent: '<button type="button" class="btn btn-default btn-sm btn-primary btnRefundRequest">TICKET</button>',
+                        "width": "100px"
+                    }
+                ]
+            });
+
+            $('#lblReport').html('Search result for ' +
+                $('#txtNumber').val() +
+                ' on date ' +
+                $('#txtReportFromDate').val());
+        }
+
+        function SendRequest1() {
+            $.ajax({
+                type: "POST",
+                url: "ajax.aspx?x=" + a2hex("rru"),
+                data: JSON.stringify(ConvertFormToJSON(document.getElementById('frmReport'))),
+                dataType: "text",
+                cache: false,
+                success: function (data) {
+                    if (data.indexOf('Error:') > -1) {
+                        $('#updateMessage').html('<span class="text-danger">' + data + '</span>');
+                    }
+                    else {
+                        $('#updateMessage').html('<span class="text-info">' + data + '</span>');
+                    }
+                },
+                error: function () {
+                    alert('Error in saving refund request.');
+                }
+            });
+        }
+
+        function ClearUpdateData() {
+            $('#updateRecordId').html('');
+            $('#updateRechargeNumber').html('');
+            $('#updateAmount').html('');
+            $('#updateOperator').html('');
+            $('#updateMessage').html('');
+            $('#updateCurrentStatus').html('');
+            $('#updateRequestDate').html('');
+            $('#txtUpdateId').val('');
+            $('#txtUpdateRechargeNumber').val('');
+            $('#txtUpdateAmount').val('');
+            $('#txtUpdateClientApiUserReference').val('');
+        }
+
+        $('#datatable-adminreport').on('click', 'button.btnRefundRequest', function (e) {
+            var $row = $(this).closest("tr");
+            ClearUpdateData();
+            $('#txtRemarks').val('');
+            $('#updateRecordId').html($row.find("td:nth-child(1)").text());
+            $('#txtUpdateId').val($row.attr('id').convertToHex()); //
+            $('#updateRechargeNumber').html($row.find("td:nth-child(3)").text());
+            $('#txtUpdateRechargeNumber').val($row.find("td:nth-child(3)").text());
+            $('#updateAmount').html($row.find("td:nth-child(5)").text());
+            $('#txtUpdateAmount').val($row.find("td:nth-child(5)").text());
+            $('#updateRequestDate').html($row.find("td:nth-child(10)").text());
+            $('#updateOperator').html($row.find("td:nth-child(2)").text());
+            $('#txtUpdateClientApiUserReference').val($row.find("td:nth-child(2)").text());
+            $('#updateCurrentStatus').html($row.find("td:nth-child(4)").text());
+            $('#txtUpdateStatus').val($row.find("td:nth-child(4)").text());
+
+            if ($row.find("td:nth-child(4)").text() !== 'SUCCESS') {
+                $('#updateAction').removeClass('show').addClass('hide');
+            }
+            else {
+                $('#updateAction').removeClass('hide').addClass('show');
+            }
+
+            $('#modals-update').modal('show');
+        });
+
+</script>

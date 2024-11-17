@@ -1,0 +1,48 @@
+<div class="card">
+    <h6 class="card-header">
+        Distributor List
+    </h6>
+    <div class="card-datatable table-responsive">
+        <table class="table table-striped table-bordered" id="datatable-grid-distributor">
+            <thead>
+            <tr>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        LoadUser();
+    });
+
+    function LoadUser() {
+        $('#datatable-grid-distributor tbody').empty();
+        $('#datatable-grid-distributor thead').empty();
+
+        var $table = $('#datatable-grid-distributor');
+        $table.dataTable({
+            destroy: true,
+            iDisplayLength: 10,
+            bProcessing: true,
+            bAutoWidth: true,
+            sAjaxSource: '@Url.Action("GetAllDistributor","MasterDistributor")',
+            rowId: 'Id',
+            cache: false,
+            order: [[1, "asc"]],
+            columns: [
+                { data: "USL", title: "USL" }, { data: "RetailerName", title: "Distributor Name" }, { data: "UserTypeString", title: "User Type" },
+                { data: "MobileNumber", title: "Mobile Number" }, { data: "City", title: "City" },
+                { data: "EMail", title: "E-Mail" }, { data: "Address", title: "Address" },
+                {
+                    data: null,
+                    title: "Action", visible: false,
+                    defaultContent: '<button type="button" class="btn btn-default btn-sm btn-primary btnSendWelcome">SmsDetail</button> <button type="button" class="btn btn-default btn-sm btn-primary edit hide">EDIT</button>'
+                }
+            ]
+        });
+    }
+</script>

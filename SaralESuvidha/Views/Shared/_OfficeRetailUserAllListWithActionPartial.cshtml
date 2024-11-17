@@ -1,0 +1,149 @@
+<form id="frmReport" method="post" action="">
+    <div class="card">
+        <h6 class="card-header">Retail User List <span id="InfoDetail" name="InfoDetail"></span></h6>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">User USL</label>
+                    <input id="OrderNo" name="OrderNo" class="form-control" onblur="LoadDetail();" data-style="btn-default" required>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="SendPassword();"><span class="far fa-paper-plane"></span> Send Password</button>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="ResetPassword();"><span class="fas fa-pen-nib"></span> Reset Password</button>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="LoadMarginSheet();"><span class="fas fa-wallet"></span> Margin Sheet</button>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="LoadRetailUser();"><span class="fas fa-users"></span> All User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h6 class="card-header" id="lblReport">
+            Retail User List
+        </h6>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-grid-allretail">
+                <thead>
+                <tr>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+    });
+    
+    function LoadMarginSheet() {
+        if ($.fn.DataTable.isDataTable('#datatable-grid-allretail')) {
+            $('#datatable-grid-allretail').DataTable().destroy();
+        }
+        $('#datatable-grid-allretail tbody').empty();
+        $('#ddatatable-grid-allretail thead').empty();
+        
+
+        var $table = $('#datatable-grid-allretail');
+        $table.dataTable({
+            destroy: true,
+            iDisplayLength: 10,
+            bProcessing: true,
+            bAutoWidth: true,
+            sAjaxSource: '@Url.Action("MarginSheetListByOrderNo", "CommonAuthAction")?usd=' + a2hex($('#OrderNo').val()),
+            cache: false,
+            order: [[1, "asc"], [2, "asc"]],
+            columns: [
+                { data: "ID", title: "Id", visible: false } , { data: "RetailUserName", title: "User Detail" }, 
+                { data: "OperatorName", title: "Operator Name" }, { data: "OperatorCircle", title: "Operator Circle", visible: false }, { data: "MarginPercent", title: "Margin Percent" },
+                { data: "MaxMargin", title: "Max Margin" }, { data: "Active", title: "Active" }
+            ]
+        });
+
+        $('#lblReport').html('Downline Margin Sheet of ' + $('#OrderNo').val());
+    }
+    
+    function LoadRetailUser() {
+        if ($.fn.DataTable.isDataTable('#datatable-grid-allretail')) {
+            $('#datatable-grid-allretail').DataTable().destroy();
+        }
+        $('#datatable-grid-allretail tbody').empty();
+        $('#datatable-grid-allretail thead').empty();
+
+        var $table = $('#datatable-grid-allretail');
+        $table.dataTable({
+            destroy: true,
+            iDisplayLength: 50,
+            bProcessing: true,
+            bAutoWidth: true,
+            sAjaxSource: '@Url.Action("GetAllMasterDistributor", "CommonAuthAction")',
+            rowId: 'Id',
+            cache: false,
+            order: [[2, "asc"]],
+            columns: [
+                { data: "Id", title: "id" }, { data: "USL", title: "USL", visible: false }, { data: "RetailerName", title: "Retailer Name" }, { data: "ParentName", title: "Parent" },
+                { data: "MobileNumber", title: "Mobile Number", visible: false }, { data: "City", title: "City" },
+                { data: "EMail", title: "E-Mail" }, { data: "Address", title: "Address" }
+            ]
+        });
+    }
+    
+    function LoadDetail() {
+        if ($('#OrderNo').val().length > 0) {
+            $.get("@Url.Action("RetailUserDetail", "CommonAuthAction")?usd=" + a2hex($('#OrderNo').val()), function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                    HideAction();
+                } else {
+                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    ShowAction();
+                }
+            });
+        }
+        else {
+            $('#InfoDetail').html('');
+        }
+    }
+    
+    function SendPassword() {
+        if ($('#OrderNo').val().length > 0) {
+            $.get("@Url.Action("SmsPassword", "CommonAuthAction")?usd=" + a2hex($('#OrderNo').val()),
+                function(data) {
+                    if (data.indexOf('Errors:') > -1) {
+                        $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                    } else {
+                        $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    }
+                });
+        } else {
+            $('#InfoDetail').html('');
+        }
+    }
+    
+    function ResetPassword() {
+            if ($('#OrderNo').val().length > 0) {
+                $.get("@Url.Action("ResetPassword", "CommonAuthAction")?usd=" + a2hex($('#OrderNo').val()),
+                    function(data) {
+                        if (data.indexOf('Errors:') > -1) {
+                            $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                        } else {
+                            $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                        }
+                    });
+            } else {
+                $('#InfoDetail').html('');
+            }
+    }
+    
+</script>

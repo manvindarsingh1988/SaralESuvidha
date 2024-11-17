@@ -1,0 +1,75 @@
+﻿@*
+
+*@
+@{
+    Layout = "_LayoutRetailClient";
+    ViewData["title"] = "Retailer Dashboard - T";
+}
+
+<form id="frmReport" method="post" action="#">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">Date<span class="text-danger">*</span></label>
+                    <input name="txtReportFromDate" id="txtReportFromDate" type="text" class="form-control flatpickr-date">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">Data<span class="text-danger">*</span></label>
+                    <input name="txtData" id="txtData" type="text" class="form-control">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="LoadReport();">Load Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h6 class="card-header alert-primary" id="lblReport">
+            Report
+        </h6>
+        <div id="infoResp" name="infoResp">
+
+        </div>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-adminreport" data-url="">
+                <thead>
+                    <tr>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+
+        function LoadReport() {
+            @*$.getJSON("@Url.Action("EBillInfo2", "RetailClient")?operatorName=" + $('#selectEOperator').val() + "&accountNumber=" + $('#EbillAccountNumber').val(),
+                function (data) {
+                    if (data.BillAmount === null) {
+                        ShowFetchBill();
+                        $('#EBillActionMessage').html('<span class="text-primary">' + data.Message + '. <br /></span><span class="text-danger">Error in fetching payable bill detail of ' + $('#EbillAccountNumber').val() + '(' + $('#selectEOperator').val() + '). </span>');
+                    }
+                    $("#EbillConsumerName").html(data.CustomerName);
+                    $("#EbillDueDate").html(data.DueDate);
+                    $("#EbillBillAmount").html(data.BillAmount);
+                    if (data.BillAmount != null) {
+                        $("#EbillAmount").val(data.BillAmount);
+                    }
+                });*@
+
+            $.get("@Url.Action("", "RetailClient")",
+                function (data) {
+                    console.log(data);
+                    $('#infoResp').html(data);
+                });
+
+            $('#lblReport').html('Report of date  ' +
+                $('#txtReportFromDate').val() +
+                ' and data - ' +
+                $('#txtData').val());
+        }
+</script>

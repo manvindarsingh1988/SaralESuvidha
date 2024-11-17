@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\MyProjects\ETopRechargeNew\BillSewa\BillSewa\BillSewa\bin\Release\netcoreapp3.1\publish\</_PublishTargetUrl>
+    <History>True|2023-12-09T10:12:38.4718981Z;True|2023-12-08T15:41:19.7138293+05:30;True|2023-11-22T13:39:25.7475875+05:30;True|2023-11-09T21:09:08.8990628+05:30;True|2023-11-09T20:44:15.3733516+05:30;True|2023-11-09T20:38:52.8527078+05:30;True|2023-11-08T19:33:00.8178677+05:30;True|2023-11-07T17:05:17.1124567+05:30;True|2023-11-07T17:00:14.0600054+05:30;True|2023-11-07T16:49:53.7588846+05:30;True|2023-11-07T12:42:57.0855677+05:30;True|2023-11-07T12:41:59.1594335+05:30;True|2023-11-07T12:14:19.3335862+05:30;True|2023-11-06T19:23:46.8077462+05:30;</History>
+  </PropertyGroup>
+</Project>

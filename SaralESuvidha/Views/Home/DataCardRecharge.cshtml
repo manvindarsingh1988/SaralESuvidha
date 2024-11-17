@@ -1,0 +1,61 @@
+﻿@{
+    Layout = "_LayoutBillPay";
+}
+
+<section class="container">
+    <div class="bg-white shadow-md rounded p-4">
+        <div class="row g-4">
+
+            <!-- DataCard Recharge
+            ============================================= -->
+            <div class="col-lg-4 col-xxl-5">
+                <h2 class="text-4 mb-3">DataCard Recharge or Bill Payment</h2>
+                <form id="datacardRechargeBill" method="post">
+                    <div class="mb-3">
+                        <div class="form-check form-check-inline">
+                            <input id="prepaid" name="rechargeBillpayment" class="form-check-input" checked="" required type="radio">
+                            <label class="form-check-label" for="prepaid">Prepaid</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input id="postpaid" name="rechargeBillpayment" class="form-check-input" required type="radio">
+                            <label class="form-check-label" for="postpaid">Postpaid</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" data-bv-field="number" id="dataCardNumber" required placeholder="Enter DataCard Number">
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-select" required="">
+                            <option value="">Select Your Operator</option>
+                            <option>Airtel</option>
+                            <option>VI</option>
+                            <option>Reliance Jio</option>
+                            <option>BSNL</option>
+                            <option>MTNL</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">&#8377;</span> <a href="#" data-bs-target="#view-plans" data-bs-toggle="modal" class="view-plans-link d-none">View Plans</a>
+                        <input class="form-control" id="amount" placeholder="Enter Amount" required type="text">
+                    </div>
+                    <div class="d-grid"><a class="btn btn-primary" href="">Continue to Recharge</a></div>
+                </form>
+            </div>
+            <!-- DataCard Recharge end -->
+            <!-- Slideshow
+            ============================================= -->
+            <div class="col-lg-8 col-xxl-7">
+                <div class="owl-carousel owl-theme single-slider" data-animateout="fadeOut" data-animatein="fadeIn" data-autoplay="true" data-loop="true" data-autoheight="true" data-nav="true" data-items="1">
+                    <div class="item"><a href="#"><img class="img-fluid" src="~/images/slider/banner-2.jpg" alt="banner 3" /></a></div>
+                    <div class="item"><a href="#"><img class="img-fluid" src="~/images/slider/banner-1.jpg" alt="banner 4" /></a></div>
+                </div>
+            </div>
+            <!-- Slideshow end -->
+
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+$('#datacard').addClass('active');
+</script>

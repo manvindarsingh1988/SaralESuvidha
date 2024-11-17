@@ -1,0 +1,398 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using SaralESuvidha.Filters;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SaralESuvidha.Models;
+using SaralESuvidha.ViewModel;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Newtonsoft.Json;
+using QRCoder;
+using ElectricityBillInfo = UPPCLLibrary.ElectricityBillInfo;
+
+namespace SaralESuvidha.Controllers
+{
+    [HomePageFilter]
+    public class HomeController : Controller
+    {
+        private readonly ILogger<HomeController> _logger;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public HomeController(ILogger<HomeController> logger, IWebHostEnvironment webHostEnvironment)
+        {
+            _logger = logger;
+            _webHostEnvironment = webHostEnvironment;
+        }
+
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult RechargeBillDTH()
+        {
+            return View();
+        }
+
+        public IActionResult DataCardRecharge()
+        {
+            return View();
+        }
+
+        public IActionResult CableTVRecharge()
+        {
+            return View();
+        }
+
+        public IActionResult ElectricityRecharge()
+        {
+            return View();
+        }
+
+        public IActionResult MetroRecharge()
+        {
+            return View();
+        }
+
+        public IActionResult GasRecharge()
+        {
+            return View();
+        }
+
+        public IActionResult WaterRecharge()
+        {
+            return View();
+        }
+
+        public IActionResult LandlineRecharge()
+        {
+            return View();
+        }
+
+        public IActionResult IndexOld()
+        {
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult BroadbandRecharge()
+        {
+            return View();
+        }
+        
+        public IActionResult RefundCancellation()
+        {
+            return View();
+        }
+        public IActionResult Terms()
+        {
+            return View();
+        }
+        public IActionResult PrivacyPolicy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        //[ValidateAntiForgeryToken]
+        public IActionResult StateList(int id)
+        {
+            return Content(StaticData.StateListJson(id));
+        }
+
+        //[ValidateAntiForgeryToken]
+        public IActionResult CityList(int id)
+        {
+            //Thread.Sleep(5000);
+            return Content(StaticData.CitiesListJson(id));
+        }
+
+        public IActionResult OperatorListForMargin()
+        {
+            return Content(StaticData.OperatorListJson());
+        }
+        
+        
+
+        public IActionResult RetailLogin(string m, string p, string s="w", string f="", string d="")
+        {
+            string result = string.Empty;
+            try
+            {
+                if (m.Length == 10 && p.Length > 5)
+                {
+                    try
+                    {
+                        //f = HttpContext.Session.GetString("f");
+                        /*
+                        if (HttpContext.Session.GetString("f") != null)
+                        {
+                            
+                        }*/
+                    }
+                    catch (Exception)
+                    {
+                        
+                    }
+                    
+                    var retailUser = StaticData.ValidateRetailUserLogin(m, p, f, d);
+                    if (retailUser != null)
+                    {
+                        if (retailUser.USL > 0)
+                        {
+                            
+                            HttpContext.Session.SetInt32("RetailUserOrderNo", (int)retailUser.USL);
+                            HttpContext.Session.SetString("RetailMobile", retailUser.MobileNumber);
+                            HttpContext.Session.SetString("RetailerName", retailUser.RetailerName);
+                            HttpContext.Session.SetString("RetailerId", retailUser.Id);
+                            HttpContext.Session.SetInt32("RetailerType", retailUser.UserType);
+                            HttpContext.Session.SetString("ApiEnabled", retailUser.ApiEnabled.ToString());
+                            HttpContext.Session.SetString("DefaultUtilityOperator", string.IsNullOrEmpty(retailUser.DefaultUtilityOperator) ? "MVVNL" : retailUser.DefaultUtilityOperator);
+
+                            try
+                            {
+                                string existingPin = StaticData.RetailUserPin(retailUser.Id);
+                                if (string.IsNullOrEmpty(existingPin))
+                                {
+                                    string newPin = StaticData.Random6DigitPINString();
+                                    StaticData.UpdateRetailUserPin(retailUser.Id, newPin);
+                                }
+                            }catch(Exception exPin)
+                            {
+
+                            }
+
+                            switch (s)
+                            {
+                                case "w":
+                                    HttpContext.Session.SetString("LoginSource", "web");
+                                    break;
+                                case "m":
+                                    HttpContext.Session.SetString("LoginSource", "mobile");
+                                    break;
+                            }
+                            //return Redirect("~/RetailClient/Index");
+                            //return RedirectToAction("Index", "RetailClient");
+                            if (retailUser.UserType == 9)
+                            {
+                                result = "Success: login ok. WhiteLabel";
+                            }
+                            if (retailUser.UserType == 7)
+                            {
+                                result = "Success: login ok. MasterDistributor";
+                            }
+                            if (retailUser.UserType == 6)
+                            {
+                                result = "Success: login ok. Distributor";
+                            }
+                            if (retailUser.UserType == 5)
+                            {
+                                result = "Success: login ok. Retailer";
+                            }
+                        }
+                        else
+                        {
+                            result = "Errors: Invalid user or password.";
+                        }
+                    }
+                    else
+                    {
+                        result = "Errors: User not found or not active.";
+                    }
+                }
+                else
+                {
+                    result = "Errors: Invalid login details.";
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: " + ex.Message;
+            }
+            return Content(result);
+        }
+
+        public IActionResult OfficeLogin()
+        {
+            return View("OfficeLogin");
+        }
+
+        public IActionResult OfficeLoginResult(string m, string p)
+        {
+            string result = string.Empty;
+            try
+            {
+                if (m.Length == 10 && p.Length > 5)
+                {
+                    var officeUser = StaticData.ValidateOfficeLogin(m, p);
+                    if (officeUser != null)
+                    {
+                        if (officeUser.OrderNo > 0)
+                        {
+                            HttpContext.Session.SetInt32("OfficeUserOrderNo", (int)officeUser.OrderNo);
+                            HttpContext.Session.SetString("UserMobile", officeUser.Mobile);
+                            HttpContext.Session.SetString("UserName", officeUser.UserName);
+                            HttpContext.Session.SetString("UserId", officeUser.Id);
+                            HttpContext.Session.SetInt32("UserType", officeUser.UserType); // 8= Admin, 1=CustomerSupport, 2=Account
+                            //return Redirect("/RetailClient/Index");
+                            //return RedirectToAction("Index", "RetailClient");
+                            string usr = "";
+                            switch (officeUser.UserType)
+                            {
+                                case 8:
+                                    //Redirect("SysAdmin");
+                                    usr = "ad";
+                                    break;
+
+                                case 1:
+                                    //Redirect("CustomerSupport");
+                                    usr = "cs";
+                                    break;
+
+                                default:
+                                    break;
+
+                            }
+
+                            result = "Success: login ok. " + usr;
+
+                        }
+                        else
+                        {
+                            result = "Errors: Invalid user or password.";
+                        }
+                    }
+                    else
+                    {
+                        result = "Errors: User not found or not active.";
+                    }
+                }
+                else
+                {
+                    result = "Errors: Invalid login details.";
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: " + ex.Message;
+            }
+            return Content(result);
+        }
+        
+        public IActionResult ReceiptUPPCL(string t)
+        {
+            string tranId = "";
+            try
+            {
+                tranId = StaticData.ConvertHexToString(t);
+                var UPPCLReceipt = StaticData.PaymentReceiptUPPCLByTranId(tranId);
+                try
+                {
+                    string verifyUrl = "http://saralesuvidha.com/Home/ReceiptUPPCL?t=" + t;//VerifyReceipt
+                    QRCodeGenerator QrGenerator = new QRCodeGenerator();
+                    QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(verifyUrl, QRCodeGenerator.ECCLevel.Q);
+                    QRCoder.Base64QRCode qr = new Base64QRCode();
+                    qr.SetQRCodeData(QrCodeInfo);
+                    UPPCLReceipt.QrCode = "data:image/png;base64," + qr.GetGraphic(20);
+                }
+                catch (Exception)
+                {
+                    
+                }
+                return View(UPPCLReceipt);
+
+            }
+            catch (Exception)
+            {
+                return View(new PaymentReceiptUPPCL() { TelecomOperatorName = "INVALID DETAILS", Amount = 0 });
+            }
+        }
+        
+
+        public IActionResult VerifyReceipt(string t)
+        {
+            string tranId = "";
+            try
+            {
+                tranId = StaticData.ConvertHexToString(t);
+                return View(StaticData.PaymentReceiptByTranId(tranId));
+
+            }
+            catch (Exception)
+            {
+                return View(new PaymentReceipt() {TelecomOperatorName = "INVALID DETAILS", Amount = 0});
+            }
+        }
+
+        public IActionResult Test()
+        {
+            try
+            {
+                //return Content(UPPCLLibrary.UPPCLManager.DiscomList());
+                /*
+                string pin = StaticData.RandomNumberString().Substring(0,6);
+                string enc = StaticData.EncodeBase64(System.Text.Encoding.Unicode, PSFTCrypto.Encrypt(pin));
+                return Content(pin + Environment.NewLine + enc + Environment.NewLine + PSFTCrypto.Decrypt(StaticData.DecodeBase64(System.Text.Encoding.Unicode,enc)));
+                */
+
+                string pin = StaticData.Random6DigitPINString();
+                string enc = StaticData.EncodePIN(pin);
+                return Content(pin + Environment.NewLine + enc + Environment.NewLine + StaticData.DecodePIN(enc));
+
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+        }
+        
+        public IActionResult Joker(string m, string o, string k)
+        {
+            try
+            {
+                ElectricityBillInfo ebi = new ElectricityBillInfo();
+                if (k == "9415004756")
+                {
+                    UPPCLLibrary.UPPCLManager.CheckTokenExpiry();
+                    ebi = UPPCLLibrary.UPPCLManager.ElectricityBillInfoFromBillFetch(UPPCLLibrary.UPPCLManager.BillFetch(o, m));
+
+                }
+                return Content(JsonConvert.SerializeObject(ebi));
+
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+        }
+
+        public IActionResult rzcb()
+        {
+            return View();
+        }
+
+        public IActionResult AccountTopup()
+        {
+            return View();
+        }
+
+    }
+}
