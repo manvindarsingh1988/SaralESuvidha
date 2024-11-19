@@ -62,4 +62,13 @@ AS
 	
 	SELECT @OperationMessage as OperationMessage;
 	
+Go
+
+CREATE PROC [dbo].[usp_GetUserDetails] 
+@RetailUserId varchar(50)
+AS 
+SELECT Id, UserType, MarginType, [dbo].[RetailerNamewithIdMobile](Id) AS RetailerName, Mobile AS MobileNumber,  
+City, EMail, MasterId as Parent, ISNULL([dbo].[RetailClientOrderNoUserNameMobile](MasterId),'') AS ParentName, [Address], OrderNo AS USL, Active
+FROM RetailUser WITH(NOLOCK) where Id = @RetailUserId or Mobile = @RetailUserId or Cast(OrderNo as nvarchar(50)) = @RetailUserId	
+	
     
