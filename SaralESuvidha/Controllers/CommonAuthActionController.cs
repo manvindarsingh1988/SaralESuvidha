@@ -378,6 +378,45 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
 
-        
+        public IActionResult ChangeActivation(string id)
+        {
+            string result = string.Empty;
+            result = StaticData.UpdateActiveState(id);
+            return Content(result);
+        }
+
+        public IActionResult UpdateDistributor(string id, string masterId)
+        {
+            string result = string.Empty;
+            result = StaticData.UpdateDistributor(id, masterId);
+            return Content(result);
+        }
+
+        [HttpGet]
+        public IActionResult GetUserDetails(string id)
+        {
+            try
+            {
+                using (var con = new SqlConnection(StaticData.conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@RetailUserId", id);
+                    List<RetailUserGrid> allRetailUser = con.Query<RetailUserGrid>("usp_GetUserDetails", parameters,
+                        commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    //OperationMessage = saveResponse;
+                    var aaData1 = new { data = allRetailUser };
+                    return Json(aaData1);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception: " + ex.Message);
+            }
+        }
+
+        public IActionResult DistributorList(int id)
+        {
+            return Content(StaticData.DistributorListJson(id));
+        }
     }
 }

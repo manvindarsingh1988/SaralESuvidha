@@ -23,6 +23,10 @@
                     <label class="form-label">&nbsp;</label>
                     <button type="button" class="form-control btn btn-primary" onclick="LoadRetailUser();"><span class="fas fa-users"></span> All User</button>
                 </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="SwitchDistributer();"><span class="fas fa-space-shuttle"></span> Switch Distributor</button>
+                </div>
             </div>
         </div>
     </div>
@@ -41,11 +45,75 @@
             </table>
         </div>
     </div>
+    <div class="modal fade" id="ModalPopUp" role="dialog">
+        <div class="modal-dialog err-pop" id="sdmodal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="DivClose" type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-sm-8 form-group">
+                                <label for="userId" class="form-label">User Id or USL or Mobile:</label>
+                                <input type="text" id="userId" name="userId" class="form-control">
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <label class="form-label">&nbsp;</label>
+                                <input type="button" value="Search" onclick="ShowUserDetails()" class="form-control btn btn-primary">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-8 form-group">
+                                <label for="lname" class="form-label">To Distributor:</label>
+                                <select name="distributor" id="distributor" class="form-control"></select>
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <label class="form-label">&nbsp;</label>
+                                <input type="button" value="Submit" id="submitButton" onclick="UpdateDistributor()" class="form-control btn btn-primary" disabled>
+                            </div>
+                        </div>
+                        <div class="card-datatable table-responsive">
+                            <table class="table table-striped table-bordered" id="datatable-grid-searchuser">
+                                <thead>
+                                    <tr>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 <script type="text/javascript">
     $(document).ready(function () {
-        
+        $("#distributor").select2({
+            dropdownParent: $('#ModalPopUp'),
+            width: "100%",
+            templateResult: formatResult,
+            templateSelection: formatSelection,
+            escapeMarkup: function (m) { return m; },
+            closeOnSelect: true
+        });
     });
+
+    function formatResult(item) {
+        if (item.loading) {
+            return 'Searching...';
+        }
+        return $('<div><h5 style="font-weight: bold;">' + item.text + '</h5></div> ');
+    }
+
+    function formatSelection(item) {
+        if (!item.id)
+            return $(item.text);
+        else
+            return $('<b>' + item.text + '</b>');
+    }
     
     function LoadMarginSheet() {
         if ($.fn.DataTable.isDataTable('#datatable-grid-allretail')) {
@@ -94,9 +162,43 @@
             columns: [
                 { data: "Id", title: "id" }, { data: "USL", title: "USL", visible: false }, { data: "RetailerName", title: "Retailer Name" }, { data: "ParentName", title: "Parent" },
                 { data: "MobileNumber", title: "Mobile Number", visible: false }, { data: "City", title: "City" },
-                { data: "EMail", title: "E-Mail" }, { data: "Address", title: "Address" }
+                { data: "EMail", title: "E-Mail" }, { data: "Address", title: "Address" },
+                {
+                    title: "Active/Inactive",
+                    data: null, render: function (data, type, row) {
+                        if (row.Active == 1)
+                            return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' onchange=ChangeActivation('" + row.Id + "') checked />";
+                        else
+                            return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' onchange=ChangeActivation('" + row.Id + "') />";
+                    }
+                }
             ]
         });
+    }
+
+    function ChangeActivation(id) {
+        $.get("@Url.Action("ChangeActivation", "CommonAuthAction")?id=" + id,
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                }
+            });
+    }
+
+    function UpdateDistributor() {
+        var id = $('#userId').attr('alt');
+        var masterid = $('#distributor').val();
+        $.get("@Url.Action("UpdateDistributor", "CommonAuthAction")?id=" + id + '&masterId=' + masterid,
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                }
+                $('#ModalPopUp').modal('hide');
+            });
     }
     
     function LoadDetail() {
@@ -144,6 +246,80 @@
             } else {
                 $('#InfoDetail').html('');
             }
+    }
+
+    function SwitchDistributer() {
+        LoadDistributers();
+
+        if ($.fn.DataTable.isDataTable('#datatable-grid-searchuser')) {
+            $('#datatable-grid-searchuser').DataTable().destroy();
+        }
+        $('#datatable-grid-searchuser tbody').empty();
+        $('#datatable-grid-searchuser thead').empty();
+        $('#userId').val("");
+        $("#submitButton").attr("disabled", true);
+        $('#userId').attr("alt", '');
+        $('#ModalPopUp').modal('show');
+    }
+
+    function ShowUserDetails() {
+        if ($('#userId').val().length > 0) {
+            if ($.fn.DataTable.isDataTable('#datatable-grid-searchuser')) {
+                $('#datatable-grid-searchuser').DataTable().destroy();
+            }
+            $('#datatable-grid-searchuser tbody').empty();
+            $('#datatable-grid-searchuser thead').empty();
+
+            var id = $('#userId').val();
+            var $table = $('#datatable-grid-searchuser');
+            $table.dataTable({
+                searching: false,
+                paging: false,
+                info: false,
+                ordering: false,
+                destroy: true,
+                bProcessing: true,
+                bAutoWidth: true,
+                sAjaxSource: '@Url.Action("GetUserDetails", "CommonAuthAction")?id=' + id,
+                rowId: 'Id',
+                cache: false,
+                columns: [
+                    { data: "Id", title: "id" }, { data: "RetailerName", title: "Retailer Name" }, { data: "ParentName", title: "Current Disributor" },
+                    {
+                        title: "Active/Inactive",
+                        data: null, render: function (data, type, row) {
+                            if (row.Active == 1)
+                                return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' checked disabled />";
+                            else
+                                return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' disabled />";
+                        }
+                    }
+                ]
+            });
+            $table
+                .on('xhr.dt', function (e, settings, json, xhr) {
+                    if (json.data.length) {
+                        $("#submitButton").attr("disabled", false);
+                        console.log(json.data);
+                        $('#userId').attr("alt", json.data[0].Id);
+                    }
+                    else {
+                        $("#submitButton").attr("disabled", true);
+                        $('#userId').attr("alt", '');
+                    }
+                });
+        } else {
+            $('#InfoDetail').html('');
+        }
+    }
+
+    function LoadDistributers() {
+        $.getJSON("@Url.Action("DistributorList", "CommonAuthAction", new { id = 6 })", function (data) {
+            $("#distributor").empty();
+            $.each(data, function (index, value) {
+                $('#distributor').append('<option value="' + value.Id + '">' + value.DistributorName + '</option>');
+            });
+        });
     }
     
 </script>

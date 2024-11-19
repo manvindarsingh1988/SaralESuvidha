@@ -25,6 +25,7 @@ using SpreadsheetLight;
 using UPPCLLibrary;
 using UPPCLLibrary.BillFetch;
 using RTran = SaralESuvidha.Models.RTran;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace SaralESuvidha.ViewModel
 {
@@ -2672,6 +2673,75 @@ namespace SaralESuvidha.ViewModel
                 return "Exception in saving log. " + ex.Message;
             }
             return "Save log done.";
+        }
+
+        public static string DistributorListJson(int userType)
+        {
+            string result = "[]";
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserType", userType);
+                    List<Distributor> allStates = con.Query<Distributor>("usp_GetDistributorList", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    result = JsonConvert.SerializeObject(allStates);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+            return result;
+        }
+
+        public static string UpdateActiveState(string retailerId)
+        {
+            string result = string.Empty;
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@RetailUserId", retailerId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<OperationResponse>("usp_updateUserActivationState", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception)
+            {
+                result = "Exception in updating active state.";// + ex.Message;
+            }
+            finally
+            {
+
+            }
+
+            return result;
+        }
+
+        public static string UpdateDistributor(string retailerId, string distributorId)
+        {
+            string result = string.Empty;
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@RetailUserId", retailerId);
+                parameters.Add("@DistributorId", distributorId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<OperationResponse>("usp_updateDistributor", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception)
+            {
+                result = "Exception in updating active state.";// + ex.Message;
+            }
+            finally
+            {
+
+            }
+
+            return result;
         }
 
     }
