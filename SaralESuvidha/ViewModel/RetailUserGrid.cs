@@ -25,5 +25,6 @@ namespace SaralESuvidha.ViewModel
         public string DefaultUtilityOperator { get; set; }
         public bool ApiEnabled { get; set; }
         public short Active { get; set; }
+        public DateTime? LoginTime { get; set; }
     }
 }
