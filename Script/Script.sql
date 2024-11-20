@@ -62,4 +62,90 @@ AS
 	
 	SELECT @OperationMessage as OperationMessage;
 	
+Go
+
+CREATE PROC [dbo].[usp_GetUserDetails] 
+@RetailUserId varchar(50)
+AS 
+SELECT Id, UserType, MarginType, [dbo].[RetailerNamewithIdMobile](Id) AS RetailerName, Mobile AS MobileNumber,  
+City, EMail, MasterId as Parent, ISNULL([dbo].[RetailClientOrderNoUserNameMobile](MasterId),'') AS ParentName, [Address], OrderNo AS USL, Active
+FROM RetailUser WITH(NOLOCK) where Id = @RetailUserId or Mobile = @RetailUserId or Cast(OrderNo as nvarchar(50)) = @RetailUserId
+
+GO
+
+CREATE TABLE [dbo].[UserLoginTimeInfo](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[RetailUserId] [varchar](10) NULL,
+	[LoginTime] [datetime] NULL,
+ CONSTRAINT [PK_UserLoginTimeInfo] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[UserLoginTimeInfo]  WITH CHECK ADD  CONSTRAINT [FK_UserLoginTimeInfo_RetailUserId] FOREIGN KEY([RetailUserId])
+REFERENCES [dbo].[RetailUser] ([Id])
+GO
+
+ALTER TABLE [dbo].[UserLoginTimeInfo] CHECK CONSTRAINT [FK_UserLoginTimeInfo_RetailUserId]
+GO	
+
+Alter PROC [dbo].[usp_RetailUserList] 
+AS 
+SELECT RU.Id, UserType, MarginType, [dbo].[RetailerNamewithIdMobile](RU.Id) AS RetailerName, Mobile AS MobileNumber,  
+City, EMail, MasterId as Parent, ISNULL([dbo].[RetailClientOrderNoUserNameMobile](MasterId),'') AS ParentName, [Address], OrderNo AS USL, Active, LoginTime
+FROM RetailUser RU WITH(NOLOCK)
+Left Join UserLoginTimeInfo ULTI on ULTI.RetailUserId = RU.ID and CAST(LoginTime as date) = CAST(getdate() as date)
+ORDER BY OrderNo ASC
+
+GO
+
+Alter PROC [dbo].[usp_RetailClient_ValidateLogin]   
+    @MobileNumber varchar(20),  
+    @Password varchar(50),  
+ @FToken varchar(400)=NULL,  
+ @Did varchar(400)=NULL,  
+ @OutResult int=0 OUT  
+AS   
+ SET NOCOUNT ON   
+ SET XACT_ABORT ON    
+   
+ BEGIN TRAN  
+ declare @Id varchar(10)
+ SELECT @OutResult = ISNULL(OrderNo,0), @Id = Id from [RetailUser] with(nolock) WHERE [Mobile] = @MobileNumber AND [Password]=@Password AND Active=1;  
+   
+ --UPDATE RetailUser SET AndroidFcmToken=@FToken WHERE OrderNo=@OutResult;  
+ DECLARE @CurrentFtoken VARCHAR(400) = '';  
+ IF(@OutResult > 0 AND @FToken IS NOT NULL)  
+ BEGIN  
+  SELECT @CurrentFtoken = ISNULL(AndroidFcmToken,'') FROm RetailUser WITh(NOLOCK) WHERE OrderNo=@OutResult;  
+  IF(@CurrentFtoken <> @FToken)  
+  BEGIN  
+   UPDATE RetailUser SET AndroidFcmToken=@FToken WHERE OrderNo=@OutResult;  
+  END  
+ END  
+  
+ --UPDATE RetailUser SET AndroidUuid=@Did WHERE OrderNo=@OutResult;  
+ DECLARE @CurrentDid VARCHAR(400) = '';  
+ IF(@OutResult > 0 AND @Did IS NOT NULL)  
+ BEGIN  
+  SELECT @CurrentDid = ISNULL(AndroidUuid,'') FROm RetailUser WITh(NOLOCK) WHERE OrderNo=@OutResult;  
+  IF(@CurrentDid <> @Did)  
+  BEGIN  
+   UPDATE RetailUser SET AndroidUuid=@Did WHERE OrderNo=@OutResult;  
+  END  
+ END  
+  
+ SELECT Id, UserType, MarginType, ISNULL(FirstName,'') + ' ' + ISNULL(MiddleName,'') + ' ' + ISNULL(LastName,'') AS RetailerName, Mobile AS MobileNumber,   
+  City, EMail, MasterId as Parent, [Address], OrderNo AS USL, Active, DefaultUtilityOperator  
+  FROM RetailUser WITH(NOLOCK) WHERE OrderNo=@OutResult;  
+
+  if((Select Count(1) from [dbo].[UserLoginTimeInfo] where CAST(LoginTime as date) = CAST(getdate() as date)) = 0)
+  begin
+      insert into [dbo].[UserLoginTimeInfo](RetailUserId, LoginTime) values(@Id, getdate())
+  end
+ COMMIT  
+
+	
     

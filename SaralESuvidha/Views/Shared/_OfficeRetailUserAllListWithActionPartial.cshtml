@@ -162,7 +162,15 @@
             columns: [
                 { data: "Id", title: "id" }, { data: "USL", title: "USL", visible: false }, { data: "RetailerName", title: "Retailer Name" }, { data: "ParentName", title: "Parent" },
                 { data: "MobileNumber", title: "Mobile Number", visible: false }, { data: "City", title: "City" },
-                { data: "EMail", title: "E-Mail" }, { data: "Address", title: "Address" },
+                { data: "EMail", title: "E-Mail" }, { data: "Address", title: "Address" }, 
+                { data: "LoginTime", title: "Login Time",
+                    render: function (data, type, row) {
+                        if (type === "sort" || type === "type") {
+                            return data;
+                        }
+                        return data ? moment(data).format("DD-MM-YYYY HH:mm:ss") : '';
+                    }
+                },
                 {
                     title: "Active/Inactive",
                     data: null, render: function (data, type, row) {
