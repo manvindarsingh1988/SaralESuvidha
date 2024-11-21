@@ -81,6 +81,11 @@ namespace SaralESuvidha.Controllers
             return View();
         }
         
+        public IActionResult ListAllUserWithBalance()
+        {
+            return View();
+        }
+        
 
         //[HttpPost]
         //public IActionResult SaveMasterDistributor(RetailUserViewModel data) //FromBody
@@ -309,6 +314,23 @@ namespace SaralESuvidha.Controllers
                 DateTime dateT = Convert.ToDateTime(StaticData.ConvertHexToString(dateTo));
                 if (HttpContext.Session != null)
                     result = StaticData.RechargeReportUPPCLByDate( dateF, dateT, x, filePath);
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: " + ex.Message;
+            }
+            return Content(result);
+        }
+        
+        public IActionResult AllUserReportResult(int x)
+        {
+            string result = string.Empty;
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath,"FileData/");
+            
+            try
+            {
+                if (HttpContext.Session != null)
+                    result = StaticData.AllUserReportResult( x, filePath);
             }
             catch (Exception ex)
             {

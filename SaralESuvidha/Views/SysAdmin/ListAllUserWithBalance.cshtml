@@ -1,0 +1,80 @@
+@{
+    Layout = "_LayoutSysAdmin";
+    ViewData["title"] = "List All User with Balance";
+}
+
+<form id="frmAllUsers" name="frmAllUsers" asp-action="" asp-controller="SysAdmin">
+    <div class="card mb-4">
+        <h6 class="card-header">UPPCL ALl Users Report<span id="InfoDetail" name="InfoDetail" class=""></span></h6>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-4 form-group">
+                    <button type="button" class="btn btn-primary" onclick="LoadUsers();">Load Users List</button>
+                    <button type="button" class="btn btn-primary" onclick="ExportExcel();">Export Users List</button>
+                </div>
+            </div>
+
+            <span id="loaderInfo" name="loaderInfo"></span>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h6 class="card-header alert-primary" id="lblReport">
+            Users List
+        </h6>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-grid-allretail">
+                <thead>
+                <tr>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+    });
+    
+    function LoadUsers() {
+        if ($.fn.DataTable.isDataTable('#datatable-grid-allretail')) {
+            $('#datatable-grid-allretail').DataTable().destroy();
+        }
+        $('#datatable-grid-allretail tbody').empty();
+        $('#ddatatable-grid-allretail thead').empty();
+        
+
+        var $table = $('#datatable-grid-allretail');
+        $table.dataTable({
+            iDisplayLength: 10,
+            bAutoWidth: true,
+            sAjaxSource: '@Url.Action("AllUserReportResult", "SysAdmin")?x=0',
+            cache: false,
+            order: [[4, "asc"], [2, "asc"]],
+            columns: [
+                { data: "Id", title: "Id" }, { data: "USL", title: "USL" }, { data: "RetailerName", title: "RetailerName" }, 
+                { data: "ParentName", title: "ParentName" }, { data: "Balance", title: "Balance" }, { data: "City", title: "City" }, { data: "Address", title: "Address" },
+                { data: "EMail", title: "EMail" }, { data: "Active", title: "Active" }
+            ]
+        });
+
+        $('#lblReport').html('All users report.');
+    }
+    
+    function ExportExcel() {
+        $('#lblReport').html('Loading report...');
+        $.get('@Url.Action("AllUserReportResult","SysAdmin")?x=1',
+        function(data) {
+            if (data.indexOf('Errors:') > -1) {
+                $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
+            } else {
+                $('#lblReport').html('ALl Users Report - ' + data);
+            }
+        });
+    }
+
+</script>
