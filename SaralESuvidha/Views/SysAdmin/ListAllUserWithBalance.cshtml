@@ -5,7 +5,7 @@
 
 <form id="frmAllUsers" name="frmAllUsers" asp-action="" asp-controller="SysAdmin">
     <div class="card mb-4">
-        <h6 class="card-header">UPPCL ALl Users Report<span id="InfoDetail" name="InfoDetail" class=""></span></h6>
+        <h6 class="card-header">UPPCL All Users Report<span id="InfoDetail" name="InfoDetail" class=""></span></h6>
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-4 form-group">
@@ -50,14 +50,15 @@
 
         var $table = $('#datatable-grid-allretail');
         $table.dataTable({
-            iDisplayLength: 10,
+            iDisplayLength: 50,
             bAutoWidth: true,
             sAjaxSource: '@Url.Action("AllUserReportResult", "SysAdmin")?x=0',
             cache: false,
             order: [[4, "asc"], [2, "asc"]],
             columns: [
-                { data: "Id", title: "Id" }, { data: "USL", title: "USL" }, { data: "RetailerName", title: "RetailerName" }, 
-                { data: "ParentName", title: "ParentName" }, { data: "Balance", title: "Balance" }, { data: "City", title: "City" }, { data: "Address", title: "Address" },
+                { data: "Id", title: "Id" }, { data: "USL", title: "USL" }, { data: "UserType", title: "UserType" }, { data: "RetailerName", title: "RetailerName" }, 
+                { data: "RName", title: "RName" }, { data: "MobileNumber", title: "Mobile" }, { data: "ParentName", title: "ParentName" }, { data: "Balance", title: "Balance" }, 
+                { data: "City", title: "City" }, { data: "Address", title: "Address" },
                 { data: "EMail", title: "EMail" }, { data: "Active", title: "Active" }
             ]
         });
@@ -72,7 +73,7 @@
             if (data.indexOf('Errors:') > -1) {
                 $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
             } else {
-                $('#lblReport').html('ALl Users Report - ' + data);
+                $('#lblReport').html('All Users Report - ' + data);
             }
         });
     }

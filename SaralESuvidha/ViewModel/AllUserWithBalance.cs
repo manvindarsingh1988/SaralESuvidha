@@ -6,6 +6,7 @@ public class AllUserWithBalance
     public int USL { get; set; }
     public string UserType { get; set; }
     public string RetailerName { get; set; }
+    public string RName { get; set; }
     public string MobileNumber { get; set; }
     public string Balance { get; set; }
     public string Parent { get; set; }
