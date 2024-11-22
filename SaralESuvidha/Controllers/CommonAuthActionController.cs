@@ -267,7 +267,7 @@ namespace SaralESuvidha.Controllers
                 {
                     foreach (var file in from.GetFiles().OfType<FileInfo>())
                     {
-                        var relPath = file.FullName.Substring(from.FullName.Length + 1);
+                        var relPath = file.FullName.Substring(from.FullName.Length);
                         ZipArchiveEntry readmeEntry = archive.CreateEntryFromFile(file.FullName, relPath);
                     }
                 }
