@@ -9,8 +9,9 @@ public class RTranAdminReport
 
     //public string ClientName { get; set; }
     public string RetailUserId { get; set; }
-    public string Parent { get; set; }
     public string RetailerDetail { get; set; }
+
+    public string ParentName { get; set; }
 
     public string RefundId { get; set; }
 
@@ -43,5 +44,4 @@ public class RTranAdminReport
     public string RefundResponse { get; set; }
     public string RefundStatus { get; set; }
     public string InitialResponseData { get; set; }
-    
 }

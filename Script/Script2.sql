@@ -115,6 +115,18 @@ AS
 	   SELECT @OperationMessage =  'Success: user ' + CONVERT(VARCHAR(20),@RetailUserOrderNo) + ' deactivated.'
     end
 	SELECT @OperationMessage as OperationMessage;
+	
+Go
+
+  
+Alter PROC [dbo].[usp_RechargeReportAllRetailClientAdminByDate]   
+    @TranDateFrom DATE, @TranDateTo DATE  
+AS   
+ --DECLARE @RetailUserId varchar(14)  
+ Select RTran.Id as Rid, RetailUserId, [dbo].[RetailClientOrderNoUserName](RetailUserId) AS RetailerDetail, ISNULL([dbo].[RetailClientOrderNoUserNameMobile](MasterId),'') AS ParentName, RefundTransactionId as RefundId, TelecomOperatorName as OperatorName, OperatorCircle,Amount,   
+ DebitAmount as Debit, CreditAmount as Credit,Margin, OpeningBalance as OB, ClosingBalance as CB,RechargeMobileNumber as RechargeNumber, RechargeStatus, ISNULL(Remarks,'') as Remarks, CreateDate, LiveId, InitialResponseData,  
+ [dbo].[TranTypeString](TranType) AS TransactionType, UPPCL_PaymentType AS PaymentType from [RTran] WITH(NOLOCK) inner join [dbo].[RetailUser]  on  RTran.RetailUserId = RetailUser.Id 
+ WHERE (CONVERT(DATE,CreateDate) BETWEEN @TranDateFrom AND @TranDateTo) ORDER BY CreateDate  	
 
 
 
