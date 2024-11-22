@@ -1179,7 +1179,7 @@ namespace SaralESuvidha.ViewModel
                         List<RTranReport> allDailyRecharge = con.Query<RTranReport>("usp_RechargeSummaryReportRetailClientByDate", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
                         if (excelExport == 1)
                         {
-                            //result = DataTableToExcel(allDailyRecharge.ToDataTable(), "DailyRecharge");
+                            result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "DailyRecharge", filePath);
                         }
                         else
                         {

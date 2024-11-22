@@ -112,7 +112,8 @@ namespace SaralESuvidha.Controllers
             {
                 DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(dateFrom));
                 DateTime dateT = Convert.ToDateTime(StaticData.ConvertHexToString(dateTo));
-                result = StaticData.RechargeReportRetailClientByDate(orderNo, dateF, dateT, x);
+                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "FileData/");
+                result = StaticData.RechargeReportRetailClientByDate(orderNo, dateF, dateT, x, filePath);
             }
             catch (Exception ex)
             {
@@ -122,14 +123,15 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
 
-        public IActionResult DailyClientStatementSummaryResult(string dateFrom, string dateTo, int x, int orderNo)
+        public IActionResult DailyClientStatementSummaryResult(string dateFrom, string dateTo, int x, int orderNo, int export = 0)
         {
             string result = string.Empty;
             try
             {
                 DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(dateFrom));
                 DateTime dateT = Convert.ToDateTime(StaticData.ConvertHexToString(dateTo));
-                result = StaticData.RechargeSummaryReportRetailClientByDate(orderNo, dateF, dateT, x);
+                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "FileData/");
+                result = StaticData.RechargeSummaryReportRetailClientByDate(orderNo, dateF, dateT, x, filePath);
             }
             catch (Exception ex)
             {

@@ -16,6 +16,8 @@
                     <label class="form-label">To Date<span class="text-danger">*</span></label>
                     <input name="txtReportDateTo" id="txtReportDateTo" type="text" class="form-control flatpickr-date required">
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-lg-2 form-group">
                     <label class="form-label">&nbsp;</label>
                     <button type="button" class="form-control btn btn-primary" onclick="LoadRechargeReport();">Load Report</button>
@@ -24,11 +26,15 @@
                     <label class="form-label">&nbsp;</label>
                     <button type="button" class="form-control btn btn-primary" onclick="LoadRechargeSummaryReport();">Load Summary</button>
                 </div>
-                <div class="col-lg-2 form-group d-none">
+                <div class="col-lg-2 form-group">
                     <label class="form-label">&nbsp;</label>
-                    <button type="button" class="form-control btn btn-primary" onclick="">Export Excel</button>
+                    <button type="button" class="form-control btn btn-primary" onclick="ExportReportExcel();">Export Report Excel</button>
                 </div>
-            </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="ExportSummaryExcel();">Export Summary Excel</button>
+                </div>
+            </div>            
         </div>
     </div>
     <div class="card">
@@ -121,5 +127,30 @@
                 }
         
             }
+
+    function ExportSummaryExcel() {
+        $('#lblReport').html('Loading report...');
+        $.get('@Url.Action("DailyClientStatementSummaryResult", "CommonAuthAction")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1&orderNo=' + $('#OrderNo').val(),
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#lblReport').html('Recharge summary report between date ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDateTo').val() + '.' + data);
+                }
+            });
+    }
+
+    function ExportReportExcel() {
+        $('#lblReport').html('Loading report...');
+        $.get('@Url.Action("DailyClientStatementResult", "CommonAuthAction")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1&orderNo=' + $('#OrderNo').val(),
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#lblReport').html('Account report between date ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDateTo').val() + '.' + data);
+                }
+            });
+    }
+
 
 </script>
