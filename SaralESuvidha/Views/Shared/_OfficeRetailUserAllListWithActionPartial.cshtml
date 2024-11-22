@@ -88,6 +88,46 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="KYCModalPopUp" role="dialog">
+        <div class="modal-dialog err-pop" id="sdmodal1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="DivClose1" type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <h5 id="userDetail" name="userDetail"></h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-8 form-group">
+                                <span>Download the files for KYC from this given link:</span> 
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <input type="button" id="download" value="Download" onclick="DownloadFiles()" class="form-control btn btn-primary">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="form-label"></label>
+                                <select class="form-control form-control-sm" data-style="btn-default" onchange="OnChangeActivation(this);">
+                                    <option value="0">InActive</option>
+                                    <option value="1">Active</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <input type="button" id="activate" value="Activate" onclick="Activate()" class="form-control btn btn-primary" disabled>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -113,6 +153,33 @@
             return $(item.text);
         else
             return $('<b>' + item.text + '</b>');
+    }
+
+    function OnChangeActivation(sel) {
+        if(sel.value == 1) {
+            $("#activate").attr("disabled", false);
+        }
+        else {
+            $("#activate").attr("disabled", true);
+        }
+    }
+
+    function Activate() {
+        var id = $('#download').attr('alt');
+        $.get("@Url.Action("ChangeActivation", "CommonAuthAction")?id=" + id,
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                }
+            });
+        $('#KYCModalPopUp').modal('hide');
+    }
+
+    function DownloadFiles() {
+        var id = $('#download').attr('alt');
+        window.location = "@Url.Action("DownloadFiles", "CommonAuthAction")?id=" + id;
     }
     
     function LoadMarginSheet() {
@@ -176,12 +243,20 @@
                     data: null, render: function (data, type, row) {
                         if (row.Active == 1)
                             return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' onchange=ChangeActivation('" + row.Id + "') checked />";
+                        else if (row.KYCRequired == 1)
+                            return "<button type='button' onclick=DoKYC('" + row.Id + "')>KYC Pending</button>";
                         else
                             return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' onchange=ChangeActivation('" + row.Id + "') />";
                     }
                 }
             ]
         });
+    }
+
+    function DoKYC(id, userName) {
+        $('#download').attr("alt", id);
+        $('#userDetail').html(id);
+        $('#KYCModalPopUp').modal('show');
     }
 
     function ChangeActivation(id) {

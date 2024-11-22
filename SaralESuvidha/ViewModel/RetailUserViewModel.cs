@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace SaralESuvidha.ViewModel
@@ -62,6 +63,26 @@ namespace SaralESuvidha.ViewModel
         public int Active { get; set; }
         public int OrderNo { get; set; }
 
+        [DisplayName("Aadhar Front")]
+        public IFormFile AadharFront { get; set; }
+
+        [DisplayName("Aadhar Back")]
+        public IFormFile AadharBack { get; set; }
+
+        [DisplayName("Pan Card")]
+        public IFormFile PanCard { get; set; }
+
+        [DisplayName("Photo")]
+        public IFormFile Photo { get; set; }
+
+        [DisplayName("Agreement")]
+        public IFormFile Agreement { get; set; }
+
+        [DisplayName("Affidavit")]
+        public IFormFile Affidavit { get; set; }
+
+        [DisplayName("Other")]
+        public IFormFile Other { get; set; }
 
         public string OperationMessage { get; set; }
 
@@ -93,8 +114,9 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@Active", Active);
                 parameters.Add("@SignupDate", DateTime.Now);
 
-                var saveResponse = con.QuerySingleOrDefault<string>("usp_RetailUserInsert", parameters, commandType: System.Data.CommandType.StoredProcedure);
-                OperationMessage = saveResponse;
+                var saveResponse = con.QuerySingleOrDefault<dynamic>("usp_RetailUserInsert", parameters, commandType: System.Data.CommandType.StoredProcedure);
+                OperationMessage = saveResponse.OperationMessage;
+                Id = saveResponse.Id;
             }
             return this;
         }

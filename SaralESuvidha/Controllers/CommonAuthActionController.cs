@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using Razorpay.Api;
 using UPPCLLibrary.BillFail;
+using System.IO.Compression;
 
 namespace SaralESuvidha.Controllers
 {
@@ -255,6 +256,33 @@ namespace SaralESuvidha.Controllers
             }
         }
 
+        public ActionResult DownloadFiles(string id)
+        {
+            try
+            {
+                MemoryStream ms = new MemoryStream();
+                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "KYCDocFiles/" + id + "/");
+                DirectoryInfo from = new DirectoryInfo(filePath);
+                using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                {
+                    foreach (var file in from.GetFiles().OfType<FileInfo>())
+                    {
+                        var relPath = file.FullName.Substring(from.FullName.Length + 1);
+                        ZipArchiveEntry readmeEntry = archive.CreateEntryFromFile(file.FullName, relPath);
+                    }
+                }
+                ms.Position = 0;
+                return File(ms, "application/zip", id + ".zip");
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new Exception("Cound not file requested file.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("There is a problem downloading file");
+            }
+        }
 
         public IActionResult PendingResult()
         {
