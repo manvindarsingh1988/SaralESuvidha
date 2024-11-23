@@ -415,6 +415,13 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
 
+        public IActionResult ChangeKYCActivation(string id, int pkyc, int activation)
+        {
+            string result = string.Empty;
+            result = StaticData.UpdateKYCState(id, pkyc, activation);
+            return Content(result);
+        }
+
         public IActionResult UpdateDistributor(string id, string masterId)
         {
             string result = string.Empty;

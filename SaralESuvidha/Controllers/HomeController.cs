@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Newtonsoft.Json;
 using QRCoder;
 using ElectricityBillInfo = UPPCLLibrary.ElectricityBillInfo;
+using DocumentFormat.OpenXml.Wordprocessing;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 
 namespace SaralESuvidha.Controllers
 {
@@ -134,7 +136,7 @@ namespace SaralESuvidha.Controllers
 
         public IActionResult RetailLogin(string m, string p, string s="w", string f="", string d="")
         {
-            string result = string.Empty;
+            string[] result = new string[2];
             try
             {
                 if (m.Length == 10 && p.Length > 5)
@@ -193,41 +195,58 @@ namespace SaralESuvidha.Controllers
                             //return RedirectToAction("Index", "RetailClient");
                             if (retailUser.UserType == 9)
                             {
-                                result = "Success: login ok. WhiteLabel";
+                                result[0] = "Success: login ok. WhiteLabel";
                             }
                             if (retailUser.UserType == 7)
                             {
-                                result = "Success: login ok. MasterDistributor";
+                                result[0] = "Success: login ok. MasterDistributor";
                             }
                             if (retailUser.UserType == 6)
                             {
-                                result = "Success: login ok. Distributor";
+                                result[0] = "Success: login ok. Distributor";
                             }
                             if (retailUser.UserType == 5)
                             {
-                                result = "Success: login ok. Retailer";
+                                result[0] = "Success: login ok. Retailer";
                             }
                         }
                         else
                         {
-                            result = "Errors: Invalid user or password.";
+                            result[0] = "Errors: Invalid user or password.";
                         }
                     }
                     else
                     {
-                        result = "Errors: User not found or not active.";
+                        result[0] = "Errors: User not found or not active.";
+                    }
+                    if(retailUser.ActivatedOn != null)
+                    {
+                        var days = (DateTime.Now - retailUser.ActivatedOn.GetValueOrDefault()).Days;
+                        if (days < 10)
+                        {
+                            var leftdays = 10 - days;
+                            result[1] = $"Account will get deactivate in {leftdays} days as physical KYC is still pending. Please contact with admin for more details.";
+                        }
+                        else
+                        {
+                            result[1] = string.Empty;
+                        }
+                    }
+                    else
+                    {
+                        result[1] = string.Empty;
                     }
                 }
                 else
                 {
-                    result = "Errors: Invalid login details.";
+                    result[0] = "Errors: Invalid login details.";
                 }
             }
             catch (Exception ex)
             {
-                result = "Errors: Exception: " + ex.Message;
+                result[0] = "Errors: Exception: " + ex.Message;
             }
-            return Content(result);
+            return Content(string.Join("$$",result));
         }
 
         public IActionResult OfficeLogin()

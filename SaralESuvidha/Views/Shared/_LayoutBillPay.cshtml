@@ -677,25 +677,29 @@
             
             $.get("@Url.Action("RetailLogin", "Home")?m=" + $('#mobileno').val() + "&p=" + $('#password').val(),
                 function(data) {
-                    if (data.indexOf('Errors:') > -1) {
-                        $('#ActionMessage').html('<span class="text-danger">' + data + '</span>');
-                    } else if (data.indexOf('Retailer') > -1){
-                        $('#ActionMessage').html('<span class="">' + data + '</span>');
+                    var resText = data.split("$$")[0];
+                    var kycMessage = data.split("$$")[1];
+                    if (resText.indexOf('Errors:') > -1) {
+                        $('#ActionMessage').html('<span class="text-danger">' + resText + '</span>');
+                    } else if (resText.indexOf('Retailer') > -1) {
+                        $('#ActionMessage').html('<span class="">' + resText + '</span>');
                         window.location.href = "/RetailClient/Index";
                     }
-                    else if (data.indexOf('Distributor') > -1 && data.indexOf('Master') < 0) {
-                        $('#ActionMessage').html('<span class="">' + data + '</span>');
+                        else if (resText.indexOf('Distributor') > -1 && resText.indexOf('Master') < 0) {
+                            $('#ActionMessage').html('<span class="">' + resText + '</span>');
                         window.location.href = "/Distributor/Index";
                     }
-                    else if (data.indexOf('MasterDistributor') > -1) {
-                        $('#ActionMessage').html('<span class="">' + data + '</span>');
+                        else if (resText.indexOf('MasterDistributor') > -1) {
+                            $('#ActionMessage').html('<span class="">' + resText + '</span>');
                         window.location.href = "/MasterDistributor/Index";
                     }
-                    else if (data.indexOf('WhiteLabel') > -1) {
-                        $('#ActionMessage').html('<span class="">' + data + '</span>');
+                        else if (resText.indexOf('WhiteLabel') > -1) {
+                            $('#ActionMessage').html('<span class="">' + resText + '</span>');
                         window.location.href = "/WhiteLabel/Index";
                     }
-                    
+                        if (kycMessage) {
+                            alert(kycMessage);
+                    }
                 });
         }
     }

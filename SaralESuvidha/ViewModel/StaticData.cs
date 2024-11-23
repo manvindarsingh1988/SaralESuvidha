@@ -2752,6 +2752,32 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
+        public static string UpdateKYCState(string retailerId, int pkyc, int activation)
+        {
+            string result = string.Empty;
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@RetailUserId", retailerId);
+                parameters.Add("@Active", activation);
+                parameters.Add("@PhysicalKYCDone", pkyc);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<OperationResponse>("usp_updateKYCState", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception)
+            {
+                result = "Exception in updating active state.";// + ex.Message;
+            }
+            finally
+            {
+
+            }
+
+            return result;
+        }
+
         public static string UpdateDistributor(string retailerId, string distributorId)
         {
             string result = string.Empty;

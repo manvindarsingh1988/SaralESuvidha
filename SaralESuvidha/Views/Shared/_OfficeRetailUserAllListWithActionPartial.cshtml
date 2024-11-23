@@ -112,7 +112,7 @@
                         <div class="row">
                             <div class="col-sm-12 form-group">
                                 <label class="form-label"></label>
-                                <select class="form-control form-control-sm" data-style="btn-default" onchange="OnChangeActivation(this);">
+                                <select id="sel" name="sel" class="form-control form-control-sm" data-style="btn-default" onchange="OnChangeActivation(this);">
                                     <option value="0">InActive</option>
                                     <option value="1">Active</option>
                                 </select>
@@ -120,7 +120,13 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-12 form-group">
-                                <input type="button" id="activate" value="Activate" onclick="Activate()" class="form-control btn btn-primary" disabled>
+                                <input type="checkbox" id="pkyc" name="pkyc" value="PKYC">
+                                <label for="pkyc"> Physical verification done.</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <input type="button" id="activate" value="Activate" onclick="Activate()" class="form-control btn btn-primary">
                             </div>
                         </div>
                     </form>
@@ -156,17 +162,18 @@
     }
 
     function OnChangeActivation(sel) {
-        if(sel.value == 1) {
-            $("#activate").attr("disabled", false);
-        }
-        else {
-            $("#activate").attr("disabled", true);
+        if(sel.value == 0) {
+            $("#pkyc").prop("checked", false);
         }
     }
 
     function Activate() {
         var id = $('#download').attr('alt');
-        $.get("@Url.Action("ChangeActivation", "CommonAuthAction")?id=" + id,
+        var pkys = $('#pkyc').prop("checked") ? "1" : "0" ;
+        console.log(pkys);
+        console.log($('#pkyc'));
+        var activate = $('#sel').val();
+        $.get("@Url.Action("ChangeKYCActivation", "CommonAuthAction")?id=" + id + "&pkyc=" + pkys + "&activation=" + activate,
             function (data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
@@ -241,7 +248,9 @@
                 {
                     title: "Active/Inactive",
                     data: null, render: function (data, type, row) {
-                        if (row.Active == 1)
+                        if (row.PhysicalKYCDone == 0)
+                            return "<button type='button' onclick=DoKYC('" + row.Id + "')>KYC Pending</button>";
+                        else if (row.Active == 1)
                             return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' onchange=ChangeActivation('" + row.Id + "') checked />";
                         else if (row.KYCRequired == 1)
                             return "<button type='button' onclick=DoKYC('" + row.Id + "')>KYC Pending</button>";
