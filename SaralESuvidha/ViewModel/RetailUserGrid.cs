@@ -8,7 +8,7 @@ namespace SaralESuvidha.ViewModel
 {
     public class RetailUserGrid
     {
-        public long USL { get; set; }
+        public int USL { get; set; }
         public string Id { get; set; }
         public string UserTypeString { get; set; }
         public string RetailerName { get; set; }

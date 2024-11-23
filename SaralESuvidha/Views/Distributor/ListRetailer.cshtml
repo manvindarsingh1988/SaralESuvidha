@@ -1,5 +1,63 @@
 ﻿@{
     Layout = "_LayoutDistributor";
-    ViewData["title"] = "Distributor Dashboard";
+    Layout = "_LayoutDistributor";
+    ViewData["title"] = "Retailer Dashboard";
 }
-<partial name="_RetailUserListRetailerPartial"/>
+@* <partial name="_RetailUserListRetailerPartial"/> *@
+
+@model List<SaralESuvidha.ViewModel.RetailUserGrid>
+
+<div class="card">
+    <h6 class="card-header">
+        Retailers List
+    </h6>
+    <div class="card-datatable table-responsive">
+        <table class="table table-striped table-bordered" id="datatable-grid-retailer">
+            <thead>
+                <tr>
+                    <th>USL</th>
+                    <th>Retailer Name</th>
+                    <th>Balance</th>
+                    <th>Mobile Number</th>
+                    <th>City</th>
+                    <th>CscId</th>
+                    <th>Address</th>
+                    <th>Action</th>
+                    </>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var retailUser in Model)
+                    {
+                        <tr>
+                            <td>
+                                @retailUser.USL
+                            </td>
+                            <td>
+                                @retailUser.RetailerName
+                            </td>
+                            <td>
+                                @retailUser.Balance
+                            </td>
+                            <td>
+                                @retailUser.MobileNumber
+                            </td>
+                            <td>
+                                @retailUser.City
+                            </td>
+                            <td>
+                                @retailUser.CscId
+                            </td>
+                            <td>
+                                @retailUser.Address
+                            </td>
+                            <td>
+                                <a asp-asp-controller="Distributor" asp-action="CreateRetailer" asp-route-id="@retailUser.USL">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

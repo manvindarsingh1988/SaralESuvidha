@@ -31,7 +31,20 @@ namespace SaralESuvidha.Controllers
         
         public IActionResult ListRetailer()
         {
-            return View();
+            try
+            {
+                using (var con = new SqlConnection(StaticData.conString))
+                {
+                    var queryParameters = new DynamicParameters();
+                    queryParameters.Add("@MasterId", HttpContext.Session.GetString("RetailerId").ToString());
+                    List<RetailUserGrid> allRetailUser = con.Query<RetailUserGrid>("usp_RetailUserListByParent", queryParameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    return View(allRetailUser);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception: " + ex.Message);
+            }
         }
         
         public IActionResult FundReport()
@@ -85,9 +98,36 @@ namespace SaralESuvidha.Controllers
             }
         }
 
-        public IActionResult CreateRetailer()
+        [Route("Distributor/CreateRetailer/{USL}")]
+        public IActionResult CreateRetailer(int USL)
         {
-            return View();
+            try
+            {
+                if (USL <= 0)
+                { return View(); }
+                else
+                {
+                    var retailerDetails = GetRetailerDetails(USL);
+                    return View(retailerDetails);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception: " + ex.Message);
+            }
+        }
+
+        public RetailUserViewModel GetRetailerDetails(int OrderNo)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@OrderNo", OrderNo);
+
+            using (var con = new SqlConnection(StaticData.conString))
+            {
+                var retailUserToUpdate = con.QuerySingleOrDefault<RetailUserViewModel>("usp_GetUserDetailsToUpdate", parameters, commandType: System.Data.CommandType.StoredProcedure);
+                retailUserToUpdate.OrderNo = OrderNo;
+                return retailUserToUpdate;
+            }
         }
 
         [HttpPost, ValidateAntiForgeryToken]
@@ -113,8 +153,7 @@ namespace SaralESuvidha.Controllers
             {
                 SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Other, "Other");
             }
-            return View(retailUserViewModel);
-
+            return RedirectToAction("ListRetailer");
             /*
             if (ModelState.IsValid)
             {
