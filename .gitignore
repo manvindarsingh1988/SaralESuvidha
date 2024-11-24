@@ -46,3 +46,14 @@
 /SaralESuvidha/obj/*.props
 /SaralESuvidha/obj/*.targets
 /SaralESuvidha/obj/*.cache
+/SaralESuvidha/wwwroot/FileData/*.xlsx
+/SaralESuvidha/wwwroot/KYCDocFiles/RU003633/*.png
+/SaralESuvidha/wwwroot/KYCDocFiles/RU003634/*.png
+/SaralESuvidha/wwwroot/KYCDocFiles/RU003635/*.png
+/SaralESuvidha/wwwroot/KYCDocFiles/RU003635/*.pdf
+/SaralESuvidha/wwwroot/KYCDocFiles/RU003636/*.png
+/SaralESuvidha/wwwroot/KYCDocFiles/RU003636/*.pdf
+/.vs/ProjectEvaluation/*.bin
+/.vs/SaralESuvidha/v17/*.v2
+/.vs/SaralESuvidha/v17/*.txt
+/.vs/SaralESuvidha/v17/*.bin
