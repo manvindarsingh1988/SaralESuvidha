@@ -9,12 +9,21 @@ using SaralESuvidha.Models;
 using SaralESuvidha.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace SaralESuvidha.Controllers
 {
     [MasterDistributorFilter]
     public class MasterDistributorController : Controller
     {
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
+        public MasterDistributorController(IWebHostEnvironment hostingEnvironment)
+        {
+            _hostingEnvironment = hostingEnvironment;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -114,6 +123,21 @@ namespace SaralESuvidha.Controllers
             retailUserViewModel.UserType = 6;
             retailUserViewModel.Password = StaticData.GeneratePassword(8);
             retailUserViewModel.Save();
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, "KYCDocFiles/" + retailUserViewModel.Id + "/");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.AadharFront, "AadharFront");
+            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.AadharBack, "AadharBack");
+            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PanCard, "PanCard");
+            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Photo, "Photo");
+            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
+            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
+            if (retailUserViewModel.Other != null)
+            {
+                SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Other, "Other");
+            }
             return View(retailUserViewModel);
 
             /*
@@ -128,6 +152,19 @@ namespace SaralESuvidha.Controllers
                 return View(retailUserViewModel);
             }
             */
+        }
+
+        private static void SaveFile(RetailUserViewModel retailUserViewModel, string folderPath, IFormFile formFile, string fileName)
+        {
+            var name = string.Empty;
+            using (var target = new MemoryStream())
+            {
+                formFile.CopyTo(target);
+                fileName = fileName + Path.GetExtension(formFile.FileName);
+                name = fileName;
+                fileName = fileName = folderPath + fileName;
+                System.IO.File.WriteAllBytes(fileName, target.ToArray());
+            }
         }
 
         public IActionResult SetMargin()

@@ -11,24 +11,24 @@
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label class="form-label" for="firstName">First Name</label> <span asp-validation-for="FirstName" class="text-danger"></span>
-                <input asp-for="FirstName" type="text" class="form-control form-control-sm" id="firstName" placeholder="First Name">
+                <input asp-for="FirstName" type="text" class="form-control" id="firstName" placeholder="First Name">
             </div>
 
             <div class="form-group col-md-4">
                 <label class="form-label" for="middleName">Middle Name</label> <span asp-validation-for="MiddleName" class="text-danger"></span>
-                <input asp-for="MiddleName" type="text" class="form-control form-control-sm" id="middleName" placeholder="Middle Name">
+                <input asp-for="MiddleName" type="text" class="form-control" id="middleName" placeholder="Middle Name">
             </div>
 
             <div class="form-group col-md-4">
                 <label class="form-label" for="lastName">Last Name</label> <span asp-validation-for="LastName" class="text-danger"></span>
-                <input asp-for="LastName" type="text" class="form-control form-control-sm" id="lastName" placeholder="Last Name">
+                <input asp-for="LastName" type="text" class="form-control" id="lastName" placeholder="Last Name">
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label class="form-label" for="firstName">Gender</label>
-                <select asp-for="Gender" class="form-control form-control-sm" data-style="btn-default">
+                <select asp-for="Gender" class="form-control" data-style="btn-default">
                     <option>Male</option>
                     <option>Female</option>
                     <option>Transgender</option>
@@ -37,19 +37,19 @@
 
             <div class="form-group col-md-4">
                 <label asp-for="DateOfBirth" class="form-label"></label> <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-                <input asp-for="DateOfBirth" type="text" class="form-control form-control-sm flatpickr-date">
+                <input asp-for="DateOfBirth" type="text" class="form-control flatpickr-date">
             </div>
 
             <div class="form-group col-md-4">
                 <label asp-for="Mobile" class="form-label"></label> <span asp-validation-for="Mobile" class="text-danger"></span>
-                <input asp-for="Mobile" type="number" autocomplete="off" class="form-control form-control-sm">
+                <input asp-for="Mobile" type="number" autocomplete="off" class="form-control">
             </div>
         </div>
 
         <div class="form-row d-none">
             <div class="form-group col-md-4">
                 <label asp-for="MarginType" class="form-label"></label>
-                <select asp-for="MarginType" class="form-control form-control-sm" data-style="btn-default">
+                <select asp-for="MarginType" class="form-control" data-style="btn-default">
                     <option value="1">Fixed</option>
                     <option value="0" selected="selected">Variable</option>
                 </select>
@@ -57,12 +57,12 @@
 
             <div class="form-group col-md-4">
                 <label asp-for="Commission" class="form-label"></label> <span asp-validation-for="Commission" class="text-danger"></span>
-                <input asp-for="Commission" value="0" type="number" autocomplete="off" class="form-control form-control-sm">
+                <input asp-for="Commission" value="0" type="number" autocomplete="off" class="form-control">
             </div>
 
             <div class="form-group col-md-4">
                 <label asp-for="Active" class="form-label"></label>
-                <select asp-for="Active" class="form-control form-control-sm" data-style="btn-default">
+                <select asp-for="Active" class="form-control" data-style="btn-default">
                     <option value="1">Active</option>
                     <option value="0">InActive</option>
                 </select>
@@ -72,23 +72,23 @@
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label asp-for="StateName" class="form-label"></label>  <span asp-validation-for="StateName" class="text-danger"></span>
-                <select asp-for="StateName" class="form-control form-control-sm" onblur="javascript: LoadCityDdl();"></select>
+                <select asp-for="StateName" class="form-control" onblur="javascript: LoadCityDdl();"></select>
             </div>
 
             <div class="form-group col-md-4">
                 <label asp-for="City" class="form-label"></label> <span asp-validation-for="City" class="text-danger"></span>
-                <select asp-for="City" class="form-control form-control-sm"></select>
+                <select asp-for="City" class="form-control"></select>
             </div>
 
             <div class="form-group col-md-4">
                 <label asp-for="PinCode" class="form-label"></label> <span asp-validation-for="PinCode" class="text-danger"></span>
-                <input asp-for="PinCode" type="number" autocomplete="off" class="form-control form-control-sm">
+                <input asp-for="PinCode" type="number" autocomplete="off" class="form-control">
             </div>
         </div>
 
         <div class="form-group">
             <label asp-for="Address" class="form-label"></label> <span asp-validation-for="Address" class="text-danger"></span>
-            <textarea asp-for="Address" rows="2" autocomplete="off" class="form-control form-control-sm"></textarea>
+            <textarea asp-for="Address" rows="2" autocomplete="off" class="form-control"></textarea>
         </div>
 
         <div class="form-row">

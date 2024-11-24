@@ -285,7 +285,18 @@ AS
    UPDATE RetailUser SET AndroidUuid=@Did WHERE OrderNo=@OutResult;    
   END    
  END    
-    
+ declare @ActivatedOn datetime
+ declare @days int
+ SELECT @ActivatedOn = ActivatedOn FROm RetailUser WITh(NOLOCK) WHERE OrderNo=@OutResult; 
+ if(@ActivatedOn is not null)
+ begin
+	 SELECT @days = DATEDIFF(day, GetDate(), @ActivatedOn)
+	 if(@days > 10)
+	 begin
+	  UPDATE RetailUser SET Active=0,@ActivatedOn = null  WHERE OrderNo=@OutResult; 
+	 end
+ end
+ 
  SELECT Id, UserType, MarginType, ISNULL(FirstName,'') + ' ' + ISNULL(MiddleName,'') + ' ' + ISNULL(LastName,'') AS RetailerName, Mobile AS MobileNumber,     
   City, EMail, MasterId as Parent, [Address], OrderNo AS USL, Active, DefaultUtilityOperator, ActivatedOn   
   FROM RetailUser WITH(NOLOCK) WHERE OrderNo=@OutResult;    
