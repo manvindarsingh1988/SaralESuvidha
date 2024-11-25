@@ -205,7 +205,7 @@ AS
 	 SELECT @days = DATEDIFF(day, GetDate(), @ActivatedOn)
 	 if(@days > 10)
 	 begin
-	  UPDATE RetailUser SET Active=0,@ActivatedOn = null  WHERE OrderNo=@OutResult; 
+	  UPDATE RetailUser SET Active=0,@ActivatedOn = null, KYCRequired = 1  WHERE OrderNo=@OutResult; 
 	 end
  end
  
