@@ -244,6 +244,26 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        public IActionResult GetAllPendingRequests()
+        {
+            try
+            {
+                using (var con = new SqlConnection(StaticData.conString))
+                {
+                    List<RetailUserGrid> allRetailUser = con.Query<RetailUserGrid>("usp_RetailUserList",
+                        commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    //OperationMessage = saveResponse;
+                    var aaData1 = new { data = allRetailUser.Where(_ => _.Active == 0 || _.KYCRequired == 1 || _.ActivatedOn != null) };
+                    return Json(aaData1);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception: " + ex.Message);
+            }
+        }
+
+        [HttpGet]
         public IActionResult GetRetailUserByType(string UserType, int ExportExcel = 0)
         {
             try

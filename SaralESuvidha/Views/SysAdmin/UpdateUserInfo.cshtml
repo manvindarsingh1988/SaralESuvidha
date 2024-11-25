@@ -2,7 +2,7 @@
 
 @{
     Layout = "_LayoutSysAdmin";
-    ViewData["title"] = "Create Master Distributor - Result";
+    ViewData["title"] = "Update User - Result";
 }
 
 
@@ -12,7 +12,7 @@
         <p>Mobile Number - @Model.Mobile</p>
         <hr>
         <p class="text-@(Model.OperationMessage.Contains("Error:") ? "danger" : "success")"><strong>@Model.OperationMessage</strong></p>
-        <p class="text-danger"><strong>Account is not yet active. Please complete KYC for activation.</strong></p>
+    <p class="text-danger @(Model.KYCRequired.ToString().Equals("1") ? "" : "d-none")"><strong>Account is not yet active. Please complete KYC for activation.</strong></p>
     </div>
 
     <div class="card-body" style="padding-left: 0px;">

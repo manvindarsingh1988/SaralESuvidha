@@ -1,0 +1,267 @@
+﻿@model SaralESuvidha.ViewModel.RetailUserViewModel;
+@{
+    Layout = "_LayoutSysAdmin";
+    ViewData["title"] = "Update User";
+}
+<div class="container">
+    <h3 class="text-center">Update User</h3>
+    <form class="form-horizontal" id="frmMain" name="frmMain" asp-action="UpdateUserInfo" asp-controller="SysAdmin" enctype="multipart/form-data">
+        <div class="form-row d-none">
+            <input asp-for="Id" type="text" class="form-control" id="id">
+            <input asp-for="Active" type="text" class="form-control" id="active">
+            <input asp-for="KYCRequired" type="text" class="form-control" id="kycrequired">
+            <input asp-for="PhysicalKYCDone" type="text" class="form-control" id="physicalkycdone">
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label asp-for="FirstName" class="form-label"></label> <span asp-validation-for="FirstName" class="text-danger"></span>
+                <input asp-for="FirstName" type="text" autocomplete="off" class="form-control">
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="MiddleName" class="form-label"></label> <span asp-validation-for="MiddleName" class="text-danger"></span>
+                <input asp-for="MiddleName" type="text" autocomplete="off" class="form-control">
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="LastName" class="form-label"></label> <span asp-validation-for="LastName" class="text-danger"></span>
+                <input asp-for="LastName" type="text" autocomplete="off" class="form-control">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label class="form-label" for="firstName">Gender</label>
+                <select asp-for="Gender" class="form-control" data-style="btn-default">
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Transgender</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label asp-for="DateOfBirth" class="form-label"></label> <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                <input asp-for="DateOfBirth" type="date" class="form-control">
+            </div>
+
+            <div class="form-group col-md-4">
+                <label asp-for="Mobile" class="form-label"></label> <span asp-validation-for="Mobile" class="text-danger"></span>
+                <input asp-for="Mobile" type="number" autocomplete="off" class="form-control">
+            </div>
+        </div>
+        <div id="comrow" class="form-row">
+            <div class="form-group col-md-4">
+                <label asp-for="MarginType" class="form-label"></label>
+                <select asp-for="MarginType" class="form-control" data-style="btn-default">
+                    <option value="1">Fixed</option>
+                    <option value="0" selected="selected">Variable</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label asp-for="Commission" class="form-label"></label> <span asp-validation-for="Commission" class="text-danger"></span>
+                <input asp-for="Commission" value="0" type="number" autocomplete="off" class="form-control">
+            </div>
+
+            <div class="form-group col-md-4">
+                <label asp-for="EMail" class="form-label"></label> <span asp-validation-for="EMail" class="text-danger"></span>
+                <input asp-for="EMail" type="text" autocomplete="off" class="form-control">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label asp-for="StateName" class="form-label"></label>  <span asp-validation-for="StateName" class="text-danger"></span>
+                <select asp-for="StateName" class="form-control" onblur="javascript: LoadCityDdl();"></select>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label asp-for="City" class="form-label"></label> <span asp-validation-for="City" class="text-danger"></span>
+                <select asp-for="City" class="form-control"></select>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label asp-for="PinCode" class="form-label"></label> <span asp-validation-for="PinCode" class="text-danger"></span>
+                <input asp-for="PinCode" type="number" autocomplete="off" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Address" class="form-label"></label> <span asp-validation-for="Address" class="text-danger"></span>
+            <textarea asp-for="Address" rows="2" autocomplete="off" class="form-control"></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <div class="form-group">
+                    <label class="form-label" asp-for="AadharFront"></label> <span asp-validation-for="AadharFront" class="text-danger"></span>
+                    <input type="file" asp-for="AadharFront" id="aadharfront" class="form-control" accept="image/*" />
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="form-group">
+                    <label class="form-label" asp-for="AadharBack"></label> <span asp-validation-for="AadharBack" class="text-danger"></span>
+                    <input type="file" id="aadharback" asp-for="AadharBack" class="form-control" accept="image/*" />
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="form-group">
+                    <label class="form-label" asp-for="PanCard"></label> <span asp-validation-for="PanCard" class="text-danger"></span>
+                    <input type="file" id="pancard" class="form-control" asp-for="PanCard" accept="image/*" />
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <div class="form-group">
+                    <label class="form-label" asp-for="Photo"></label> <span asp-validation-for="Photo" class="text-danger"></span>
+                    <input type="file" id="photo" class="form-control" asp-for="Photo" accept="image/*" />
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="form-group">
+                    <label class="form-label" asp-for="Agreement"></label> <span asp-validation-for="Agreement" class="text-danger"></span>
+                    <input type="file" id="agreement" class="form-control" asp-for="Agreement" accept="application/pdf" />
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="form-group">
+                    <label class="form-label" asp-for="Affidavit"></label> <span asp-validation-for="Affidavit" class="text-danger"></span>
+                    <input type="file" id="affidavit" class="form-control" asp-for="Affidavit" accept="application/pdf" />
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <div class="form-group">
+                    <label class="form-label" asp-for="Other"></label>
+                    <input type="file" id="other" class="form-control" asp-for="Other" accept="application/pdf,image/*" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2">
+                <button type="button" class="btn btn-primary hide" onclick="javascript: CreateMD();">Save</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+                @* <button type="reset" class="btn btn-default" onclick="">Reset</button> *@
+                <span id="loaderInfo" name="loaderInfo"></span>
+            </div>
+        </div>
+    </form>
+</div>
+    
+
+<script type="text/javascript">
+    function ValidateSave() {
+        return true;
+        if ($('#FirstName').val() === '') {
+            $('#modals-info-message').html('First Name is required.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+        if ($('#LastName').val() === '') {
+            $('#modals-info-message').html('Last Name is required.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+        if ($('#City').val() === '' || $('#City').val() === null) {
+            $('#modals-info-message').html('City is required. Select state then city.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+        if ($('#Mobile').val() === '') {
+            $('#modals-info-message').html('Mobile Number is required.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+        if ($('#Mobile').val().length !== 10) {
+            $('#modals-info-message').html('Mobile Number is incorrect.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+
+
+        if ($('#Commission').val() === '') {
+            $('#modals-info-message').html('Margin Percent is required.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+        return true;
+    }
+
+    function CreateMD() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("SaveMasterDistributor", "SysAdmin")",
+            data: $("form").serialize(),
+            contentType: 'application/json; charset=utf-8',
+            //contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+            //data: JSON.stringify(ConvertFormToJSON(document.getElementById('frmMain'))),
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                if (data.indexOf('Error:') > -1) {
+                    //Error
+                }
+                else {
+                    //success
+                    $('#modals-info-message').html(data);
+                    $('#modals-info').modal('show');
+                }
+                //$('#submitCreateUser').prop('disabled', false);
+            },
+            error: function () {
+                $('#modals-info-message').html('Error in creating Master Distributor.');
+                $('#modals-info').modal('show');
+            }
+        });
+    }
+
+    function LoadStateDdl() {
+        //var cid = $('#ddlCountry option:selected').val();
+        $.getJSON("@Url.Action("StateList", "Home", new {id = 96})", function (data) {
+            //$("#ddlState").find("option:gt(0)").remove();
+            $("#StateName").empty();
+            $('#StateName').append('<option value="">Select State</option>');
+            $.each(data, function (index, value) {
+                $('#StateName').append('<option value="' + value.Id + '">' + value.RegionName + '</option>');
+            });
+            $("#StateName").val("@Model.StateName");
+            LoadCityDdl();
+        });
+    }
+
+    //<img src='ViewBag.wwwRootPath/assets/img/loader91px.gif' alt='Loading...' />
+    function LoadCityDdl() {
+        var sid = $('#StateName option:selected').val();
+        $("#loaderInfo").html("LOADING");
+        $.getJSON("@Url.Action("CityList", "Home")" + "?id=" + sid, function (data) {
+            $("#City").empty();
+            $('#City').append('<option value="">Select City</option>');
+            $.each(data, function (index, value) {
+                $('#City').append('<option value="' + value.CityName + '">' + value.CityName + '</option>');
+            });
+            $("#City").val("@Model.City");
+        });
+        $("#loaderInfo").html('');
+    }
+
+
+
+    $(function () {
+        LoadStateDdl();
+        $("#Gender").val("@Model.Gender");
+        $("#MarginType").val("@Model.MarginType");
+        var userType = "@Model.UserType";
+        console.log(userType);
+        if (userType == "5") {
+            $('#comrow').addClass('d-none');
+        } 
+        else {
+            $('#comrow').removeClass('d-none')
+        }
+    });
+
+</script>
+

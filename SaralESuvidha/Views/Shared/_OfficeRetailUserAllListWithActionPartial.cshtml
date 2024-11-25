@@ -7,6 +7,8 @@
                     <label class="form-label">User USL</label>
                     <input id="OrderNo" name="OrderNo" class="form-control" onblur="LoadDetail();" data-style="btn-default" required>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-lg-2 form-group">
                     <label class="form-label">&nbsp;</label>
                     <button type="button" class="form-control btn btn-primary" onclick="SendPassword();"><span class="far fa-paper-plane"></span> Send Password</button>
@@ -25,8 +27,12 @@
                 </div>
                 <div class="col-lg-2 form-group">
                     <label class="form-label">&nbsp;</label>
-                    <button type="button" class="form-control btn btn-primary" onclick="SwitchDistributer();"><span class="fas fa-space-shuttle"></span> Switch Distributor</button>
+                    <button type="button" class="form-control btn btn-primary" onclick="PendingRequests();"><span class="fas fa-space-shuttle"></span> Pending Requests</button>
                 </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="SwitchDistributer();"><span class="fas fa-space-shuttle"></span> Switch Distributor</button>
+                </div>                
             </div>
         </div>
     </div>
@@ -215,8 +221,12 @@
 
         $('#lblReport').html('Downline Margin Sheet of ' + $('#OrderNo').val());
     }
-    
-    function LoadRetailUser() {
+
+    function PendingRequests() {
+        LoadUsers(true);
+    }
+
+    function LoadUsers(isPending) {
         if ($.fn.DataTable.isDataTable('#datatable-grid-allretail')) {
             $('#datatable-grid-allretail').DataTable().destroy();
         }
@@ -229,7 +239,7 @@
             iDisplayLength: 50,
             bProcessing: true,
             bAutoWidth: true,
-            sAjaxSource: '@Url.Action("GetAllMasterDistributor", "CommonAuthAction")',
+            sAjaxSource: isPending ? '@Url.Action("GetAllPendingRequests", "CommonAuthAction")' : '@Url.Action("GetAllMasterDistributor", "CommonAuthAction")',
             rowId: 'Id',
             cache: false,
             order: [[2, "asc"]],
@@ -253,13 +263,24 @@
                         else if (row.Active == 1)
                             return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' onchange=ChangeActivation('" + row.Id + "') checked />";
                         else if (row.KYCRequired == 1)
-                            return "<button type='button' onclick=DoKYC('" + row.Id + "')>KYC Pending</button>";
+                            return "<button type='button' class='btn btn-default btn-sm btn-primary' onclick=DoKYC('" + row.Id + "')>KYC Pending</button>";
                         else
                             return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' onchange=ChangeActivation('" + row.Id + "') />";
+                    }
+                },
+                {
+                    data: null,
+                    title: "Action",
+                    render: function (data, type, row) {
+                        return "<button type='button' class='btn btn-default btn-sm btn-primary edit' onclick=Edit('" + row.Id + "')>EDIT</button>";
                     }
                 }
             ]
         });
+    }
+    
+    function LoadRetailUser() {
+        LoadUsers(false);
     }
 
     function DoKYC(id, userName) {
@@ -412,6 +433,10 @@
                 $('#distributor').append('<option value="' + value.Id + '">' + value.DistributorName + '</option>');
             });
         });
+    }
+
+    function Edit(id){
+        window.location.href = '@Url.Action("UpdateUser", "SysAdmin")?id=' + id;
     }
     
 </script>

@@ -39,10 +39,16 @@
                 { data: "EMail", title: "E-Mail" }, { data: "Address", title: "Address" },
                 {
                     data: null,
-                    title: "Action", visible: false,
-                    defaultContent: '<button type="button" class="btn btn-default btn-sm btn-primary btnSendWelcome">SmsDetail</button> <button type="button" class="btn btn-default btn-sm btn-primary edit hide">EDIT</button>'
+                    title: "Action",
+                    render: function (data, type, row) {
+                        return "<button type='button' class='btn btn-default btn-sm btn-primary edit' onclick=Edit('" + row.Id + "')>EDIT</button>";
+                    }
                 }
             ]
         });
+    }
+
+    function Edit(id) {
+        window.location.href = '@Url.Action("UpdateDistributor", "MasterDistributor")?id=' + id;
     }
 </script>

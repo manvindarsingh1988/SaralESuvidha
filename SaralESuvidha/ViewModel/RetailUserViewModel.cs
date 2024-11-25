@@ -86,6 +86,10 @@ namespace SaralESuvidha.ViewModel
 
         public string OperationMessage { get; set; }
 
+        public int KYCRequired { get; set; }
+
+        public int PhysicalKYCDone {  get; set; }
+
         public RetailUserViewModel Save()
         {
             Password = StaticData.GeneratePassword(8);
@@ -120,6 +124,39 @@ namespace SaralESuvidha.ViewModel
             }
             return this;
         }
-        
+
+        public RetailUserViewModel Update()
+        {
+            Password = StaticData.GeneratePassword(8);
+            using (var con = new SqlConnection(StaticData.conString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", Id);
+                parameters.Add("@MarginType", MarginType);
+                parameters.Add("@FirstName", FirstName);
+                parameters.Add("@MiddleName", MiddleName);
+                parameters.Add("@LastName", LastName);
+                parameters.Add("@EMail", EMail);
+                parameters.Add("@Gender", Gender);
+                parameters.Add("@DateOfBirth", DateOfBirth);
+                parameters.Add("@Mobile", Mobile);
+                parameters.Add("@Address", Address);
+                parameters.Add("@City", City);
+                parameters.Add("@PinCode", PinCode);
+                parameters.Add("@Country", "India");
+                parameters.Add("@StateName", StateName);
+                parameters.Add("@Password", Password);
+                parameters.Add("@CreditLimit", 0);
+                parameters.Add("@MinFundValue", 0);
+                parameters.Add("@Commission", Commission);
+                parameters.Add("@Active", Active);
+                parameters.Add("@KYCRequired", KYCRequired);
+                parameters.Add("@PhysicalKYCDone", PhysicalKYCDone);
+
+                OperationMessage = con.QuerySingleOrDefault<string>("usp_RetailUserUpdate", parameters, commandType: System.Data.CommandType.StoredProcedure);                
+            }
+            return this;
+        }
+
     }
 }

@@ -154,17 +154,68 @@ namespace SaralESuvidha.Controllers
             */
         }
 
-        private static void SaveFile(RetailUserViewModel retailUserViewModel, string folderPath, IFormFile formFile, string fileName)
+        public IActionResult UpdateDistributor(string id)
         {
-            var name = string.Empty;
-            using (var target = new MemoryStream())
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", id);
+
+            using (var con = new SqlConnection(StaticData.conString))
             {
-                formFile.CopyTo(target);
-                fileName = fileName + Path.GetExtension(formFile.FileName);
-                name = fileName;
-                fileName = fileName = folderPath + fileName;
-                System.IO.File.WriteAllBytes(fileName, target.ToArray());
+                var retailUserToUpdate = con.QuerySingleOrDefault<RetailUserViewModel>("usp_GetUserDetailsToUpdate", parameters, commandType: System.Data.CommandType.StoredProcedure);
+                return View(retailUserToUpdate);
             }
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public IActionResult UpdateDistributorInfo(RetailUserViewModel retailUserViewModel)
+        {
+            var kycRequired = false;
+
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, "KYCDocFiles/" + retailUserViewModel.Id + "/");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.AadharFront, "AadharFront");
+            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.AadharBack, "AadharBack");
+            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PanCard, "PanCard");
+            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Photo, "Photo");
+            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
+            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
+            if (retailUserViewModel.Other != null)
+            {
+                kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Other, "Other");
+            }
+            if (retailUserViewModel.KYCRequired == 0 && kycRequired)
+            {
+                retailUserViewModel.KYCRequired = kycRequired ? 1 : 0;
+                retailUserViewModel.PhysicalKYCDone = kycRequired ? 0 : 1;
+                retailUserViewModel.Active = kycRequired ? 0 : 1;
+            }
+            retailUserViewModel.Update();
+            return View(retailUserViewModel);
+        }
+
+        private static bool SaveFile(RetailUserViewModel retailUserViewModel, string folderPath, IFormFile formFile, string fileName)
+        {
+            if (formFile != null)
+            {
+                var name = string.Empty;
+                using (var target = new MemoryStream())
+                {
+                    formFile.CopyTo(target);
+                    fileName = fileName + Path.GetExtension(formFile.FileName);
+                    name = fileName;
+                    fileName = fileName = folderPath + fileName;
+                    if (System.IO.File.Exists(fileName))
+                    {
+                        System.IO.File.Delete(fileName);
+                    }
+                    System.IO.File.WriteAllBytes(fileName, target.ToArray());
+                    return true;
+                }
+            }
+            return false;
         }
 
         public IActionResult SetMargin()

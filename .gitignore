@@ -57,3 +57,9 @@
 /.vs/SaralESuvidha/v17/*.v2
 /.vs/SaralESuvidha/v17/*.txt
 /.vs/SaralESuvidha/v17/*.bin
+/SaralESuvidha/wwwroot/KYCDocFiles/*.png
+/SaralESuvidha/wwwroot/KYCDocFiles/*.pdf
+/SaralESuvidha/wwwroot/KYCDocFiles/RU00113/*.png
+/SaralESuvidha/wwwroot/KYCDocFiles/RU003637/*.png
+/SaralESuvidha/wwwroot/KYCDocFiles/RU003637/*.pdf
+/SaralESuvidha/wwwroot/KYCDocFiles/RU0061/*.png
