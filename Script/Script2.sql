@@ -5,14 +5,14 @@ Alter Table [dbo].[RetailUser]
 Add PhysicalKYCDone tinyint
 
 Alter Table [dbo].[RetailUser]
-Add ActivatedOn datetime
+Add ActivatedTill datetime
 
 Go
 
 Alter PROC [dbo].[usp_RetailUserList] 
 AS 
 SELECT RU.Id, UserType, MarginType, [dbo].[RetailerNamewithIdMobile](RU.Id) AS RetailerName, Mobile AS MobileNumber,  
-City, EMail, MasterId as Parent, ISNULL([dbo].[RetailClientOrderNoUserNameMobile](MasterId),'') AS ParentName, [Address], OrderNo AS USL, Active, LoginTime, KYCRequired, PhysicalKYCDone, ActivatedOn
+City, EMail, MasterId as Parent, ISNULL([dbo].[RetailClientOrderNoUserNameMobile](MasterId),'') AS ParentName, [Address], OrderNo AS USL, Active, LoginTime, KYCRequired, PhysicalKYCDone, ActivatedTill
 FROM RetailUser RU WITH(NOLOCK)
 Left Join UserLoginTimeInfo ULTI on ULTI.RetailUserId = RU.ID and CAST(LoginTime as date) = CAST(getdate() as date)
 ORDER BY OrderNo ASC
@@ -76,7 +76,7 @@ AS
 	   SET [Active]=@Active, 
 	       KYCRequired = case when @Active = 1 then 0 else 1 end,
 		   PhysicalKYCDone = @PhysicalKYCDone,
-		   ActivatedOn = case when @PhysicalKYCDone = 1 then null else GETDATE() end
+		   ActivatedTill = case when @PhysicalKYCDone = 1 then null else DATEADD(day, 10, GETDATE()) end
 		   WHERE Id=@RetailUserId;
 	SELECT @OperationMessage =  'Success: user activation state updated.'
 	SELECT @OperationMessage as OperationMessage;
@@ -197,20 +197,19 @@ AS
    UPDATE RetailUser SET AndroidUuid=@Did WHERE OrderNo=@OutResult;    
   END    
  END    
- declare @ActivatedOn datetime
+ declare @ActivatedTill datetime
  declare @days int
- SELECT @ActivatedOn = ActivatedOn FROm RetailUser WITh(NOLOCK) WHERE OrderNo=@OutResult; 
- if(@ActivatedOn is not null)
+ SELECT @ActivatedTill = ActivatedTill FROm RetailUser WITh(NOLOCK) WHERE OrderNo=@OutResult; 
+ if(@ActivatedTill is not null)
  begin
-	 SELECT @days = DATEDIFF(day, GetDate(), @ActivatedOn)
-	 if(@days > 10)
+	 if(@ActivatedTill < GetDate())
 	 begin
-	  UPDATE RetailUser SET Active=0,@ActivatedOn = null, KYCRequired = 1  WHERE OrderNo=@OutResult; 
+	  UPDATE RetailUser SET Active=0,ActivatedTill = null, KYCRequired = 1  WHERE OrderNo=@OutResult; 
 	 end
  end
  
  SELECT Id, UserType, MarginType, ISNULL(FirstName,'') + ' ' + ISNULL(MiddleName,'') + ' ' + ISNULL(LastName,'') AS RetailerName, Mobile AS MobileNumber,     
-  City, EMail, MasterId as Parent, [Address], OrderNo AS USL, Active, DefaultUtilityOperator, ActivatedOn   
+  City, EMail, MasterId as Parent, [Address], OrderNo AS USL, Active, DefaultUtilityOperator, ActivatedTill   
   FROM RetailUser WITH(NOLOCK) WHERE OrderNo=@OutResult;    
   
   if((Select Count(1) from [dbo].[UserLoginTimeInfo] where CAST(LoginTime as date) = CAST(getdate() as date)) = 0)  

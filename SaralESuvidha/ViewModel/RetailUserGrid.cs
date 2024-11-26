@@ -28,6 +28,6 @@ namespace SaralESuvidha.ViewModel
         public DateTime? LoginTime { get; set; }
         public short KYCRequired { get; set; }
         public short? PhysicalKYCDone { get; set; }
-        public DateTime? ActivatedOn { get; set; }
+        public DateTime? ActivatedTill { get; set; }
     }
 }

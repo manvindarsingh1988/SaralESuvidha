@@ -253,7 +253,7 @@ namespace SaralESuvidha.Controllers
                     List<RetailUserGrid> allRetailUser = con.Query<RetailUserGrid>("usp_RetailUserList",
                         commandType: System.Data.CommandType.StoredProcedure).ToList();
                     //OperationMessage = saveResponse;
-                    var aaData1 = new { data = allRetailUser.Where(_ => _.Active == 0 || _.KYCRequired == 1 || _.ActivatedOn != null) };
+                    var aaData1 = new { data = allRetailUser.Where(_ => _.Active == 0 || _.KYCRequired == 1 || _.ActivatedTill != null) };
                     return Json(aaData1);
                 }
             }

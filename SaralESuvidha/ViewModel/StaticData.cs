@@ -458,7 +458,7 @@ namespace SaralESuvidha.ViewModel
         public static string ConvertHexToString(string HexValue)
         {
             string StrValue = "";
-            while (HexValue.Length > 0)
+            while (HexValue != null && HexValue.Length > 0)
             {
                 StrValue += System.Convert.ToChar(System.Convert.ToUInt32(HexValue.Substring(0, 2), 16)).ToString();
                 HexValue = HexValue.Substring(2, HexValue.Length - 2);

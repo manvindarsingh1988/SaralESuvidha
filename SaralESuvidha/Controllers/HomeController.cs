@@ -219,13 +219,12 @@ namespace SaralESuvidha.Controllers
                     {
                         result[0] = "Errors: User not found or not active.";
                     }
-                    if(retailUser.ActivatedOn != null)
-                    {
-                        var days = (DateTime.Now - retailUser.ActivatedOn.GetValueOrDefault()).Days;
-                        if (days < 10)
+                    if(retailUser != null && retailUser.ActivatedTill != null)
+                    {                        
+                        if (DateTime.Now < retailUser.ActivatedTill.GetValueOrDefault())
                         {
-                            var leftdays = 10 - days;
-                            result[1] = $"Account will get deactivate in {leftdays} days as physical KYC is still pending. Please contact with admin for more details.";
+                            var days = (retailUser.ActivatedTill.GetValueOrDefault() - DateTime.Now).Days;
+                            result[1] = $"Account will get deactivate in {days} days as physical KYC is still pending. Please contact with admin for more details.";
                         }
                         else
                         {
