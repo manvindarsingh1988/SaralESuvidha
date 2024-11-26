@@ -33,6 +33,7 @@ namespace SaralESuvidha.ViewModel
         [DisplayName("Gender")]
         public string Gender { get; set; }
 
+       
         [DisplayName("Date Of Birth"), Required(ErrorMessage = "Required")]
         public DateTime DateOfBirth { get; set; }
 
@@ -90,6 +91,10 @@ namespace SaralESuvidha.ViewModel
 
         public int PhysicalKYCDone {  get; set; }
 
+
+        [DisplayName("DistributorType")]
+        public string DistributorType { get; set; }
+
         public RetailUserViewModel Save()
         {
             Password = StaticData.GeneratePassword(8);
@@ -117,6 +122,7 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@Commission", Commission);
                 parameters.Add("@Active", Active);
                 parameters.Add("@SignupDate", DateTime.Now);
+                parameters.Add("@DistributorType", DistributorType);                
 
                 var saveResponse = con.QuerySingleOrDefault<dynamic>("usp_RetailUserInsert", parameters, commandType: System.Data.CommandType.StoredProcedure);
                 OperationMessage = saveResponse.OperationMessage;
@@ -152,6 +158,7 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@Active", Active);
                 parameters.Add("@KYCRequired", KYCRequired);
                 parameters.Add("@PhysicalKYCDone", PhysicalKYCDone);
+                parameters.Add("@DistributorType", DistributorType);
 
                 OperationMessage = con.QuerySingleOrDefault<string>("usp_RetailUserUpdate", parameters, commandType: System.Data.CommandType.StoredProcedure);                
             }

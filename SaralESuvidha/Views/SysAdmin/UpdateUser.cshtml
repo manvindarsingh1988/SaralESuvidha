@@ -133,6 +133,14 @@
                     <input type="file" id="other" class="form-control" asp-for="Other" accept="application/pdf,image/*" />
                 </div>
             </div>
+            <div class="form-group col-md-4">
+                <label class="form-label" for="firstName">Distributor Type</label>
+                <select asp-for="DistributorType" class="form-control" data-style="btn-default">
+                    <option>Company Owned</option>
+                    <option>Third Party</option>
+                    <option>Other</option>
+                </select>
+            </div>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2">

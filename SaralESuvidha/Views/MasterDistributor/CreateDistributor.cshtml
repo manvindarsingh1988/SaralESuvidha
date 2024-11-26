@@ -4,7 +4,7 @@
     ViewData["title"] = "Create Distributor";
 }
 <div class="container shadow p-3 mb-5 bg-white rounded">
-    <h3 class="text-center">Add Retailer Details</h3>
+    <h3 class="text-center">Add Distributor Details</h3>
     <form class="form-horizontal" id="frmMain" name="frmMain" asp-action="SaveDistributor" asp-controller="MasterDistributor" enctype="multipart/form-data">
         <div class="form-row">
             <div class="form-group col-md-4">            
@@ -126,6 +126,14 @@
                     <label class="form-label" asp-for="Other"></label>
                     <input type="file" id="other" class="form-control" asp-for="Other" accept="application/pdf,image/*" />
                 </div>
+            </div>
+            <div class="form-group col-md-4">
+                <label class="form-label" for="firstName">Distributor Type</label>
+                <select asp-for="DistributorType" class="form-control" data-style="btn-default">
+                    <option>Company Owned</option>
+                    <option>Third Party</option>
+                    <option>Other</option>
+                </select>
             </div>
         </div>
         <div class="form-group">
