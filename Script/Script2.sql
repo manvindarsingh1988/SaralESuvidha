@@ -339,7 +339,60 @@ Active,
 [PhysicalKYCDone],
 DistributorType
 FROM RetailUser WITH(NOLOCK)    
-where Id = @Id  
+where Id = @Id 
+
+Go
+
+Alter PROC [dbo].[usp_GetUserBalanceWithName]   
+ @RetailUserOrderNo int, @CurrentUserId varchar(20) = ''  
+AS     
+ DECLARE @RetailUserId varchar(10); DECLARE @MasterId varchar(10);  
+ DECLARE @UserName varchar(250);  
+ DECLARE @OperationMessage varchar(500);   
+ DECLARE @UserCount int = 0;  
+ DECLARE @IsValidIp bit = 0;  
+ DECLARE @IsValidLogin bit = 0;  
+ DECLARE @Balance DECIMAL(18,2) = 0; 
+ Declare @UserType int;
+  
+ SELECT @UserCount = ISNULL(OrderNo,0), @RetailUserId = Id, @UserType = UserType, @MasterId=MasterId, @UserName = ISNULL(FirstName,'') + ' ' + ISNULL(MiddleName,'') + ISNULL(LastName,'') + ' [ ' + Mobile + ' ] ' from RetailUser WITH(NOLOCK) WHERE OrderNo=@RetailUserOrderNo;  
+  
+ IF(@CurrentUserId!='')  
+ BEGIN  
+  IF(@CurrentUserId=@MasterId)  
+  BEGIN  
+   SELECT @UserCount = 1;  
+  END  
+  ELSE  
+  BEGIN  
+   SELECT @UserCount = 0;  
+  END  
+ END  
+ else
+ Begin
+	 if(@UserType != 7)
+	 begin
+		SELECT @UserCount = 0;  
+	 End
+ End
+ --SELECT @UserCount = ISNULL(OrderNo,0) from RetailUser WITH(NOLOCK) WHERE OrderNo=@RetailUserOrderNo;  
+ --PRINT(CONVERT(VARCHAR(20),@ApiOrderNo) + ' ' + @LoginPassword + '-' + CONVERT(NVARCHAR(20),@ApiCount));  
+  
+ IF @UserCount<1  
+ BEGIN    
+  SELECT @OperationMessage = 'Errors: Invalid user.';  
+  --SELECT @OperationMessage as OperationMessage;  
+ END  
+ ELSE  
+ BEGIN  
+  --Proceed with further validation.  
+  SELECT @IsValidLogin = 1;  
+  --SELECT @RetailUserId = Id , @UserName = FirstName + ' ' + ISNULL(MiddleName,'') + LastName + ' [ ' + Mobile + ' ] ' from RetailUser WITH(NOLOCK) WHERE OrderNo=@RetailUserOrderNo;   
+  SELECT @Balance = [dbo].[RetailUserBalance](@RetailUserId);  
+  SELECT @OperationMessage = 'Current Balance of ' + @UserName;  
+ END  
+   
+ SELECT @RetailUserOrderNo as [Order], @Balance as Balance, @OperationMessage as OperationMessage;   
 
 
 
