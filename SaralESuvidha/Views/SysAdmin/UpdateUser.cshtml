@@ -133,7 +133,7 @@
                     <input type="file" id="other" class="form-control" asp-for="Other" accept="application/pdf,image/*" />
                 </div>
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-4" id="distributorcol">
                 <label class="form-label" for="firstName">Distributor Type</label>
                 <select asp-for="DistributorType" class="form-control" data-style="btn-default">
                     <option>Company Owned</option>
@@ -268,6 +268,12 @@
         } 
         else {
             $('#comrow').removeClass('d-none')
+        }
+        if (userType == "6") {
+            $('#distributorcol').removeClass('d-none')
+        }
+        else {
+            $('#distributorcol').addClass('d-none');   
         }
     });
 

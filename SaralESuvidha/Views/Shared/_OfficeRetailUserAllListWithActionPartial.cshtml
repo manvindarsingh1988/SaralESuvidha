@@ -258,7 +258,7 @@
                 {
                     title: "Active/Inactive",
                     data: null, render: function (data, type, row) {
-                        if (row.PhysicalKYCDone == 0)
+                        if (row.ActivatedTill != null)
                             return "<button type='button' class='btn btn-default btn-sm btn-primary' onclick=DoKYC('" + row.Id + "')>KYC Pending</button>";
                         else if (row.Active == 1)
                             return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' onchange=ChangeActivation('" + row.Id + "') checked />";

@@ -7,6 +7,9 @@ Add PhysicalKYCDone tinyint
 Alter Table [dbo].[RetailUser]
 Add ActivatedTill datetime
 
+Alter Table [RetailUser] 
+Add DistributorType varchar(50)
+
 Go
 
 Alter PROC [dbo].[usp_RetailUserList] 
@@ -104,7 +107,8 @@ Alter PROC [dbo].[usp_RetailUserInsert]
     @MinFundValue float = NULL,  
     @Commission float = NULL,      
     @Active int = NULL,  
-    @SignupDate datetime = NULL  
+    @SignupDate datetime = NULL,
+    @DistributorType varchar(50) = NULL	
 AS   
  SET NOCOUNT ON   
  SET XACT_ABORT ON    
@@ -135,10 +139,10 @@ AS
   
   INSERT INTO [dbo].[RetailUser] ([Id], [MasterId], [UserType], [MarginType], [FirstName], [MiddleName], [LastName], [EMail], [Gender], [DateOfBirth],   
   [Mobile], [Address], [City], [PinCode], [Country], [StateName], [Password], [CreditLimit],   
-  [MinFundValue], [Commission], [Active],  [SignupDate], KYCRequired, PhysicalKYCDone)  
+  [MinFundValue], [Commission], [Active],  [SignupDate], KYCRequired, PhysicalKYCDone, DistributorType)  
   SELECT @Id, @MasterId, @UserType, @MarginType, @FirstName, @MiddleName, @LastName, @EMail, @Gender, @DateOfBirth, @Mobile, @Address,  
   @City, @PinCode, @Country, @StateName, @Password, @CreditLimit, @MinFundValue, @Commission,   
-  0, CURRENT_TIMESTAMP, 1, 0;  
+  0, CURRENT_TIMESTAMP, 1, 0, @DistributorType;  
     
   SELECT @OperationMessage = 'Successfully created user ' + @FirstName + ' ' + @MiddleName + ' ' + @LastName + ', Mobile(Login Id)-' + @Mobile + ' Login Password-' + @Password + '';  
   
@@ -244,7 +248,8 @@ Create PROC [dbo].[usp_RetailUserUpdate]
     @Commission float = NULL,      
     @Active int = NULL,  
     @KYCRequired int = NULL,
-	@PhysicalKYCDone int = null
+	@PhysicalKYCDone int = null,
+	@DistributorType varchar(50) = NULL
 AS   
  SET NOCOUNT ON   
  SET XACT_ABORT ON    
@@ -294,7 +299,8 @@ AS
   [Commission]= @Commission,
   [Active] = @Active,
   [KYCRequired] = @KYCRequired,
-  [PhysicalKYCDone] = @PhysicalKYCDone
+  [PhysicalKYCDone] = @PhysicalKYCDone,
+  DistributorType = @DistributorType
   Where Id = @UserId
     
   SELECT @OperationMessage = 'Successfully updated user ' + @FirstName + ' ' + @MiddleName + ' ' + @LastName + ', Mobile(Login Id)-' + @Mobile + ' Login Password-' + @Password + '';  
@@ -330,7 +336,8 @@ Password,
 Commission,    
 Active,
 [KYCRequired],
-[PhysicalKYCDone]
+[PhysicalKYCDone],
+DistributorType
 FROM RetailUser WITH(NOLOCK)    
 where Id = @Id  
 
