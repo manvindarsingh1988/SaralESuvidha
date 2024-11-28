@@ -25,7 +25,7 @@ Go
 
  Alter PROC [dbo].[usp_updateUserActivationState] 
     @RetailUserId varchar(14),
-	@allUser tinyint
+	@updateChild tinyint
 AS 
 	DECLARE @Active tinyint 
 	Declare @OperationMessage nvarchar(500)
@@ -41,7 +41,7 @@ AS
 	   Set @Active = 1
     end
 	UPDATE RetailUser SET [Active]=@Active, KYCRequired = 0 WHERE Id=@RetailUserId;
-	if(@allUser = 1 and (@UserType = 6 or @UserType = 7))
+	if(@updateChild = 1 and (@UserType = 6 or @UserType = 7))
 	begin
 	 if(@Active = 0)
 	 begin 
