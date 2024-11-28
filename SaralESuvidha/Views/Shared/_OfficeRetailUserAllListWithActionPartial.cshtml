@@ -140,6 +140,30 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="ConfirmationPopUp" role="dialog">
+        <div class="modal-dialog err-pop" id="sdmodal1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="DivClose1" type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <p id="confirmationp">Do you want to change status of all child retailers as well?</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <input type="button" id="download" value="Yes" onclick="Yes()" class="form-control btn btn-primary">
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <input type="button" id="download" value="No" onclick="No()" class="form-control btn btn-primary">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -289,30 +313,35 @@
         $('#KYCModalPopUp').modal('show');
     }
 
+    function Yes() {
+        var id = $('#confirmationp').attr('alt');
+        $.get("@Url.Action("ChangeActivation", "CommonAuthAction")?id=" + id + '&updateChild=1',
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                }
+                $('#ConfirmationPopUp').modal('hide');
+            });
+    }
+
+    function No() {
+        var id = $('#confirmationp').attr('alt');
+        $.get("@Url.Action("ChangeActivation", "CommonAuthAction")?id=" + id + '&updateChild=0',
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                }
+                $('#ConfirmationPopUp').modal('hide');
+            });
+    }
+
     function ChangeActivation(id) {
-        if(confirm("Do you want to change status of all child retailers as well?"))
-         {
-              $.get("@Url.Action("ChangeActivation", "CommonAuthAction")?id=" + id + '&updateChild=1',
-            function (data) {
-                if (data.indexOf('Errors:') > -1) {
-                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
-                } else {
-                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
-                }
-            });
-         }
-         else
-         {
-              $.get("@Url.Action("ChangeActivation", "CommonAuthAction")?id=" + id + '&updateChild=0',
-            function (data) {
-                if (data.indexOf('Errors:') > -1) {
-                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
-                } else {
-                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
-                }
-            });
-         }
-       
+        $('#confirmationp').attr("alt", id);
+        $('#ConfirmationPopUp').modal('show');
     }
 
     function UpdateDistributor() {
