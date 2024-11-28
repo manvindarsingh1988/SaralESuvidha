@@ -36,14 +36,14 @@
             columns: [
                 { data: "USL", title: "USL" }, { data: "RetailerName", title: "Retailer Name" }, { data: "Balance", title: "Balance" },
                 { data: "MobileNumber", title: "Mobile Number" }, { data: "City", title: "City" },
-                { data: "CscId", title: "CscId" }, { data: "Address", title: "Address" },
-                {
-                    data: null,
-                    title: "Action",
-                    render: function (data, type, row) {
-                        return "<button type='button' class='btn btn-default btn-sm btn-primary edit' onclick=Edit('" + row.Id + "')>EDIT</button>";
-                    }
-                }
+                { data: "CscId", title: "CscId" }, { data: "Address", title: "Address" }
+                // {
+                //     data: null,
+                //     title: "Action",
+                //     render: function (data, type, row) {
+                //         return "<button type='button' class='btn btn-default btn-sm btn-primary edit' onclick=Edit('" + row.Id + "')>EDIT</button>";
+                //     }
+                // }
             ]
         });
     }
