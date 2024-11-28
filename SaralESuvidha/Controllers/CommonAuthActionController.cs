@@ -428,10 +428,10 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
 
-        public IActionResult ChangeActivation(string id)
+        public IActionResult ChangeActivation(string id, int updateChild)
         {
             string result = string.Empty;
-            result = StaticData.UpdateActiveState(id);
+            result = StaticData.UpdateActiveState(id, updateChild);
             return Content(result);
         }
 

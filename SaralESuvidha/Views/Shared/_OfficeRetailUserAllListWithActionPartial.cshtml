@@ -290,7 +290,9 @@
     }
 
     function ChangeActivation(id) {
-        $.get("@Url.Action("ChangeActivation", "CommonAuthAction")?id=" + id,
+        if(confirm("Do you want to change status of all child retailers as well?"))
+         {
+              $.get("@Url.Action("ChangeActivation", "CommonAuthAction")?id=" + id + '&updateChild=1',
             function (data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
@@ -298,6 +300,19 @@
                     $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
                 }
             });
+         }
+         else
+         {
+              $.get("@Url.Action("ChangeActivation", "CommonAuthAction")?id=" + id + '&updateChild=0',
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                }
+            });
+         }
+       
     }
 
     function UpdateDistributor() {
