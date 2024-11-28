@@ -798,7 +798,7 @@ namespace SaralESuvidha.ViewModel
             }
             catch (Exception)
             {
-
+                throw;
             }
             return retailUser;
         }
@@ -2728,13 +2728,14 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string UpdateActiveState(string retailerId)
+        public static string UpdateActiveState(string retailerId, int updateChild)       
         {
             string result = string.Empty;
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@RetailUserId", retailerId);
+                parameters.Add("@updateChild", updateChild);
                 using (var con = new SqlConnection(conString))
                 {
                     result = con.QuerySingleOrDefault<OperationResponse>("usp_updateUserActivationState", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
