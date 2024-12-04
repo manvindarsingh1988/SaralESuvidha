@@ -20,6 +20,8 @@ using QRCoder;
 using ElectricityBillInfo = UPPCLLibrary.ElectricityBillInfo;
 using DocumentFormat.OpenXml.Wordprocessing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using Dapper;
+using System.Data.SqlClient;
 
 namespace SaralESuvidha.Controllers
 {
@@ -136,7 +138,7 @@ namespace SaralESuvidha.Controllers
 
         public IActionResult RetailLogin(string m, string p, string s="w", string f="", string d="")
         {
-            string[] result = new string[2];
+            string[] result = new string[3];
             try
             {
                 if (m.Length == 10 && p.Length > 5)
@@ -232,6 +234,10 @@ namespace SaralESuvidha.Controllers
                             result[1] = $"Account will get deactivate in {days} days as physical KYC is still pending. Please contact with admin for more details.";
                         }
                     }
+                    if (retailUser != null)
+                    {
+                        result[2] = retailUser.AgreementAccepted != null ? retailUser.AgreementAccepted.ToString() : "0";
+                    }
                 }
                 else
                 {
@@ -243,6 +249,19 @@ namespace SaralESuvidha.Controllers
                 result[0] = "Errors: Exception: " + ex.Message;
             }
             return Content(string.Join("$$",result));
+        }
+
+        public IActionResult UpdateAgreementAceptStatus()
+        {
+            var id = HttpContext.Session.GetString("RetailerId");
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", id);
+
+            using (var con = new SqlConnection(StaticData.conString))
+            {
+                var result = con.QuerySingleOrDefault<string>("usp_UpdateAgreementStatus", parameters, commandType: System.Data.CommandType.StoredProcedure);
+                return Content("status updated.");
+            }
         }
 
         public IActionResult OfficeLogin()

@@ -393,3 +393,81 @@ AS
  SELECT @OperationMessage AS OperationMessage;     
                    
  COMMIT
+ 
+ Go
+ 
+ Alter Table [dbo].[RetailUser]
+Add AgreementAccepted tinyint
+
+Go
+
+Alter PROC [dbo].[usp_RetailClient_ValidateLogin]         
+    @MobileNumber varchar(20),        
+    @Password varchar(50),        
+ @FToken varchar(400)=NULL,        
+ @Did varchar(400)=NULL,        
+ @OutResult int=0 OUT        
+AS         
+ SET NOCOUNT ON         
+ SET XACT_ABORT ON          
+         
+ BEGIN TRAN        
+ declare @Id varchar(10)      
+ SELECT @OutResult = ISNULL(OrderNo,0), @Id = Id from [RetailUser] with(nolock) WHERE [Mobile] = @MobileNumber AND [Password]=@Password AND Active=1;        
+         
+ --UPDATE RetailUser SET AndroidFcmToken=@FToken WHERE OrderNo=@OutResult;        
+ DECLARE @CurrentFtoken VARCHAR(400) = '';        
+ IF(@OutResult > 0 AND @FToken IS NOT NULL)        
+ BEGIN        
+  SELECT @CurrentFtoken = ISNULL(AndroidFcmToken,'') FROm RetailUser WITh(NOLOCK) WHERE OrderNo=@OutResult;        
+  IF(@CurrentFtoken <> @FToken)        
+  BEGIN        
+   UPDATE RetailUser SET AndroidFcmToken=@FToken WHERE OrderNo=@OutResult;        
+  END        
+ END        
+        
+ --UPDATE RetailUser SET AndroidUuid=@Did WHERE OrderNo=@OutResult;        
+ DECLARE @CurrentDid VARCHAR(400) = '';        
+ IF(@OutResult > 0 AND @Did IS NOT NULL)        
+ BEGIN        
+  SELECT @CurrentDid = ISNULL(AndroidUuid,'') FROm RetailUser WITh(NOLOCK) WHERE OrderNo=@OutResult;        
+  IF(@CurrentDid <> @Did)        
+  BEGIN        
+   UPDATE RetailUser SET AndroidUuid=@Did WHERE OrderNo=@OutResult;        
+  END        
+ END        
+ declare @ActivatedTill datetime    
+ declare @days int    
+ SELECT @ActivatedTill = ActivatedTill FROm RetailUser WITh(NOLOCK) WHERE OrderNo=@OutResult;     
+ if(@ActivatedTill is not null)    
+ begin    
+  if(@ActivatedTill < GetDate())    
+  begin    
+   UPDATE RetailUser SET Active=0,ActivatedTill = null  WHERE OrderNo=@OutResult;     
+  end    
+ end    
+     
+ SELECT Id, UserType, MarginType, ISNULL(FirstName,'') + ' ' + ISNULL(MiddleName,'') + ' ' + ISNULL(LastName,'') AS RetailerName, Mobile AS MobileNumber,         
+  City, EMail, MasterId as Parent, [Address], OrderNo AS USL, Active, DefaultUtilityOperator, ActivatedTill, AgreementAccepted       
+  FROM RetailUser WITH(NOLOCK) WHERE OrderNo=@OutResult;        
+      
+  if((Select Count(1) from [dbo].[UserLoginTimeInfo] where CAST(LoginTime as date) = CAST(getdate() as date)) = 0)      
+  begin      
+      insert into [dbo].[UserLoginTimeInfo](RetailUserId, LoginTime) values(@Id, getdate())      
+  end   
+    if(@OutResult is null)    
+	 begin
+	    SELECT @OutResult = ISNULL(OrderNo,0), @Id = Id from [RetailUser] with(nolock) WHERE [Mobile] = @MobileNumber AND [Password]=@Password;
+		IF(@OutResult > 0)        
+        BEGIN 
+			set @OutResult = -1
+		end
+	 end
+ COMMIT
+ 
+ Go
+ 
+ Create Proc usp_UpdateAgreementStatus
+ @Id varchar(10)
+ As 
+ Update RetailUser set AgreementAccepted = 1 where Id = @Id
