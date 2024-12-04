@@ -65,7 +65,7 @@ namespace SaralESuvidha.Controllers
             try
             {
                 int Id = Convert.ToInt32(StaticData.ConvertHexToString(usd));
-                var balResponse = StaticData.retailUser.GetBalanceWithName(Id);
+                var balResponse = StaticData.retailUser.GetBalanceWithName(Id, "", 1);
                 if (!balResponse.OperationMessage.Contains("Errors"))
                 {
                     //ViewData["Error"] = "0";

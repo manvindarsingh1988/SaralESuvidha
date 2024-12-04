@@ -153,7 +153,7 @@ namespace SaralESuvidha.Models
             return rubr;
         }
 
-        public RetailUserBalanceResponse GetBalanceWithName(int? retailUserOrderNo, string currentUserId="")
+        public RetailUserBalanceResponse GetBalanceWithName(int? retailUserOrderNo, string currentUserId="", int isAdmin = 0)
         {
             RetailUserBalanceResponse rubr = new RetailUserBalanceResponse();
             try
@@ -163,6 +163,7 @@ namespace SaralESuvidha.Models
                     var queryParameters = new DynamicParameters();
                     queryParameters.Add("@RetailUserOrderNo", retailUserOrderNo);
                     queryParameters.Add("@CurrentUserId", currentUserId);
+                    queryParameters.Add("@isAdmin", isAdmin);
                     rubr = con.QuerySingle<RetailUserBalanceResponse>("usp_GetUserBalanceWithName", queryParameters, commandType: System.Data.CommandType.StoredProcedure);
                 }
             }
