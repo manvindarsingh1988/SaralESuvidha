@@ -220,6 +220,8 @@ Create Proc usp_GetActivationDetails
 As 
 Select * from RetailUser where Id = @Id
 
+Go
+
 Alter PROC [dbo].[usp_updateKYCState]   
     @RetailUserId varchar(14),  
  @Active tinyint,  
