@@ -36,14 +36,17 @@
             columns: [
                 { data: "USL", title: "USL" }, { data: "RetailerName", title: "Distributor Name" }, { data: "UserTypeString", title: "User Type" },
                 { data: "MobileNumber", title: "Mobile Number" }, { data: "City", title: "City" },
-                { data: "EMail", title: "E-Mail" }, { data: "Address", title: "Address" }
-                // {
-                //     data: null,
-                //     title: "Action",
-                //     render: function (data, type, row) {
-                //         return "<button type='button' class='btn btn-default btn-sm btn-primary edit' onclick=Edit('" + row.Id + "')>EDIT</button>";
-                //     }
-                // }
+                { data: "EMail", title: "E-Mail" }, { data: "Address", title: "Address" },
+                {
+                    data: null,
+                    title: "Action",
+                    render: function (data, type, row) {
+                        if (row.DocVerificationFailed)
+                            return "<button type='button' class='btn btn-default btn-sm btn-primary edit' onclick=Edit('" + row.Id + "')>Revisit</button>";
+                        else
+                            return "<div></div>";
+                    }
+                }
             ]
         });
     }

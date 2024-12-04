@@ -8,12 +8,21 @@ using SaralESuvidha.Models;
 using SaralESuvidha.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace SaralESuvidha.Controllers
 {
     [RetailUserCommonFilter]
     public class RetailUserCommonController : Controller
     {
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
+        public RetailUserCommonController(IWebHostEnvironment hostingEnvironment)
+        {
+            _hostingEnvironment = hostingEnvironment;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -429,5 +438,27 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
 
+        public IActionResult SendAadharOTP(string aadharId)
+        {
+            string result = string.Empty;
+            result = KYCHelper.SendOTP(aadharId);
+            return Content(result);
+        }
+
+        public IActionResult VerifyAadharOTP(string referenceId, string otp, string aadharId)
+        {
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, "KYCDocFiles/");
+            string result = string.Empty;
+            result = KYCHelper.VerifyOTP(referenceId, otp, folderPath, aadharId);
+            return Content(result);
+        }
+
+        public IActionResult VerifyPAN(string pan, string name, string dob, string referenceId)
+        {
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, "KYCDocFiles/");
+            string result = string.Empty;
+            result = KYCHelper.VerifyPan(pan, name, dob, folderPath, referenceId);
+            return Content(result);
+        }
     }
 }

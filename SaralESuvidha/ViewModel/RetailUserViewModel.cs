@@ -41,8 +41,14 @@ namespace SaralESuvidha.ViewModel
         public string Mobile { get; set; }
 
 
-        [DisplayName("Address"), Required(ErrorMessage = "Required")] 
+        [DisplayName("Parmanent Address")] 
+        public string ParmanentAddress { get; set; }
+
+        [DisplayName("Current Address"), Required(ErrorMessage = "Required")]
         public string Address { get; set; }
+
+        [DisplayName("Counter Location"), Required(ErrorMessage = "Required")]
+        public string CounterLocation { get; set; }
 
         [DisplayName("City"), Required(ErrorMessage = "Select City")]
         public string City { get; set; }
@@ -64,36 +70,30 @@ namespace SaralESuvidha.ViewModel
         public int Active { get; set; }
         public int OrderNo { get; set; }
 
-        [DisplayName("Aadhar Front")]
-        public IFormFile AadharFront { get; set; }
-
-        [DisplayName("Aadhar Back")]
-        public IFormFile AadharBack { get; set; }
-
-        [DisplayName("Pan Card")]
-        public IFormFile PanCard { get; set; }
-
-        [DisplayName("Photo")]
+        [DisplayName("")]
         public IFormFile Photo { get; set; }
 
-        [DisplayName("Agreement")]
+        [DisplayName("")]
         public IFormFile Agreement { get; set; }
 
-        [DisplayName("Affidavit")]
+        [DisplayName("")]
         public IFormFile Affidavit { get; set; }
 
-        [DisplayName("Other")]
-        public IFormFile Other { get; set; }
+        [DisplayName("")]
+        public IFormFile PoliceVerification { get; set; }
 
         public string OperationMessage { get; set; }
 
-        public int KYCRequired { get; set; }
+        public int DocVerification { get; set; }
 
         public int PhysicalKYCDone {  get; set; }
+        public string ReferenceId {  get; set; }
 
 
         [DisplayName("DistributorType")]
         public string DistributorType { get; set; }
+
+        public string FailureReason { get; set; }
 
         public RetailUserViewModel Save()
         {
@@ -123,6 +123,8 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@Active", Active);
                 parameters.Add("@SignupDate", DateTime.Now);
                 parameters.Add("@DistributorType", DistributorType);                
+                parameters.Add("@ParmanentAddress", ParmanentAddress);                
+                parameters.Add("@CounterLocation", CounterLocation);                
 
                 var saveResponse = con.QuerySingleOrDefault<dynamic>("usp_RetailUserInsert", parameters, commandType: System.Data.CommandType.StoredProcedure);
                 OperationMessage = saveResponse.OperationMessage;
@@ -138,26 +140,13 @@ namespace SaralESuvidha.ViewModel
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@UserId", Id);
-                parameters.Add("@MarginType", MarginType);
-                parameters.Add("@FirstName", FirstName);
-                parameters.Add("@MiddleName", MiddleName);
-                parameters.Add("@LastName", LastName);
-                parameters.Add("@EMail", EMail);
-                parameters.Add("@Gender", Gender);
-                parameters.Add("@DateOfBirth", DateOfBirth);
                 parameters.Add("@Mobile", Mobile);
-                parameters.Add("@Address", Address);
-                parameters.Add("@City", City);
-                parameters.Add("@PinCode", PinCode);
                 parameters.Add("@Country", "India");
                 parameters.Add("@StateName", StateName);
-                parameters.Add("@Password", Password);
-                parameters.Add("@CreditLimit", 0);
-                parameters.Add("@MinFundValue", 0);
-                parameters.Add("@Commission", Commission);
-                parameters.Add("@Active", Active);
-                parameters.Add("@KYCRequired", KYCRequired);
-                parameters.Add("@PhysicalKYCDone", PhysicalKYCDone);
+                parameters.Add("@City", City);
+                parameters.Add("@PinCode", PinCode);
+                parameters.Add("@Address", Address);
+                parameters.Add("@CounterLocation", CounterLocation);
                 parameters.Add("@DistributorType", DistributorType);
 
                 OperationMessage = con.QuerySingleOrDefault<string>("usp_RetailUserUpdate", parameters, commandType: System.Data.CommandType.StoredProcedure);                

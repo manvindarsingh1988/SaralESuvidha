@@ -1,7 +1,7 @@
 ﻿@model SaralESuvidha.ViewModel.RetailUserViewModel;
 @{
     Layout = "_LayoutDistributor";
-    ViewData["title"] = "Create Retailer";
+    ViewData["title"] = "Update Retailer";
 }
 
 
@@ -10,31 +10,28 @@
     <form class="form-horizontal" id="frmMain" name="frmMain" asp-action="UpdateRetailerInfo" asp-controller="Distributor" enctype="multipart/form-data">
         <div class="form-row d-none">
             <input asp-for="Id" type="text" class="form-control" id="id">
-            <input asp-for="Active" type="text" class="form-control" id="active">
-            <input asp-for="KYCRequired" type="text" class="form-control" id="kycrequired">
-            <input asp-for="PhysicalKYCDone" type="text" class="form-control" id="physicalkycdone">
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label class="form-label" for="firstName">First Name</label> <span asp-validation-for="FirstName" class="text-danger"></span>
-                <input asp-for="FirstName" type="text" class="form-control" id="firstName" placeholder="First Name">
+                <input asp-for="FirstName" type="text" class="form-control" id="firstName" placeholder="First Name" readOnly>
             </div>
 
             <div class="form-group col-md-4">
                 <label class="form-label" for="middleName">Middle Name</label> <span asp-validation-for="MiddleName" class="text-danger"></span>
-                <input asp-for="MiddleName" type="text" class="form-control" id="middleName" placeholder="Middle Name">
+                <input asp-for="MiddleName" type="text" class="form-control" id="middleName" placeholder="Middle Name" readOnly>
             </div>
 
             <div class="form-group col-md-4">
                 <label class="form-label" for="lastName">Last Name</label> <span asp-validation-for="LastName" class="text-danger"></span>
-                <input asp-for="LastName" type="text" class="form-control" id="lastName" placeholder="Last Name">
+                <input asp-for="LastName" type="text" class="form-control" id="lastName" placeholder="Last Name" readOnly>
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label class="form-label" for="firstName">Gender</label>
-                <select asp-for="Gender" class="form-control" data-style="btn-default">
+                <select asp-for="Gender" class="form-control" data-style="btn-default" id="gender" readOnly>
                     <option>Male</option>
                     <option>Female</option>
                     <option>Transgender</option>
@@ -43,146 +40,99 @@
 
             <div class="form-group col-md-4">
                 <label asp-for="DateOfBirth" class="form-label"></label> <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-                <input asp-for="DateOfBirth" type="date" class="form-control">
+                <input asp-for="DateOfBirth" type="date" class="form-control" id="dob" readOnly>
             </div>
 
             <div class="form-group col-md-4">
                 <label asp-for="Mobile" class="form-label"></label> <span asp-validation-for="Mobile" class="text-danger"></span>
-                <input asp-for="Mobile" type="number" autocomplete="off" class="form-control">
-            </div>
-        </div>
-
-        <div class="form-row d-none">
-            <div class="form-group col-md-4">
-                <label asp-for="MarginType" class="form-label"></label>
-                <select asp-for="MarginType" class="form-control" data-style="btn-default">
-                    <option value="1">Fixed</option>
-                    <option value="0" selected="selected">Variable</option>
-                </select>
-            </div>
-
-            <div class="form-group col-md-4">
-                <label asp-for="Commission" class="form-label"></label> <span asp-validation-for="Commission" class="text-danger"></span>
-                <input asp-for="Commission" value="0" type="number" autocomplete="off" class="form-control">
-            </div>
-
-            <div class="form-group col-md-4">
-                <label asp-for="Active" class="form-label"></label>
-                <select asp-for="Active" class="form-control" data-style="btn-default">
-                    <option value="1">Active</option>
-                    <option value="0">InActive</option>
-                </select>
+                <input asp-for="Mobile" type="number" autocomplete="off" class="form-control" readOnly>
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label asp-for="StateName" class="form-label"></label>  <span asp-validation-for="StateName" class="text-danger"></span>
-                <select asp-for="StateName" class="form-control" onblur="javascript: LoadCityDdl();"></select>
+                <select asp-for="StateName" class="form-control" onblur="javascript: LoadCityDdl();" readOnly></select>
             </div>
 
             <div class="form-group col-md-4">
                 <label asp-for="City" class="form-label"></label> <span asp-validation-for="City" class="text-danger"></span>
-                <select asp-for="City" class="form-control"></select>
+                <select asp-for="City" class="form-control" readOnly></select>
             </div>
 
             <div class="form-group col-md-4">
                 <label asp-for="PinCode" class="form-label"></label> <span asp-validation-for="PinCode" class="text-danger"></span>
-                <input asp-for="PinCode" type="number" autocomplete="off" class="form-control">
+                <input asp-for="PinCode" type="number" autocomplete="off" class="form-control" readOnly>
             </div>
         </div>
 
         <div class="form-group">
+            <label asp-for="ParmanentAddress" class="form-label"></label> <span asp-validation-for="ParmanentAddress" class="text-danger"></span>
+            <textarea asp-for="ParmanentAddress" rows="2" autocomplete="off" class="form-control" id="parmanentAddress" readOnly></textarea>
+        </div>
+        <div class="form-group">
             <label asp-for="Address" class="form-label"></label> <span asp-validation-for="Address" class="text-danger"></span>
-            <textarea asp-for="Address" rows="2" autocomplete="off" class="form-control"></textarea>
+            <textarea asp-for="Address" rows="2" autocomplete="off" class="form-control" readOnly></textarea>
         </div>
-
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <div class="form-group">
-                    <label class="form-label" asp-for="AadharFront"></label> <span asp-validation-for="AadharFront" class="text-danger"></span>
-                    <input type="file" asp-for="AadharFront" id="aadharfront" class="form-control" accept="image/*" />
-                </div>
-            </div>
-            <div class="form-group col-md-4">
-                <div class="form-group">
-                    <label class="form-label" asp-for="AadharBack"></label> <span asp-validation-for="AadharBack" class="text-danger"></span>
-                    <input type="file" id="aadharback" asp-for="AadharBack" class="form-control" accept="image/*" />
-                </div>
-            </div>
-            <div class="form-group col-md-4">
-                <div class="form-group">
-                    <label class="form-label" asp-for="PanCard"></label> <span asp-validation-for="PanCard" class="text-danger"></span>
-                    <input type="file" id="pancard" class="form-control" asp-for="PanCard" accept="image/*" />
-                </div>
-            </div>
+        <div class="form-group">
+            <label asp-for="CounterLocation" class="form-label"></label> <span asp-validation-for="CounterLocation" class="text-danger"></span>
+            <textarea asp-for="CounterLocation" rows="2" autocomplete="off" class="form-control" readOnly></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label text-danger">Comment added by Admin</label>
+            <textarea asp-for="FailureReason" rows="2" autocomplete="off" class="form-control" readOnly></textarea>
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
                 <div class="form-group">
-                    <label class="form-label" asp-for="Photo"></label> <span asp-validation-for="Photo" class="text-danger"></span>
-                    <input type="file" id="photo" class="form-control" asp-for="Photo" accept="image/*" />
+                    <label class="form-label">Photo</label>
+                    <div class="custom-file">
+                        <input type=file name="photo" id="photo" class="custom-file-input" asp-for="Photo" accept="image/*" >
+                        <label id="photolable" class="custom-file-label" asp-for="Photo"></label>
+                    </div>
                 </div>
             </div>
             <div class="form-group col-md-4">
                 <div class="form-group">
-                    <label class="form-label" asp-for="Agreement"></label> <span asp-validation-for="Agreement" class="text-danger"></span>
-                    <input type="file" id="agreement" class="form-control" asp-for="Agreement" accept="application/pdf"  />
+                    <label class="form-label">Agreement</label>
+                    <div class="custom-file">
+                        <input type=file name="agreement" id="agreement" class="custom-file-input" asp-for="Agreement" accept="application/pdf" >
+                        <label id="agreementlable" class="custom-file-label" asp-for="Agreement"></label>
+                    </div>
                 </div>
             </div>
             <div class="form-group col-md-4">
-                <div class="form-group">
-                    <label class="form-label" asp-for="Affidavit"></label> <span asp-validation-for="Affidavit" class="text-danger"></span>
-                    <input type="file" id="affidavit" class="form-control" asp-for="Affidavit" accept="application/pdf" />
+                <label class="form-label">Affidavit</label>
+                <div class="custom-file">
+                    <input type=file name="affidavit" id="affidavit" class="custom-file-input" asp-for="Affidavit" accept="application/pdf" >
+                    <label id="affidavitlable" class="custom-file-label" asp-for="Affidavit"></label>
                 </div>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
                 <div class="form-group">
-                    <label class="form-label" asp-for="Other"></label>
-                    <input type="file" id="other" class="form-control" asp-for="Other" accept="application/pdf,image/*" />
+                    <label class="form-label">Police Verification</label>
+                    <div class="custom-file">
+                        <input type=file name="policeverification" id="policeverification" class="custom-file-input" asp-for="PoliceVerification" accept="application/pdf,image/*">
+                        <label id="pvlable" class="custom-file-label" asp-for="PoliceVerification"></label>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2">
-                <button type="button" class="btn btn-primary hide" onclick="Create();">Save Details</button>
                 <button type="submit" class="btn btn-primary">Update Details</button>
                 <span id="loaderInfo" name="loaderInfo"></span>
             </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label text-danger">Photo field supports image file only and Agreement, Affidavit & Police Verification support PDF files. </label>
         </div>
     </form>
 </div>
 
 <script type="text/javascript">
-
-    function Create() {
-        $.ajax({
-            type: "POST",
-            url: "@Url.Action("SaveRetailer", "Distributor")",
-            data: $("form").serialize(),
-            contentType: 'application/json; charset=utf-8',
-            dataType: "json",
-            cache: false,
-            success: function (data) {
-                if (data.indexOf('Error:') > -1) {
-                    //Error
-                }
-                else {
-                    //success
-                    $('#modals-info-message').html(data);
-                    $('#modals-info').modal('show');
-                }
-                //$('#submitCreateUser').prop('disabled', false);
-            },
-            error: function () {
-                $('#modals-info-message').html('Error in creating Master Distributor.');
-                $('#modals-info').modal('show');
-            }
-        });
-    }
-
     function LoadStateDdl() {
         $.getJSON("@Url.Action("StateList", "Home", new { id = 96 })", function (data) {
             //$("#ddlState").find("option:gt(0)").remove();
@@ -214,7 +164,22 @@
 
     $(function () {
         LoadStateDdl();
-        $("#Gender").val("@Model.Gender");
+
+        $("#photo").change(function () {
+            $("#photolable").html(this.files[0].name).removeClass('hide');
+        });
+        $("#agreement").change(function () {
+            $("#agreementlable").html(this.files[0].name).removeClass('hide');
+        });
+        $("#affidavit").change(function () {
+            $("#affidavitlable").html(this.files[0].name).removeClass('hide');
+        });
+        $("#policeverification").change(function () {
+            $("#pvlable").html(this.files[0].name).removeClass('hide');
+        });
+        $("#gender").css("pointer-events","none");
+        $("#StateName").css("pointer-events","none");
+        $("#City").css("pointer-events","none");
     });
 
 </script>

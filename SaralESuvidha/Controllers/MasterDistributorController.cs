@@ -123,21 +123,26 @@ namespace SaralESuvidha.Controllers
             retailUserViewModel.UserType = 6;
             retailUserViewModel.Password = StaticData.GeneratePassword(8);
             retailUserViewModel.Save();
-            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, "KYCDocFiles/" + retailUserViewModel.Id + "/");
-            if (!Directory.Exists(folderPath))
+            if(retailUserViewModel.Id != null)
             {
-                Directory.CreateDirectory(folderPath);
+                string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, "KYCDocFiles/" + retailUserViewModel.Id + "/");
+                string kycFolder = Path.Combine(_hostingEnvironment.WebRootPath, "KYCDocFiles/" + retailUserViewModel.ReferenceId + "/");
+                if (Directory.Exists(kycFolder))
+                {
+                    Directory.Move(kycFolder, folderPath);
+                }
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Photo, "Photo");
+                KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
+                KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
+                KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PoliceVerification, "PoliceVerification");
             }
-            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.AadharFront, "AadharFront");
-            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.AadharBack, "AadharBack");
-            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PanCard, "PanCard");
-            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Photo, "Photo");
-            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
-            SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
-            if (retailUserViewModel.Other != null)
-            {
-                SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Other, "Other");
-            }
+            
             return View(retailUserViewModel);
 
             /*
@@ -169,53 +174,34 @@ namespace SaralESuvidha.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public IActionResult UpdateDistributorInfo(RetailUserViewModel retailUserViewModel)
         {
-            var kycRequired = false;
+            var docUpdated = false;
 
             string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, "KYCDocFiles/" + retailUserViewModel.Id + "/");
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
             }
-            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.AadharFront, "AadharFront");
-            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.AadharBack, "AadharBack");
-            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PanCard, "PanCard");
-            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Photo, "Photo");
-            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
-            kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
-            if (retailUserViewModel.Other != null)
+            docUpdated = docUpdated || KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Photo, "Photo");
+            docUpdated = docUpdated || KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
+            docUpdated = docUpdated || KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
+            docUpdated = docUpdated || KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PoliceVerification, "PoliceVerification");
+            if(docUpdated)
             {
-                kycRequired = kycRequired || SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Other, "Other");
+                var parameters = new DynamicParameters();
+                parameters.Add("@Id", retailUserViewModel.Id);
+                using (var con = new SqlConnection(StaticData.conString))
+                {
+                    var retailUserToUpdate = con.QuerySingleOrDefault<RetailUserViewModel>("usp_UpdateDocumentUploadStatus", parameters, commandType: System.Data.CommandType.StoredProcedure);
+                    
+                }
             }
-            if (retailUserViewModel.KYCRequired == 0 && kycRequired)
-            {
-                retailUserViewModel.KYCRequired = kycRequired ? 1 : 0;
-                retailUserViewModel.PhysicalKYCDone = kycRequired ? 0 : 1;
-                retailUserViewModel.Active = kycRequired ? 0 : 1;
-            }
-            retailUserViewModel.Update();
             return View(retailUserViewModel);
         }
 
-        private static bool SaveFile(RetailUserViewModel retailUserViewModel, string folderPath, IFormFile formFile, string fileName)
+        public IActionResult LoadUser(string id)
         {
-            if (formFile != null)
-            {
-                var name = string.Empty;
-                using (var target = new MemoryStream())
-                {
-                    formFile.CopyTo(target);
-                    fileName = fileName + Path.GetExtension(formFile.FileName);
-                    name = fileName;
-                    fileName = fileName = folderPath + fileName;
-                    if (System.IO.File.Exists(fileName))
-                    {
-                        System.IO.File.Delete(fileName);
-                    }
-                    System.IO.File.WriteAllBytes(fileName, target.ToArray());
-                    return true;
-                }
-            }
-            return false;
+            var retailUserToUpdate = KYCHelper.LoadUser(id, Path.Combine(_hostingEnvironment.WebRootPath, "KYCDocFiles/"));
+            return View(retailUserToUpdate);
         }
 
         public IActionResult SetMargin()

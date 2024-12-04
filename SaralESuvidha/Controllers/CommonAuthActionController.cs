@@ -19,6 +19,8 @@ using Newtonsoft.Json.Linq;
 using Razorpay.Api;
 using UPPCLLibrary.BillFail;
 using System.IO.Compression;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace SaralESuvidha.Controllers
 {
@@ -253,8 +255,27 @@ namespace SaralESuvidha.Controllers
                     List<RetailUserGrid> allRetailUser = con.Query<RetailUserGrid>("usp_RetailUserList",
                         commandType: System.Data.CommandType.StoredProcedure).ToList();
                     //OperationMessage = saveResponse;
-                    var aaData1 = new { data = allRetailUser.Where(_ => _.Active == 0 || _.KYCRequired == 1 || _.ActivatedTill != null) };
+                    var aaData1 = new { data = allRetailUser.Where(_ => _.Active == 0 || _.DocVerification == 0 || _.ActivatedTill != null) };
                     return Json(aaData1);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception: " + ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetActivationDetails(string id)
+        {
+            try
+            {
+                using (var con = new SqlConnection(StaticData.conString))
+                {
+                    var queryParameters = new DynamicParameters();
+                    queryParameters.Add("@Id", id);
+                    RetailUserGrid user = con.QuerySingleOrDefault<RetailUserGrid>("usp_GetActivationDetails", queryParameters, commandType: System.Data.CommandType.StoredProcedure);
+                    return Json(user);
                 }
             }
             catch (Exception ex)
@@ -435,11 +456,13 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
 
-        public IActionResult ChangeKYCActivation(string id, int pkyc, int activation)
+        [HttpPost]
+        public IActionResult ChangeKYCActivation(ActivateUser activateUser)
         {
             string result = string.Empty;
-            result = StaticData.UpdateKYCState(id, pkyc, activation);
-            return Content(result);
+            result = StaticData.UpdateKYCState(activateUser.Id, activateUser.DocVerification, activateUser.Active, activateUser.DocVerificationFailed, activateUser.FailureReason);
+            
+            return Json(new { success = false, responseText = result });
         }
 
         public IActionResult UpdateDistributor(string id, string masterId)
@@ -475,5 +498,14 @@ namespace SaralESuvidha.Controllers
         {
             return Content(StaticData.DistributorListJson(id));
         }
+    }
+
+    public class ActivateUser
+    {
+        public string Id { get; set; }
+        public int Active { get; set; }
+        public int DocVerificationFailed { get; set; }
+        public int DocVerification { get; set; }
+        public string FailureReason { get; set; }
     }
 }

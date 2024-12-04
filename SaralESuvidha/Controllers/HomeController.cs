@@ -155,7 +155,8 @@ namespace SaralESuvidha.Controllers
                         
                     }
                     
-                    var retailUser = StaticData.ValidateRetailUserLogin(m, p, f, d);
+                    var user = StaticData.ValidateRetailUserLogin(m, p, f, d);
+                    var retailUser = user.Item1;
                     if (retailUser != null)
                     {
                         if (retailUser.USL > 0)
@@ -218,6 +219,10 @@ namespace SaralESuvidha.Controllers
                     else
                     {
                         result[0] = "Errors: User not found or not active.";
+                        if(user.Item2 == -1)
+                        {
+                            result[1] = "Account is inactive. Please contact with admin for activation.";
+                        }
                     }
                     if(retailUser != null && retailUser.ActivatedTill != null)
                     {                        
@@ -226,14 +231,6 @@ namespace SaralESuvidha.Controllers
                             var days = (retailUser.ActivatedTill.GetValueOrDefault() - DateTime.Now).Days;
                             result[1] = $"Account will get deactivate in {days} days as physical KYC is still pending. Please contact with admin for more details.";
                         }
-                        else
-                        {
-                            result[1] = string.Empty;
-                        }
-                    }
-                    else
-                    {
-                        result[1] = string.Empty;
                     }
                 }
                 else

@@ -109,7 +109,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-8 form-group">
-                                <span>Download the files for KYC from this given link:</span> 
+                                <span>Download the files for verification from this given link:</span> 
                             </div>
                             <div class="col-sm-4 form-group">
                                 <input type="button" id="download" value="Download" onclick="DownloadFiles()" class="form-control btn btn-primary">
@@ -119,20 +119,36 @@
                             <div class="col-sm-12 form-group">
                                 <label class="form-label"></label>
                                 <select id="sel" name="sel" class="form-control form-control-sm" data-style="btn-default" onchange="OnChangeActivation(this);">
-                                    <option value="0">InActive</option>
+                                    <option value="0">Inactive</option>
                                     <option value="1">Active</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12 form-group">
-                                <input type="checkbox" id="pkyc" name="pkyc" value="PKYC">
-                                <label for="pkyc"> Physical verification done.</label>
+                                <label class="form-label">Documents verified</label>
+                                <select id="verified" name="verified" class="form-control form-control-sm" data-style="btn-default" onchange="OnChangeVerificationStatus(this);">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
                             </div>
+                        </div>
+                        <div class="row" id="faileddiv">
+                            <div class="col-sm-12 form-group">
+                                <label class="form-label">Documents verification Failed</label>
+                                <select id="pkyc" name="pkyc" class="form-control form-control-sm" data-style="btn-default" onchange="OnChangeVerification(this);">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="reasondiv">
+                            <label class="form-label">Failure Reason</label>
+                            <textarea rows="2" autocomplete="off" class="form-control" id="reason"></textarea>
                         </div>
                         <div class="row">
                             <div class="col-sm-12 form-group">
-                                <input type="button" id="activate" value="Activate" onclick="Activate()" class="form-control btn btn-primary">
+                                <input type="button" id="activate" value="Submit" onclick="Activate()" class="form-control btn btn-primary">
                             </div>
                         </div>
                     </form>
@@ -193,25 +209,66 @@
 
     function OnChangeActivation(sel) {
         if(sel.value == 0) {
-            $("#pkyc").prop("checked", false);
+            $("#verified").val(0);
+        }
+    }
+
+    function OnChangeVerification(sel) {
+        if (sel.value == 0) {
+            $("#reason").val('')
+            $("#reason").attr("required", false);
+            $("#reason").attr("readOnly", true);
+            $("#activate").prop('disabled', false);
+        }
+        else {
+            $("#reason").attr("required", true);
+            $("#reason").attr("readOnly", false);
+            $("#activate").prop('disabled', true);
+        }
+    }
+
+    function OnChangeVerificationStatus(sel) {
+        if (sel.value == 1) {
+            $("#reason").val('')
+            $("#pkyc").val(0);
+            $("#faileddiv").addClass('hide');
+            $("#reasondiv").addClass('hide');
+        }
+        else {
+            $("#faileddiv").removeClass('hide');
+            $("#reasondiv").removeClass('hide');
         }
     }
 
     function Activate() {
-        var id = $('#download').attr('alt');
-        var pkys = $('#pkyc').prop("checked") ? "1" : "0" ;
-        console.log(pkys);
-        console.log($('#pkyc'));
-        var activate = $('#sel').val();
-        $.get("@Url.Action("ChangeKYCActivation", "CommonAuthAction")?id=" + id + "&pkyc=" + pkys + "&activation=" + activate,
-            function (data) {
-                if (data.indexOf('Errors:') > -1) {
-                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+        var user = new Object();
+        user.Id = $('#download').attr('alt');
+        user.Active = $('#sel').val();
+        user.DocVerificationFailed = $('#pkyc').val();
+        user.DocVerification = $('#verified').val();
+        user.FailureReason = $('#reason').val();
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("ChangeKYCActivation", "CommonAuthAction")",
+            content: "application/json; charset=utf-8",
+            dataType: "json",
+            data: user,
+            success: function (response) {
+                if (response.responseText.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(response.responseText).removeClass('text-success').addClass('text-danger');
                 } else {
-                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    $('#InfoDetail').html(response.responseText).removeClass('text-danger').addClass('text-success');
                 }
-            });
-        $('#KYCModalPopUp').modal('hide');
+                $('#KYCModalPopUp').modal('hide')
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+            
     }
 
     function DownloadFiles() {
@@ -282,12 +339,14 @@
                 {
                     title: "Active/Inactive",
                     data: null, render: function (data, type, row) {
-                        if (row.ActivatedTill != null)
-                            return "<button type='button' class='btn btn-default btn-sm btn-primary' onclick=DoKYC('" + row.Id + "')>KYC Pending</button>";
+                        if (row.DocVerificationFailed)
+                            return '<span class="text-danger">Documents verification failed.</span>'
+                        else if (row.ActivatedTill != null)
+                            return "<button type='button' class='btn btn-default btn-sm btn-primary' onclick=DoKYC('" + row.Id + "')>Verify Doc</button>";
                         else if (row.Active == 1)
                             return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' onchange=ChangeActivation('" + row.Id + "') checked />";
-                        else if (row.KYCRequired == 1)
-                            return "<button type='button' class='btn btn-default btn-sm btn-primary' onclick=DoKYC('" + row.Id + "')>KYC Pending</button>";
+                        else if (row.DocVerification == 0)
+                            return "<button type='button' class='btn btn-default btn-sm btn-primary' onclick=DoKYC('" + row.Id + "')>Verify Doc</button>";
                         else
                             return "<input placeholder='active' type='checkbox' class='form - control' data-style='btn -default' autocomplete='off' onchange=ChangeActivation('" + row.Id + "') />";
                     }
@@ -308,9 +367,39 @@
     }
 
     function DoKYC(id, userName) {
+        $("#reason").val('')
         $('#download').attr("alt", id);
         $('#userDetail').html(id);
-        $('#KYCModalPopUp').modal('show');
+        $.get("@Url.Action("GetActivationDetails", "CommonAuthAction")?id=" + id,
+            function (data) { 
+                $('#sel').val(data.Active);
+                $('#verified').val(data.DocVerification)
+                $('#pkyc').val(data.DocVerificationFailed)
+                $('#reason').val(data.FailureReason)
+                $('#KYCModalPopUp').modal('show');
+                if(data.DocVerificationFailed) {
+                    $("#reason").attr("readOnly", false);
+                }
+                else {
+                    $("#reason").attr("readOnly", true);
+                }
+                $('#reason').keyup(function () {
+                    if ($(this).val() != '') {
+                        $('#activate').prop('disabled', false);
+                    }
+                    else {
+                        $('#activate').prop('disabled', true);
+                    }
+                });
+                if (data.DocVerification == 1) {
+                    $("#faileddiv").addClass('hide');
+                    $("#reasondiv").addClass('hide');
+                }
+                else {
+                    $("#faileddiv").removeClass('hide');
+                    $("#reasondiv").removeClass('hide');
+                }
+            });
     }
 
     function Yes() {

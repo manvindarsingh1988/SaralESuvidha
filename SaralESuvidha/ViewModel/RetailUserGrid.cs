@@ -26,8 +26,11 @@ namespace SaralESuvidha.ViewModel
         public bool ApiEnabled { get; set; }
         public short Active { get; set; }
         public DateTime? LoginTime { get; set; }
-        public short KYCRequired { get; set; }
+        public short? DocVerification { get; set; }
         public short? PhysicalKYCDone { get; set; }
         public DateTime? ActivatedTill { get; set; }
+
+        public string FailureReason { get; set; }
+        public short? DocVerificationFailed { get; set; }
     }
 }

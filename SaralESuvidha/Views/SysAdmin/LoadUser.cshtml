@@ -1,15 +1,15 @@
 ﻿@model SaralESuvidha.ViewModel.RetailUserViewModel;
 @{
     Layout = "_LayoutDistributor";
-    ViewData["title"] = "Update Distributor";
+    ViewData["title"] = "Create Master Distributor";
 }
 
 
 <div class="container shadow p-3 mb-5 bg-white rounded">
-    <h3 class="text-center">Update Retailer Details</h3>
-    <form class="form-horizontal" id="frmMain" name="frmMain" asp-action="UpdateDistributorInfo" asp-controller="MasterDistributor" enctype="multipart/form-data">
-        <div class="form-row d-none">
-            <input asp-for="Id" type="text" class="form-control" id="id">
+    <h3 class="text-center">Save User Details</h3>
+    <form class="form-horizontal" id="frmMain" name="frmMain" asp-action="SaveMasterDistributor" asp-controller="SysAdmin" enctype="multipart/form-data">
+        <div class="form-row hide">
+            <input asp-for="ReferenceId" type="text" class="form-control" id="ReferenceId">
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
@@ -45,24 +45,24 @@
 
             <div class="form-group col-md-4">
                 <label asp-for="Mobile" class="form-label"></label> <span asp-validation-for="Mobile" class="text-danger"></span>
-                <input asp-for="Mobile" type="number" autocomplete="off" class="form-control" readOnly>
+                <input asp-for="Mobile" type="number" autocomplete="off" class="form-control">
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label asp-for="StateName" class="form-label"></label>  <span asp-validation-for="StateName" class="text-danger"></span>
-                <select asp-for="StateName" class="form-control" onblur="javascript: LoadCityDdl();" readOnly></select>
+                <select asp-for="StateName" class="form-control" onblur="javascript: LoadCityDdl();"></select>
             </div>
 
             <div class="form-group col-md-4">
                 <label asp-for="City" class="form-label"></label> <span asp-validation-for="City" class="text-danger"></span>
-                <select asp-for="City" class="form-control" readOnly></select>
+                <select asp-for="City" class="form-control"></select>
             </div>
 
             <div class="form-group col-md-4">
                 <label asp-for="PinCode" class="form-label"></label> <span asp-validation-for="PinCode" class="text-danger"></span>
-                <input asp-for="PinCode" type="number" autocomplete="off" class="form-control" readOnly>
+                <input asp-for="PinCode" type="number" autocomplete="off" class="form-control">
             </div>
         </div>
 
@@ -72,31 +72,27 @@
         </div>
         <div class="form-group">
             <label asp-for="Address" class="form-label"></label> <span asp-validation-for="Address" class="text-danger"></span>
-            <textarea asp-for="Address" rows="2" autocomplete="off" class="form-control" readOnly></textarea>
+            <textarea asp-for="Address" rows="2" autocomplete="off" class="form-control"></textarea>
         </div>
         <div class="form-group">
             <label asp-for="CounterLocation" class="form-label"></label> <span asp-validation-for="CounterLocation" class="text-danger"></span>
-            <textarea asp-for="CounterLocation" rows="2" autocomplete="off" class="form-control" readOnly></textarea>
-        </div>
-        <div class="form-group">
-            <label class="form-label text-danger">Comment added by Admin</label>
-            <textarea asp-for="FailureReason" rows="2" autocomplete="off" class="form-control" readOnly></textarea>
+            <textarea asp-for="CounterLocation" rows="2" autocomplete="off" class="form-control"></textarea>
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
                 <div class="form-group">
-                    <label class="form-label">Photo</label>
+                    <label class="form-label">Photo</label> 
                     <div class="custom-file">
-                        <input type=file name="photo" id="photo" class="custom-file-input" asp-for="Photo" accept="image/*" >
+                        <input type=file name="photo" id="photo" class="custom-file-input" asp-for="Photo" accept="image/*" required>
                         <label id="photolable" class="custom-file-label" asp-for="Photo"></label>
                     </div>
                 </div>
             </div>
             <div class="form-group col-md-4">
                 <div class="form-group">
-                    <label class="form-label">Agreement</label>
+                    <label class="form-label">Agreement</label> 
                     <div class="custom-file">
-                        <input type=file name="agreement" id="agreement" class="custom-file-input" asp-for="Agreement" accept="application/pdf" >
+                        <input type=file name="agreement" id="agreement" class="custom-file-input" asp-for="Agreement" accept="application/pdf" required>
                         <label id="agreementlable" class="custom-file-label" asp-for="Agreement"></label>
                     </div>
                 </div>
@@ -104,7 +100,7 @@
             <div class="form-group col-md-4">
                 <label class="form-label">Affidavit</label>
                 <div class="custom-file">
-                    <input type=file name="affidavit" id="affidavit" class="custom-file-input" asp-for="Affidavit" accept="application/pdf" >
+                    <input type=file name="affidavit" id="affidavit" class="custom-file-input" asp-for="Affidavit" accept="application/pdf" required>
                     <label id="affidavitlable" class="custom-file-label" asp-for="Affidavit"></label>
                 </div>
             </div>
@@ -119,18 +115,10 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group col-md-4">
-                <label class="form-label" for="firstName">Distributor Type</label>
-                <select asp-for="DistributorType" class="form-control" data-style="btn-default" readOnly>
-                    <option>Company Owned</option>
-                    <option>Third Party</option>
-                    <option>Other</option>
-                </select>
-            </div>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2">
-                <button type="submit" class="btn btn-primary">Update Details</button>
+                <button type="submit" class="btn btn-primary">Save</button>
                 <span id="loaderInfo" name="loaderInfo"></span>
             </div>
         </div>
@@ -185,10 +173,8 @@
         $("#policeverification").change(function () {
             $("#pvlable").html(this.files[0].name).removeClass('hide');
         });
-        $("#gender").css("pointer-events", "none");
-        $("#StateName").css("pointer-events", "none");
-        $("#City").css("pointer-events", "none");
-        $("#DistributorType").css("pointer-events", "none");
+        
+        $("#gender").css("pointer-events","none");
     });
 
 </script>

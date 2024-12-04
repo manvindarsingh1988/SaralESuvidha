@@ -26,6 +26,7 @@ using UPPCLLibrary;
 using UPPCLLibrary.BillFetch;
 using RTran = SaralESuvidha.Models.RTran;
 using DocumentFormat.OpenXml.Bibliography;
+using System.Drawing;
 
 namespace SaralESuvidha.ViewModel
 {
@@ -298,6 +299,44 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
+
+        public static List<KYCToken> GetKYCTokens()
+        {
+            List<KYCToken> result = new();
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<KYCToken>("usp_GetKYCTokens", commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        public static bool InsertOrUpdateKYCTokens(string token, DateTime createdOn)
+        {
+            var result = true;
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Token", token);
+                    parameters.Add("@CreatedOn", createdOn);
+                    con.Execute("usp_InsertOrUpdateKYCToken", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = false;
+            }
+            return result;
+        }
+
+        
 
         public static string GeneratePassword(int length)
         {
@@ -773,9 +812,10 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static RetailUserGrid ValidateRetailUserLogin(string mobileNumber, string password, string f="", string d="")
+        public static (RetailUserGrid, int) ValidateRetailUserLogin(string mobileNumber, string password, string f="", string d="")
         {
             RetailUserGrid retailUser = new RetailUserGrid();
+            int inactive;
             try
             {
                 using (var con = new SqlConnection(StaticData.conString))
@@ -793,14 +833,14 @@ namespace SaralESuvidha.ViewModel
                     }
                     queryParameters.Add("@OutResult", dbType: DbType.Int32, direction: ParameterDirection.Output, size: 5215585);
                     retailUser = con.QuerySingleOrDefault<RetailUserGrid>("usp_RetailClient_ValidateLogin", queryParameters, commandType: System.Data.CommandType.StoredProcedure);
-                    
+                    inactive = queryParameters.Get<int>("@OutResult");
                 }
             }
             catch (Exception)
             {
                 throw;
             }
-            return retailUser;
+            return (retailUser, inactive);
         }
 
         public static AppUserLogin ValidateOfficeLogin(string mobileNumber, string password)
@@ -2753,7 +2793,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string UpdateKYCState(string retailerId, int pkyc, int activation)
+        public static string UpdateKYCState(string retailerId, int docVerification, int activation, int docVerificationFailed, string failureReason)
         {
             string result = string.Empty;
             try
@@ -2761,7 +2801,9 @@ namespace SaralESuvidha.ViewModel
                 var parameters = new DynamicParameters();
                 parameters.Add("@RetailUserId", retailerId);
                 parameters.Add("@Active", activation);
-                parameters.Add("@PhysicalKYCDone", pkyc);
+                parameters.Add("@DocVerification", docVerification);
+                parameters.Add("@DocVerificationFailed", docVerificationFailed);
+                parameters.Add("@FailureReason", failureReason);
                 using (var con = new SqlConnection(conString))
                 {
                     result = con.QuerySingleOrDefault<OperationResponse>("usp_updateKYCState", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
