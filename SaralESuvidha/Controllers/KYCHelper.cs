@@ -187,7 +187,7 @@ namespace SaralESuvidha.Controllers
         {
             var retailUserToUpdate = new RetailUserViewModel();
             try
-            {                
+            {
                 folderPath = Path.Combine(folderPath + id + "/");
                 var filePath = folderPath + "Aadhar.txt";
 
@@ -232,14 +232,15 @@ namespace SaralESuvidha.Controllers
                         retailUserToUpdate.Gender = "Transgender";
                     }
 
-                    var dob = Convert.ToDateTime(data.date_of_birth);
+                    DateTime dob = DateTime.ParseExact(data.date_of_birth, "dd-MM-yyyy",
+                                           System.Globalization.CultureInfo.InvariantCulture);
                     retailUserToUpdate.DateOfBirth = dob;
                     retailUserToUpdate.ParmanentAddress = data.full_address;
                     retailUserToUpdate.PinCode = data.address.pincode;
                     retailUserToUpdate.ReferenceId = id;
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 retailUserToUpdate.Address = ex.Message;
             }
