@@ -186,54 +186,62 @@ namespace SaralESuvidha.Controllers
         public static RetailUserViewModel LoadUser(string id, string folderPath)
         {
             var retailUserToUpdate = new RetailUserViewModel();
-            folderPath = Path.Combine(folderPath + id + "/");
-            var filePath = folderPath + "Aadhar.txt";
-            if (File.Exists(filePath))
-            {
-                var aadharInfo = System.IO.File.ReadAllText(filePath);
-                var data = Newtonsoft.Json.JsonConvert.DeserializeObject<data>(aadharInfo);
-                var nameList = data.name.Split(' ');
-                if (nameList.Count() == 1)
-                {
-                    retailUserToUpdate.FirstName = nameList[0];
-                    retailUserToUpdate.MiddleName = ".";
-                    retailUserToUpdate.LastName = ".";
-                }
-                else if (nameList.Count() == 2)
-                {
-                    retailUserToUpdate.FirstName = nameList[0];
-                    retailUserToUpdate.MiddleName = ".";
-                    retailUserToUpdate.LastName = nameList[1];
-                }
-                else if (nameList.Count() > 2)
-                {
-                    retailUserToUpdate.FirstName = nameList[0];
-                    var middleName = string.Empty;
-                    for (var i = 1; i < nameList.Length - 1; i++)
-                    {
-                        middleName += " " + nameList[i];
-                    }
-                    retailUserToUpdate.MiddleName = middleName;
-                    retailUserToUpdate.LastName = nameList[nameList.Length - 1];
-                }
-                if (data.gender.ToLower() == "m")
-                {
-                    retailUserToUpdate.Gender = "Male";
-                }
-                else if (data.gender.ToLower() == "f")
-                {
-                    retailUserToUpdate.Gender = "Female";
-                }
-                else
-                {
-                    retailUserToUpdate.Gender = "Transgender";
-                }
+            try
+            {                
+                folderPath = Path.Combine(folderPath + id + "/");
+                var filePath = folderPath + "Aadhar.txt";
 
-                var dob = Convert.ToDateTime(data.date_of_birth);
-                retailUserToUpdate.DateOfBirth = dob;
-                retailUserToUpdate.ParmanentAddress = data.full_address;
-                retailUserToUpdate.PinCode = data.address.pincode;
-                retailUserToUpdate.ReferenceId = id;
+                if (File.Exists(filePath))
+                {
+                    var aadharInfo = System.IO.File.ReadAllText(filePath);
+                    var data = Newtonsoft.Json.JsonConvert.DeserializeObject<data>(aadharInfo);
+                    var nameList = data.name.Split(' ');
+                    if (nameList.Count() == 1)
+                    {
+                        retailUserToUpdate.FirstName = nameList[0];
+                        retailUserToUpdate.MiddleName = ".";
+                        retailUserToUpdate.LastName = ".";
+                    }
+                    else if (nameList.Count() == 2)
+                    {
+                        retailUserToUpdate.FirstName = nameList[0];
+                        retailUserToUpdate.MiddleName = ".";
+                        retailUserToUpdate.LastName = nameList[1];
+                    }
+                    else if (nameList.Count() > 2)
+                    {
+                        retailUserToUpdate.FirstName = nameList[0];
+                        var middleName = string.Empty;
+                        for (var i = 1; i < nameList.Length - 1; i++)
+                        {
+                            middleName += " " + nameList[i];
+                        }
+                        retailUserToUpdate.MiddleName = middleName;
+                        retailUserToUpdate.LastName = nameList[nameList.Length - 1];
+                    }
+                    if (data.gender.ToLower() == "m")
+                    {
+                        retailUserToUpdate.Gender = "Male";
+                    }
+                    else if (data.gender.ToLower() == "f")
+                    {
+                        retailUserToUpdate.Gender = "Female";
+                    }
+                    else
+                    {
+                        retailUserToUpdate.Gender = "Transgender";
+                    }
+
+                    var dob = Convert.ToDateTime(data.date_of_birth);
+                    retailUserToUpdate.DateOfBirth = dob;
+                    retailUserToUpdate.ParmanentAddress = data.full_address;
+                    retailUserToUpdate.PinCode = data.address.pincode;
+                    retailUserToUpdate.ReferenceId = id;
+                }
+            }
+            catch (Exception ex)
+            {
+                retailUserToUpdate.Address = ex.Message;
             }
             return retailUserToUpdate;
         }
