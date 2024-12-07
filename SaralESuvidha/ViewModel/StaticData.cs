@@ -812,10 +812,10 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static (RetailUserGrid, int) ValidateRetailUserLogin(string mobileNumber, string password, string f="", string d="")
+        public static (RetailUserGrid, int?) ValidateRetailUserLogin(string mobileNumber, string password, string f="", string d="")
         {
             RetailUserGrid retailUser = new RetailUserGrid();
-            int inactive;
+            int? inactive;
             try
             {
                 using (var con = new SqlConnection(StaticData.conString))
@@ -833,7 +833,7 @@ namespace SaralESuvidha.ViewModel
                     }
                     queryParameters.Add("@OutResult", dbType: DbType.Int32, direction: ParameterDirection.Output, size: 5215585);
                     retailUser = con.QuerySingleOrDefault<RetailUserGrid>("usp_RetailClient_ValidateLogin", queryParameters, commandType: System.Data.CommandType.StoredProcedure);
-                    inactive = queryParameters.Get<int>("@OutResult");
+                    inactive = queryParameters.Get<int?>("@OutResult");
                 }
             }
             catch (Exception)

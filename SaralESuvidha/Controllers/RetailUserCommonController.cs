@@ -334,8 +334,6 @@ namespace SaralESuvidha.Controllers
             string result = "";
             try
             {
-                np = Regex.Replace(np, @"[^0-9a-zA-Z]+", "");
-                op = Regex.Replace(op, @"[^0-9a-zA-Z]+", "");
                 np = np.Length > 20 ? np.Substring(0, 20) : np;
                 result = StaticData.UpdatePassword(op, np, HttpContext.Session.GetString("RetailerId"));
             }
