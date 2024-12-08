@@ -47,6 +47,18 @@ namespace SaralESuvidha.Controllers
         {
             return View();
         }
+        
+        public IActionResult AccountTopup()
+        {
+            return View();
+        }
+        
+        
+
+        public IActionResult AccountTopupReport()
+        {
+            return View();
+        }
 
         public IActionResult DownlineSalesReportResult(string dateFrom, string dateTo, int x)
         {
