@@ -80,3 +80,8 @@
 /SaralESuvidha/wwwroot/KYCDocFiles/RU003648/*.pdf
 /SaralESuvidha/wwwroot/KYCDocFiles/RU003648/*.png
 UPPCLLibrary/obj/
+SaralESuvidha/obj/
+.idea/
+SaralESuvidha/appsettings.json
+SaralESuvidha/bin/Debug/net6.0/SaralESuvidha.zip
+SaralESuvidha/bin/
