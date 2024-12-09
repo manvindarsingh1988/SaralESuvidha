@@ -411,7 +411,24 @@ namespace SaralESuvidha.Controllers
             }
             return Content(result);
         }
-        
+
+        public IActionResult AllUserReportResultByUserAndDate(string date, int x, int orderNo)
+        {
+            string result = string.Empty;
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
+            DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(date));
+            try
+            {
+                if (HttpContext.Session != null)
+                    result = StaticData.AllUserReportResultByUserAndDate(x, dateF, orderNo, filePath);
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: " + ex.Message;
+            }
+            return Content(result);
+        }
+
         public IActionResult DailyTopupReportResult(string dateFrom,string dateTo, int x)
         {
             string result = string.Empty;

@@ -151,7 +151,7 @@
 
     function LoadDetail() {
         if ($('#OrderNo').val().length > 0) {
-            $.get("@Url.Action("RetailUserDetail", "CommonAuthAction")?usd=" + a2hex($('#OrderNo').val()), function (data) {
+            $.get("@Url.Action("RetailUserDetail", "CommonAuthAction")?usd=" + a2hex($('#OrderNo').val()) + "&fundTransfer=1", function (data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
                     HideAction();

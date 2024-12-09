@@ -60,12 +60,12 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
 
-        public IActionResult RetailUserDetail(string usd)
+        public IActionResult RetailUserDetail(string usd, int fundTransfer = 0)
         {
             try
             {
                 int Id = Convert.ToInt32(StaticData.ConvertHexToString(usd));
-                var balResponse = StaticData.retailUser.GetBalanceWithName(Id, "", 1);
+                var balResponse = StaticData.retailUser.GetBalanceWithName(Id, "", fundTransfer);
                 if (!balResponse.OperationMessage.Contains("Errors"))
                 {
                     //ViewData["Error"] = "0";

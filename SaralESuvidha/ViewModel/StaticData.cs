@@ -1161,8 +1161,49 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
-        
+
+        public static string AllUserReportResultByUserAndDate(int excelExport, DateTime date, int id, string filePath = "")
+        {
+            var aaIData = new UPPCLReport();
+            string result = JsonConvert.SerializeObject(aaIData);
+            try
+            {
+                using (var con = new SqlConnection(StaticData.conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@date", date);
+                    if(id > 0)
+                    {
+                        parameters.Add("@Id", id);
+                    }  
+                    else
+                    {
+                        parameters.Add("@Id", null);
+                    }
+                    List<AllUserWithBalance> allDailyRecharge = con.Query<AllUserWithBalance>("usp_RetailUserListWithBalanceByUserAndDate", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    if (excelExport == 1)
+                    {
+                        result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "AllUsersReportByUserAndDate", filePath);
+                    }
+                    else
+                    {
+                        var aaData = new { data = allDailyRecharge };
+                        result = JsonConvert.SerializeObject(aaData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                aaIData.Account_Number = ex.Message;
+                result = JsonConvert.SerializeObject(aaIData);
+            }
+            finally
+            {
+                aaIData = null;
+            }
+            return result;
+        }
+
         public static string RechargeReportDistributorByDate(int retailClientOrderNo, DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
         {
             var aaIData = new RTranReport();
