@@ -27,6 +27,9 @@ using UPPCLLibrary.BillFetch;
 using RTran = SaralESuvidha.Models.RTran;
 using DocumentFormat.OpenXml.Bibliography;
 using System.Drawing;
+using Microsoft.VisualBasic;
+using Org.BouncyCastle.Asn1.Ocsp;
+using UPPCLLibrary.OTS;
 
 namespace SaralESuvidha.ViewModel
 {
@@ -1916,8 +1919,103 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
-        
+
+        public static string PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, string inputSource = "web")
+        {
+            var billTran = new RTran();
+            string result = string.Empty;
+            try
+            {
+                billTran.RetailUserOrderNo = Convert.ToInt32(retailUserOrderNo);
+                billTran.RetailUserId = retailerId;
+                billTran.TelecomOperatorName = operatorName;
+                billTran.RechargeMobileNumber = accountNumber;
+                billTran.Amount = Convert.ToDecimal(initResponse.Data.BillDetails.BillAmount);
+                var dueAmount = (int)Math.Round(Convert.ToDecimal(initResponse.Data.BillDetails.AccountInfo), MidpointRounding.AwayFromZero);
+                string retailerName = "" + dueAmount.ToString();
+                try
+                {
+                    retailerName += " >> " + retailUserOrderNo;
+                    retailerName += "-" + retailerName;
+                    retailerName = retailerName.Length > 48 ? retailerName.Substring(0, 46) : retailerName;
+                }
+                catch (Exception exName)
+                {
+                    return "Errors: Invalid consumer name in bill fetch." + exName.Message;
+                }
+                billTran.Parameter4 = retailerName;
+                billTran.RequestIp = requestIp;
+                billTran.RequestMachine = inputSource + ">" + userAgent;
+                billTran.EndCustomerName = initResponse.Data.BillDetails.ConsumerName;
+                billTran.EndCustomerMobileNumber = initResponse.Data.BillDetails.MobileNumber;
+                billTran.Extra1 = initResponse.Data.BillDetails.BillDueDate;
+                billTran.Extra2 = dueAmount.ToString();
+                billTran.UPPCL_ProjectArea = initResponse.Data.BillDetails.ProjectArea;
+                if (decimal.TryParse(initResponse.Data.BillDetails.Param1, out var res))
+                {
+                    billTran.UPPCL_DDR = res;
+                }
+                try
+                {
+                    billTran.UPPCL_AccountInfo = Convert.ToDecimal(initResponse.Data.BillDetails.AccountInfo);
+                }
+                catch (Exception exAccInfo)
+                {
+                    return "Errors: Invalid Account Info." + exAccInfo.Message;
+                }
+                billTran.UPPCL_TDConsumer = initResponse.Data.BillDetails.TdStatus == "true" ? true : false;
+                billTran.UPPCL_ConnectionType = initResponse.Data.BillDetails.ConnectionType;
+                billTran.UPPCL_DivCode = initResponse.Data.BillDetails.DivCode;
+                billTran.UPPCL_SDOCode = initResponse.Data.BillDetails.SdoCode;
+                try
+                {
+                    billTran.UPPCL_BillAmount = Convert.ToDecimal(initResponse.Data.BillDetails.BillAmount);
+                }
+                catch (Exception exBillAmount)
+                {
+                    return "Errors: Invalid Bill Amount." + exBillAmount.Message;
+                }
+                billTran.UPPCL_Division = initResponse.Data.BillDetails.Division;
+                billTran.UPPCL_SubDivision = initResponse.Data.BillDetails.SubDivision;
+                billTran.UPPCL_PurposeOfSupply = initResponse.Data.BillDetails.PurposeOfSupply;
+                try
+                {
+                    billTran.UPPCL_SanctionedLoadInKW = Convert.ToDecimal(initResponse.Data.BillDetails.SanctionedLoadInKW);
+                }
+                catch (Exception exSanLoad)
+                {
+                    return "Errors: Invalid Sanctioned Load." + exSanLoad.Message;
+                }
+                billTran.UPPCL_BillId = initResponse.Data.BillDetails.BillId;
+                billTran.UPPCL_BillDate = initResponse.Data.BillDetails.BillDate;
+                billTran.UPPCL_Discom = operatorName;
+                result = billTran.PayOTSUPPCL(initResponse, inputSource);
+            }
+            catch (Exception ex)
+            {
+                string extra = "opname-" + operatorName;
+                result += "Errors: Exception: BPU: " + ex.Message;
+            }
+            finally
+            {
+                billTran = null;
+            }
+
+            if (result == null)
+            {
+                result = "Errors: Error in paying bill, null response, please check status after 5 minutes.";
+            }
+            else
+            {
+                if (result.Contains("Successfully updated to failed"))
+                {
+                    result = "Errors: Can not pay bill, please try later.";
+                }
+            }
+            return result;
+        }
+
+
         public static string PayBillUPPCL(string operatorName, string accountNumber, decimal billAmount, string retailerId, string eBillInfo, string retailUserOrderNo, string retailUserName, string userAgent, string requestIp, string additionalInfo1 = "", string customerName = null, string dueDate = null, string dueAmount = null, string p1 = "", string p2 = "", string inputSource = "web", string pi="", string clientReferenceId = "")
         {
             var billTran = new RTran();

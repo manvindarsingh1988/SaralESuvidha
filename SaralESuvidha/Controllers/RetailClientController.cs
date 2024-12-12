@@ -20,6 +20,8 @@ using Razorpay.Api;
 using UPPCLLibrary;
 using UPPCLLibrary.BillFetch;
 using RTran = SaralESuvidha.Models.RTran;
+using UPPCLLibrary.OTS;
+using Microsoft.VisualBasic;
 
 namespace SaralESuvidha.Controllers
 {
@@ -40,6 +42,11 @@ namespace SaralESuvidha.Controllers
         
 
         public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        public IActionResult OTS()
         {
             return View();
         }
@@ -381,6 +388,73 @@ namespace SaralESuvidha.Controllers
         {
             return View();
         }
-        
+
+        public IActionResult CheckEligibilityForOTS(string accountId, string discomId)
+        {
+            UPPCLManager.CheckTokenExpiry();
+            var obj = UPPCLManager.CheckEligibility(discomId, accountId);
+            
+            return Content(JsonConvert.SerializeObject(obj));
+        }
+
+        public IActionResult GetAmountDetailsForOTS(string accountId, string discomId)
+        {
+            UPPCLManager.CheckTokenExpiry();
+            var obj = UPPCLManager.GetAmountDetails(discomId, accountId);
+            return Content(JsonConvert.SerializeObject(obj));
+        }
+
+        public IActionResult InitiateOTSCase(string accountId, string discomId, int isFull, string amount, string downPayment, string registrationAmount)
+        {
+            if(isFull == 1)
+            {
+                var totalAmount = Convert.ToDecimal(downPayment) + Convert.ToDecimal(registrationAmount);
+                if (amount == null)
+                {
+                    var caseInitResponse = new CaseInitResponse
+                    {
+                        Data = null,
+                        Message = $"Input amount can not be blank and must be equal or greater than the 30% of total amount ({totalAmount})",
+                        Status = "error"
+                    };
+                    return Content(JsonConvert.SerializeObject(caseInitResponse));
+                }
+                else
+                {
+                    var val = Convert.ToDecimal(amount);
+                    
+                    if (val < (totalAmount * 30 / 100))
+                    {
+                        var caseInitResponse = new CaseInitResponse
+                        {
+                            Data = null,
+                            Message = $"Input amount can not be less than the 30% of total amount ({totalAmount})",
+                            Status = "error"
+                        };
+                        return Content(JsonConvert.SerializeObject(caseInitResponse));
+                    }
+                }
+            }
+            
+            UPPCLManager.CheckTokenExpiry();
+            var obj = UPPCLManager.InitiateOTSCase(discomId, accountId, isFull == 1 ? true : false, amount);
+            var ots = JsonConvert.SerializeObject(obj);
+            HttpContext.Session.SetString("otsinfo", ots);
+            return Content(ots);
+        }
+
+        public IActionResult SubmitOTSCase(string accountId, string discomId)
+        {
+            string result = string.Empty;
+            string retailerId = HttpContext.Session.GetString("RetailerId");
+            string retailUserOrderNo = HttpContext.Session.GetInt32("RetailUserOrderNo").ToString();
+            string userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+            string requestIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+            //string retailerId, string eBillInfo, string retailUserOrderNo, string retailUserName, string userAgent, string requestIp
+            var obj = JsonConvert.DeserializeObject<CaseInitResponse>(HttpContext.Session.GetString("otsinfo"));
+            result = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent);
+
+            return Content(result);
+        }
     }
 }

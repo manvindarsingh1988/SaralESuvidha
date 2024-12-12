@@ -14,6 +14,7 @@ namespace UPPCLLibrary
         public int BillPostPayment { get; set; }
         public int BillPostStatusCheck { get; set; }
         public int Forcefail { get; set; }
+        public int OTS { get; set; }
 
         public string Message { get; set; }
     }

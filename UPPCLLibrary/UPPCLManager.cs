@@ -16,6 +16,7 @@ using RestSharp.Authenticators;
 using UPPCLLibrary.BillFail;
 using UPPCLLibrary.BillFetch;
 using UPPCLLibrary.BillPost;
+using UPPCLLibrary.OTS;
 
 namespace UPPCLLibrary
 {
@@ -702,7 +703,7 @@ namespace UPPCLLibrary
             return tr;
         }
 
-        public static BillPostResponse BillPostBillPayment(BillPaymentRequest billPaymentRequest)
+        public static BillPostResponse BillPostBillPayment(BillPaymentRequest billPaymentRequest, bool isOTS = false)
         {
             BillPostResponse billPostResponse = new BillPostResponse();
             RestResponse response =  new RestResponse();
@@ -723,7 +724,15 @@ namespace UPPCLLibrary
                 
                 basicAuth = "Bearer " + uppclConfig.BillPost_BillPayment_AccessToken;
                 request.AddHeader("Authorization", basicAuth);
-                postData = uppclConfig.BillPost_BillPayment_PostData
+                if (isOTS)
+                {
+                    postData = uppclConfig.OTS_Submit_PostData;
+                }
+                else
+                {
+                    postData = uppclConfig.BillPost_BillPayment_PostData;
+                }
+                postData = postData
                     .Replace("_agencyType_", billPaymentRequest.agencyType)
                     .Replace("_agency_id_", billPaymentRequest.agentId)
                     .Replace("_payable_amount_", billPaymentRequest.amount)
@@ -1348,6 +1357,15 @@ namespace UPPCLLibrary
                         UPPCLManager.ForceFailRefreshToken();
                     }
 
+                    if (tokenExpiry.OTS < 0)
+                    {
+                        UPPCLManager.OTSToken();
+                    }
+                    else if (tokenExpiry.OTS < 15)
+                    {
+                        UPPCLManager.OTSRefreshToken();
+                    }
+
                     //MyLog(JsonConvert.SerializeObject(UPPCLManager.TokenExpiryDetail()), false);
                 }
             }
@@ -1406,6 +1424,314 @@ namespace UPPCLLibrary
             return result;
         }
 
+        public static TokenResponse OTSToken()
+        {
+            TokenResponse tr = new TokenResponse();
 
+            try
+            {
+                var client = new RestClient(uppclConfig.TokenUrl);
+                var request = new RestRequest("", Method.Post);
+                string basicAuth = "Basic " + EncodeBase64(Encoding.ASCII, uppclConfig.OTS_Consumer_key + ":" + uppclConfig.OTS_Consumer_Secret);
+                request.AddHeader("Authorization", basicAuth);
+                var response = client.Execute<TokenResponse>(request);
+
+                if (response.IsSuccessful)
+                {
+                    tr = JsonConvert.DeserializeObject<TokenResponse>(response.Content);
+                    if (tr.error != "invalid_grant" || tr.error == "invalid_client")
+                    {
+                        UpdateOTSToken(tr);
+                        Initialize();
+                    }
+                }
+                else
+                {
+                    tr.error_description = "Internal: Error: " + response.Content;
+                }
+
+
+                SaveHitLog("S", null, null, null, "OTSAccess", uppclConfig.TokenUrl, basicAuth, response?.Content, DateTime.Now, null);
+            }
+            catch (Exception ex)
+            {
+                tr.error_description = "Internal: Exception: " + ex.Message;
+            }
+            return tr;
+        }
+
+        public static TokenResponse OTSRefreshToken()
+        {
+            TokenResponse tr = new TokenResponse();
+            //string tr = "";
+
+            try
+            {
+                var client = new RestClient(uppclConfig.RefreshTokenUrl.Replace("_refresh_token_", uppclConfig.OTS_RefreshToken));
+                var request = new RestRequest("", Method.Post);
+                string basicAuth = "Basic " + EncodeBase64(Encoding.ASCII, uppclConfig.OTS_Consumer_key + ":" + uppclConfig.OTS_Consumer_Secret);
+                request.AddHeader("Authorization", basicAuth);
+                var response = client.Execute<TokenResponse>(request);
+
+                if (response.Content.Contains("access token data not"))
+                {
+                    OTSToken();
+                }
+
+                if (response.IsSuccessful)
+                {
+                    tr = JsonConvert.DeserializeObject<TokenResponse>(response.Content);
+                    if (tr.error != "invalid_grant" || tr.error == "invalid_client")
+                    {
+                        UpdateOTSToken(tr);
+                        Initialize();
+                    }
+                    else
+                    {
+                        //Refresh token invalid, so get the fresh access token and refresh token.
+                        OTSToken();
+                    }
+                }
+                else
+                {
+                    tr.error_description = "Internal: Error: " + response.Content;
+                }
+
+                SaveHitLog("S", null, null, null, "OTSAccess", uppclConfig.TokenUrl, basicAuth, response?.Content, DateTime.Now, null);
+
+            }
+            catch (Exception ex)
+            {
+                tr.error_description = "Internal: Exception: " + ex.Message;
+            }
+            return tr;
+        }
+
+        public static string UpdateOTSToken(TokenResponse tr)
+        {
+            string result = "";
+            try
+            {
+                TimeSpan ts = new TimeSpan(0, 0, tr.expires_in / 60, 0);
+                DateTime dtExpiry = DateTime.Now.Add(ts);
+
+                using var con = new SqlConnection(DbConnection);
+                var queryParameters = new DynamicParameters();
+                queryParameters.Add("@Id", "CON001");
+                queryParameters.Add("@OTS_AccessToken", tr.access_token);
+                queryParameters.Add("@OTS_RefreshToken", tr.refresh_token);
+                queryParameters.Add("@OTS_TokenType", tr.token_type);
+                queryParameters.Add("@OTS_ExpiresIn", tr.expires_in);
+                queryParameters.Add("@OTS_ExpiresTime", dtExpiry);
+                result = con.Query<string>("usp_UPPCLConfigOTSTokenUpdate", queryParameters, commandType: System.Data.CommandType.StoredProcedure).SingleOrDefault();
+            }
+            catch (Exception ex)
+            {
+                result += "Exception: " + ex.Message;
+            }
+            return result;
+        }
+
+        public static CheckEligibility CheckEligibility(string divisionName, string consumerNumber)
+        {
+            var br = new CheckEligibility();
+
+            try
+            {
+                string url = uppclConfig.OTS_EligibilityCheck_Url.Replace("_discomName_", divisionName).Replace("_accountNo_", consumerNumber.Trim());
+                var client = new RestClient(url);
+                var request = new RestRequest("", Method.Get);
+                string basicAuth = "Bearer " + uppclConfig.OTS_AccessToken;
+                request.AddHeader("Authorization", basicAuth);
+
+                var response = client.Execute<CheckEligibility>(request);
+
+                SaveHitLog("S", null, null, consumerNumber, "OTS_CheckElgibility_0", url, basicAuth, response?.Content, DateTime.Now, null);
+
+                if (response.IsSuccessful)
+                {
+                    br = JsonConvert.DeserializeObject<CheckEligibility>(response.Content);
+                    if(br != null && br.Data != null && br.Data.Status == "error")
+                    {
+                        br.Status = br.Data.Status;
+                        br.Message = br.Data.Message;
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        br = JsonConvert.DeserializeObject<CheckEligibility>(response.Content);
+
+                        if(br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
+                        {
+                            br.Status = "error";
+                            br.Message = "Failed to check eligibility";
+                        }
+
+                        if (br != null && br.Data != null && br.Data.Status == "error")
+                        {
+                            br.Status = br.Data.Status;
+                            br.Message = br.Data.Message;
+                        }
+                    }
+                    catch
+                    {
+                        br.Status = "error";
+                        br.Message = "Failed to check eligibility";
+                    }
+                }
+
+                SaveHitLog("S", null, null, consumerNumber, "OTS_CheckElgibility", url, basicAuth, response?.Content, DateTime.Now, null);
+
+            }
+            catch (Exception ex)
+            {
+                br.Status = "error";
+                br.Message = ex.Message;
+            }
+            return br;
+        }
+
+        public static AmountDetails GetAmountDetails(string divisionName, string consumerNumber)
+        {
+            var br = new AmountDetails();
+
+            try
+            {
+                string url = uppclConfig.OTS_AmountDetails_Url.Replace("_discomName_", divisionName).Replace("_accountNo_", consumerNumber.Trim());
+                var client = new RestClient(url);
+                var request = new RestRequest("", Method.Get);
+                string basicAuth = "Bearer " + uppclConfig.OTS_AccessToken;
+                request.AddHeader("Authorization", basicAuth);
+
+                var response = client.Execute<AmountDetails>(request);
+
+                SaveHitLog("S", null, null, consumerNumber, "OTS_AmountDetails_0", url, basicAuth, response?.Content, DateTime.Now, null);
+
+                if (response.IsSuccessful)
+                {
+                    br = JsonConvert.DeserializeObject<AmountDetails>(response.Content);
+                    if (br != null && br.Data != null && br.Data.Status == "error")
+                    {
+                        br.Status = br.Data.Status;
+                        br.Message = br.Data.Message;
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        br = JsonConvert.DeserializeObject<AmountDetails>(response.Content);
+                        if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
+                        {
+                            br.Status = "error";
+                            br.Message = "Failed to get Amount Details";
+                        }
+
+                        if (br != null && br.Data != null && br.Data.Status == "error")
+                        {
+                            br.Status = br.Data.Status;
+                            br.Message = br.Data.Message;
+                        }
+                    }
+                    catch
+                    {
+                        br.Status = "error";
+                        br.Message = "Failed to get Amount Details";
+                    }                    
+                }
+
+                SaveHitLog("S", null, null, consumerNumber, "OTS_AmountDetails", url, basicAuth, response?.Content, DateTime.Now, null);
+
+            }
+            catch (Exception ex)
+            {
+                br.Status = "error";
+                br.Message = ex.Message;
+            }
+            return br;
+        }
+
+        public static CaseInitResponse InitiateOTSCase(string divisionName, string consumerNumber, bool isFull, string amount)
+        {
+            var br = new CaseInitResponse();
+            try
+            {
+                var amountDetails = GetAmountDetails(divisionName, consumerNumber);
+                var postData = uppclConfig.OTS_Init_PostData
+                                    .Replace("_account_", consumerNumber)
+                                    .Replace("_discom_", divisionName)
+                                    .Replace("_lpscAmount_", amountDetails.Data.LPSC31.ToString())
+                                    .Replace("_supplyTypeCode_", amountDetails.Data.SupplyType)
+                                    .Replace("_totalOutstandingAmt_", amountDetails.Data.TotoalOutStandingAmount.ToString())
+                                    .Replace("_principalAmt_", amountDetails.Data.Payment31.ToString())
+                                    .Replace("_registrationFee_", isFull ? amount : amountDetails.Data.InstallmentList1[0].RegistrationAmount.ToString())
+                                    .Replace("_downPayment_", isFull ? amountDetails.Data.FullPaymentList[0].Downpayment.ToString() : amountDetails.Data.InstallmentList1[0].Downpayment.ToString())
+                                    .Replace("_existingLoad_", amountDetails.Data.SanctionLoad.ToString())
+                                    .Replace("_installmentAmt_", isFull ? "" : amountDetails.Data.InstallmentList1[0].InstallmentAmount.ToString())
+                                    .Replace("_noOfInstallment_", isFull ? "" : amountDetails.Data.InstallmentList1[0].NoOfInstallments.ToString())
+                                    .Replace("_registrationOption_", "SARAL")
+                                    .Replace("_lpscWaiveOff_", isFull ? amountDetails.Data.FullPaymentList[0].LPSCWaivOff.ToString() : amountDetails.Data.InstallmentList1[0].LPSCWaivOff.ToString());
+                var client = new RestClient(uppclConfig.OTS_Init_Url);
+                var request = new RestRequest("", Method.Post);
+                request.AddStringBody(postData, ContentType.Json);
+                string basicAuth = "Bearer " + uppclConfig.OTS_AccessToken;
+                request.AddHeader("Authorization", basicAuth);
+
+                var response = client.Execute<CaseInitResponse>(request);
+
+                SaveHitLog("S", null, null, consumerNumber, "OTS_CaseInit_0", uppclConfig.OTS_Init_Url, basicAuth, response?.Content, DateTime.Now, null);
+
+                if (response.IsSuccessful)
+                {
+                    br = JsonConvert.DeserializeObject<CaseInitResponse>(response.Content);
+                    if (br != null && br.Data != null && br.Data.Status == "error")
+                    {
+                        br.Status = br.Data.Status;
+                        br.Message = br.Data.Message;
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        br = JsonConvert.DeserializeObject<CaseInitResponse>(response.Content);
+                        if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
+                        {
+                            br.Status = "error";
+                            br.Message = "Failed to initiate OTS case";
+                        }
+
+                        if (br != null && br.Data != null && br.Data.Status == "error")
+                        {
+                            br.Status = br.Data.Status;
+                            br.Message = br.Data.Message;
+                        }
+
+                        if (br != null && br.Data != null && br.Data.ResMsg.ToLower().StartsWith("Eerror"))
+                        {
+                            br.Status = "error";
+                            br.Message = br.Data.ResMsg;
+                        }
+                    }
+                    catch
+                    {
+                        br.Status = "error";
+                        br.Message = "Failed to initiate OTS case";
+                    }
+                }
+
+                SaveHitLog("S", null, null, consumerNumber, "OTS_CaseInit", uppclConfig.OTS_Init_Url, basicAuth, response?.Content, DateTime.Now, null);
+
+            }
+            catch (Exception ex)
+            {
+                br.Status = "error";
+                br.Message = ex.Message;
+            }
+            return br;
+        }
+       
     }
 }

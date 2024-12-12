@@ -67,5 +67,17 @@ namespace UPPCLLibrary
         public DateTime? Forcefail_ExpiresTime { get; set; }
         public string Forcefail_FailUrl { get; set; }
         public string Forcefail_PostData { get; set; }
+        public string OTS_EligibilityCheck_Url { get; set; }
+        public string OTS_AmountDetails_Url { get; set; }
+        public string OTS_Init_Url { get; set; }
+        public string OTS_Init_PostData { get; set; }
+        public string OTS_Consumer_key { get; set; }
+        public string OTS_Consumer_Secret { get; set; }
+        public string OTS_AccessToken { get; set; }
+        public string OTS_RefreshToken { get; set; }
+        public string OTS_TokenType { get; set; }
+        public int? OTS_ExpiresIn { get; set; }
+        public DateTime? OTS_ExpiresTime { get; set; }
+        public string OTS_Submit_PostData { get; set; }
     }
 }

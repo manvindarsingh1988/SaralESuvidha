@@ -29,6 +29,7 @@ namespace UPPCLLibrary.BillPost
         public string param1 { get; set; }
         public string vanNo { get; set; }
         public string walletId { get; set; }
+        public string scheme { get; set; }
 
     }
 }

@@ -12,6 +12,7 @@ using UPPCLLibrary;
 using UPPCLLibrary.BillFail;
 using UPPCLLibrary.BillFetch;
 using UPPCLLibrary.BillPost;
+using UPPCLLibrary.OTS;
 
 namespace SaralESuvidha.Models
 {
@@ -364,6 +365,286 @@ namespace SaralESuvidha.Models
                 result += "Errors: Exception: " + ex.Message;
             }
 
+            return result;
+        }
+
+        public string PayOTSUPPCL(CaseInitResponse initResponse, string inputSource = "web",
+            string clientReferenceId = "")
+        {
+            string result = string.Empty;
+            if (string.IsNullOrEmpty(RetailUserOrderNo.ToString()) || string.IsNullOrEmpty(RechargeMobileNumber) ||
+                    string.IsNullOrEmpty(Amount.ToString()) || string.IsNullOrEmpty(TelecomOperatorName))
+            {
+                result = "Errors: Invalid user data. Can not process bill payment. Please try after login again.";
+            }
+            else
+            {
+                decimal accountInfoInt = Convert.ToDecimal(initResponse.Data.BillDetails.AccountInfo);
+                decimal billAmountInt = Convert.ToDecimal(initResponse.Data.BillDetails.BillAmount);
+                decimal dueDateRebate = Convert.ToDecimal(initResponse.Data.BillDetails.Param1);
+                UPPCL_DDR = Convert.ToDecimal(dueDateRebate);
+                string paymentTypeFullPartial = "";
+                if ((accountInfoInt + dueDateRebate) >= billAmountInt && Amount >= accountInfoInt)
+                {
+                    paymentTypeFullPartial = "FULL";
+                }
+                else if ((accountInfoInt + dueDateRebate) >= billAmountInt && Amount < accountInfoInt)
+                {
+                    paymentTypeFullPartial = "PARTIAL";
+                }
+                else if ((accountInfoInt + dueDateRebate) < billAmountInt && Amount > accountInfoInt)
+                {
+                    paymentTypeFullPartial = "PARTIAL";
+                }
+                else if ((accountInfoInt + dueDateRebate) < billAmountInt && Amount <= accountInfoInt)
+                {
+                    paymentTypeFullPartial = "PARTIAL";
+                }
+
+                UPPCL_PaymentType = paymentTypeFullPartial;
+
+                using (var con = new SqlConnection(StaticData.conString))
+                {
+                    var queryParameters = new DynamicParameters();
+                    //queryParameters.Add("@Id", Id);
+                    queryParameters.Add("@RetailUserOrderNo", RetailUserOrderNo);
+                    queryParameters.Add("@MobileNumber", RechargeMobileNumber);
+                    queryParameters.Add("@OperatorName", TelecomOperatorName);
+                    queryParameters.Add("@Amount", Amount);
+                    queryParameters.Add("@RechargeType", "R");
+                    queryParameters.Add("@RequestIP", RequestIp);
+                    queryParameters.Add("@RequestMachine", RequestMachine);
+                    queryParameters.Add("@RequestGeoCode", RequestGeoCode);
+                    queryParameters.Add("@RequestNumber", RequestNumber);
+                    queryParameters.Add("@RequestMessage", RequestMessage);
+                    queryParameters.Add("@RequestTime", DateTime.Now);
+                    queryParameters.Add("@Parameter1", Parameter1);
+                    queryParameters.Add("@Parameter2", Parameter2);
+                    queryParameters.Add("@Parameter3", Parameter3);
+                    queryParameters.Add("@Parameter4", Parameter4);
+                    queryParameters.Add("@EndCustomerName", EndCustomerName);
+                    queryParameters.Add("@EndCustomerMobileNumber", EndCustomerMobileNumber);
+                    queryParameters.Add("@Extra1", Extra1);
+                    queryParameters.Add("@Extra2", Extra2);
+                    queryParameters.Add("@UPPCL_ProjectArea", UPPCL_ProjectArea);
+                    queryParameters.Add("@UPPCL_AccountInfo", UPPCL_AccountInfo);
+                    queryParameters.Add("@UPPCL_TDConsumer", UPPCL_TDConsumer);
+                    queryParameters.Add("@UPPCL_ConnectionType", UPPCL_ConnectionType);
+                    queryParameters.Add("@UPPCL_DivCode", UPPCL_DivCode);
+                    queryParameters.Add("@UPPCL_SDOCode", UPPCL_SDOCode);
+                    queryParameters.Add("@UPPCL_BillAmount", UPPCL_BillAmount);
+                    queryParameters.Add("@UPPCL_Division", UPPCL_Division);
+                    queryParameters.Add("@UPPCL_SubDivision", UPPCL_SubDivision);
+                    queryParameters.Add("@UPPCL_PurposeOfSupply", UPPCL_PurposeOfSupply);
+                    queryParameters.Add("@UPPCL_SanctionedLoadInKW", UPPCL_SanctionedLoadInKW);
+                    queryParameters.Add("@UPPCL_BillId", UPPCL_BillId);
+                    queryParameters.Add("@UPPCL_Discom", UPPCL_Discom);
+                    queryParameters.Add("@UPPCL_BillDate", UPPCL_BillDate);
+                    queryParameters.Add("@UPPCL_PaymentType", UPPCL_PaymentType);
+                    queryParameters.Add("@UPPCL_DDR", dueDateRebate);
+                    queryParameters.Add("@ClientApiUserReferenceId", clientReferenceId);
+
+                    RechargeStatus = "PROCESS";
+
+                    var resp = con.QuerySingleOrDefault<RTranValidateResponse>("usp_RTranValidateUPPCL", queryParameters, commandType: System.Data.CommandType.StoredProcedure);
+                    string printMessage = "";
+                    if (resp != null)
+                    {
+                        if (!string.IsNullOrEmpty(resp.Id))
+                        {
+                            Id = resp.Id;
+                            // set the workstatus to 1 and billpost date to current date time.
+                            var updateTime = UpdateBeforeUPPCLPush();
+                            if (updateTime.Contains("Success"))
+                            {
+                                BillPaymentRequest billPaymentRequest = new BillPaymentRequest();
+                                billPaymentRequest.agentId = UPPCLManager.uppclConfig.AgentID;
+                                billPaymentRequest.agencyType = "OTHER";
+                                billPaymentRequest.amount = ((int)Amount).ToString();
+                                billPaymentRequest.billAmount = UPPCL_BillAmount.ToString();
+                                billPaymentRequest.billId = UPPCL_BillId;
+                                billPaymentRequest.connectionType = UPPCL_ConnectionType;
+                                billPaymentRequest.consumerAccountId = RechargeMobileNumber;
+                                billPaymentRequest.consumerName = initResponse.Data.BillDetails.ConsumerName.Replace(@"\", @"\\")
+                                    .Replace(@"/", @"\/").Replace(".", "").Replace("-", "");
+                                billPaymentRequest.discom = UPPCL_Discom;
+                                billPaymentRequest.division = initResponse.Data.BillDetails.Division;
+                                billPaymentRequest.divisionCode = initResponse.Data.BillDetails.DivCode;
+                                billPaymentRequest.mobile = string.IsNullOrEmpty(initResponse.Data.BillDetails.MobileNumber) ? "" : initResponse.Data.BillDetails.MobileNumber;
+                                billPaymentRequest.outstandingAmount = initResponse.Data.BillDetails.AccountInfo;
+                                billPaymentRequest.paymentType = paymentTypeFullPartial;
+                                billPaymentRequest.referenceTransactionId = Id;
+                                billPaymentRequest.sourceType = initResponse.Data.BillDetails.ProjectArea;
+                                billPaymentRequest.type = initResponse.Data.BillDetails.ProjectArea;
+                                billPaymentRequest.vanNo = UPPCLManager.uppclConfig.AgentVANNo;
+                                billPaymentRequest.walletId = RetailUserId;
+
+                                string city = "NA";
+                                try
+                                {
+                                    if (initResponse.Data.BillDetails.PremiseAddress.City != null)
+                                        city = initResponse.Data.BillDetails.PremiseAddress.City;
+                                }
+                                catch (Exception)
+                                {
+                                    city = "NA";
+                                }
+
+                                if (city.Length < 1)
+                                {
+                                    city = "NA";
+                                }
+
+                                billPaymentRequest.city = city;
+                                try
+                                {
+                                    billPaymentRequest.param1 = initResponse.Data.BillDetails.Param1.ToString() ?? string.Empty;
+                                }
+                                catch (Exception)
+                                {
+
+                                }
+
+                                string successFailMessage = "";
+
+                                try
+                                {
+                                    BillPostResponse billPostResponse = UPPCLManager.BillPostBillPayment(billPaymentRequest, true);
+
+                                    OtherApiStatusCode = billPostResponse.status;
+                                    CallbackData = JsonConvert.SerializeObject(billPostResponse);
+                                    ConfirmDate = DateTime.Now;
+
+                                    if (billPostResponse.status == "SUCCESS")
+                                    {
+                                        RechargeStatus = "SUCCESS";
+                                        OtherApiId = billPostResponse.externalTransactionId;
+                                        LiveId = billPostResponse.externalTransactionId;
+                                        WorkStatus = 2;
+                                        TranType = 3;
+
+                                        UpdateAfterCallbackProcessUPPCL();
+                                    }
+                                    else if (billPostResponse.status == "FAILED")
+                                    {
+                                        if (billPostResponse.message.Contains("enough funds in wallet"))
+                                        {
+                                            printMessage = "Errors: Can not pay bill. Insufficient balance.";
+                                        }
+
+                                        if (billPostResponse.message.Contains("payment was already done"))
+                                        {
+                                            printMessage = "Errors: Can not pay bill. Payment was already done.";
+                                        }
+
+                                        if (billPostResponse.message.Contains("Id and van number do not"))
+                                        {
+                                            printMessage = "Errors: Can not pay bill. Agent Id and van number do not match.";
+                                        }
+
+                                        RechargeStatus = "FAILURE";
+                                        OtherApiId = "FAILURE";
+                                        LiveId = "";
+                                        WorkStatus = 2;
+
+                                        TranType = 10;
+
+                                        UpdateAfterCallbackProcessUPPCL();
+
+                                        Remarks = printMessage;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(billPostResponse.message))
+                                    {
+                                        if (billPostResponse.message.Contains("Internal: Exception: Value cannot be null.") || billPostResponse.message.Contains("Exception: Server:") || billPostResponse.message.Contains("The requested API is temporarily blocked"))
+                                        {
+                                            Remarks = "Errors: Can not send bill. Please check your recharge report after 1 minute for final status.";
+
+                                            try
+                                            {
+                                                Thread.Sleep(15000); // Delay 15 seconds before calling status check
+                                                Id = resp.Id;
+                                                RTran tempTran = LoadRecord();
+                                                UPPCL_BillId = tempTran.UPPCL_BillId;
+                                                CreateDate = tempTran.CreateDate;
+                                                Amount = tempTran.Amount;
+
+                                                StatusCheckResponse statusCheckResponse = StatusCheck(true);
+
+                                                Remarks = (statusCheckResponse.status == "SUCCESS" ? "Success: " : "Errors: ") + statusCheckResponse.message;
+
+                                                //Exception: Server:
+                                                if (statusCheckResponse.message.Contains("Status check api down") || statusCheckResponse.message.Contains("Exception: ") || statusCheckResponse.message.Contains("No Record found") || statusCheckResponse.message.Contains("The requested API is temporarily blocked"))
+                                                {
+                                                    try
+                                                    {
+                                                        ForceFailResponse forceFailResponse = ForceFail(true);
+                                                        //Remarks = "Errors: " + forceFailResponse.message;
+                                                        Remarks = "Errors: Payment failed.";
+                                                        printMessage = Remarks;
+                                                    }
+                                                    catch (Exception exFF)
+                                                    {
+                                                        Remarks = "Errors: Can not send bill. Please check your recharge report after 1 minute for final status. Force fail failed.";
+                                                        printMessage = Remarks;
+                                                    }
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Remarks = "Errors: Can not send bill. Please check your recharge report after 1 minute for final status. Status check failed.";
+                                                printMessage = Remarks;
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    printMessage = "Errors: Can not send bill. Please check your recharge report in 1 minute for final status." + ex.Message;
+                                    Remarks += printMessage;
+                                }
+                            }
+                            else
+                            {
+                                printMessage = "Errors: Can not save record for bill post.";
+                            }
+
+                            //after post , update the details with poost data
+
+                            //printMessage = " <a target='_blank' href='Home/PrintReceipt?t=" + StaticData.ConvertStringToHex(resp.Id) + "'>PRINT RECEIPT</a>";
+
+                            printMessage = " <span class='btn btn-primary' onclick=\'PrintReceipt(\"" +
+                                           StaticData.ConvertStringToHex(resp.Id) + "\");\'>PRINT RECEIPT</span>";
+                        }
+                        else
+                        {
+                            Remarks = "Errors: " + resp.OperationMessage;
+                            result = Remarks;
+                        }
+                    }
+
+                    if (StaticData.loginSource == "mobile")
+                    {
+                        printMessage = "=" + resp.Id;
+                    }
+
+                    if (RechargeStatus == "FAILURE")
+                    {
+                        result = Remarks;
+                    }
+                    else if (RechargeStatus == "PROCESS")
+                    {
+                        result = Remarks;
+                    }
+                    else
+                    {
+                        result = "Success: Bill payment / recharge status of " + TelecomOperatorName +
+                                 " of account " + RechargeMobileNumber + " of Amount " + Amount?.ToString("N2") +
+                                 ". " + resp.OperationMessage + " Balance: " + resp.ClosingBalance?.ToString("N2") +
+                                 printMessage;
+                    }
+                }
+            }
             return result;
         }
 
