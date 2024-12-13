@@ -281,14 +281,14 @@
     function Submit() {
          $.getJSON("@Url.Action("SubmitOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val(),
             function (data) {
-                if(data.Status == "success") {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail2').html(data.Message).removeClass('text-success').addClass('text-danger');
+                } else {
+                    //success
                     $('#checkeligiblecard').removeClass('d-none');
                     $('#submitcard').addClass('d-none');
                     $('#InfoDetail').html(data.Message).addClass('text-success').removeClass('text-danger');
-                    $('#Account').val(data1.Data.Account);
-                }
-                else {
-                    $('#InfoDetail2').html(data.Message).removeClass('text-success').addClass('text-danger');
+                    $('#Account').val('');
                 }
             });
     }
