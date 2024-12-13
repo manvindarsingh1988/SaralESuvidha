@@ -1582,7 +1582,7 @@ namespace UPPCLLibrary
                         if (br != null && br.Data != null && br.Data.Result == "False")
                         {
                             br.Status = "error";
-                            br.Message = "Account Id is not eleigible for OTS.";
+                            br.Message = "Account Id is not eligible for OTS.";
                         }
                     }
                     catch
