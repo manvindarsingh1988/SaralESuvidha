@@ -453,7 +453,7 @@ namespace SaralESuvidha.Controllers
             //string retailerId, string eBillInfo, string retailUserOrderNo, string retailUserName, string userAgent, string requestIp
             var obj = JsonConvert.DeserializeObject<CaseInitResponse>(HttpContext.Session.GetString("otsinfo"));
             result = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent);
-
+            result = "Errors: Can not pay bill. Insufficient balance.";
             return Content(result);
         }
     }

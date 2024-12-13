@@ -279,10 +279,11 @@
     }
 
     function Submit() {
-         $.getJSON("@Url.Action("SubmitOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val(),
+        $.get("@Url.Action("SubmitOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val(),
             function (data) {
+                console.log(data);
                 if (data.indexOf('Errors:') > -1) {
-                    $('#InfoDetail2').html(data.Message).removeClass('text-success').addClass('text-danger');
+                    $('#InfoDetail2').html(data).removeClass('text-success').addClass('text-danger');
                 } else {
                     //success
                     $('#checkeligiblecard').removeClass('d-none');
