@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "_LayoutBlank";
 }
 <!DOCTYPE html>
@@ -64,7 +64,7 @@
 
             <!-- Logo -->
             <div class="d-flex justify-content-center align-items-center">
-                <h3>E-SUVIDHA</h3>
+                <h3>E-Suvidha</h3>
             </div>
             <!-- / Logo -->
             <!-- Form -->
@@ -73,7 +73,7 @@
                     <div class="" name="ActionMessage" id="ActionMessage"></div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Login Id</label>
+                    <label class="form-label">Monitor Login Id</label>
                     <input type="text" class="form-control" id="mobileno" name="mobileno">
                 </div>
                 <div class="form-group">
@@ -126,20 +126,14 @@
 
         function Login() {
             if(ValidInput()){
-                $.get("@Url.Action("OfficeLoginResult", "Home")?m=" + $('#mobileno').val() + "&p=" + $('#password').val(),
+                $.get("@Url.Action("MonitorLoginResult", "Home")?m=" + $('#mobileno').val() + "&p=" + $('#password').val(),
                     function(data) {
                         if (data.indexOf('Errors:') > -1) {
                             $('#ActionMessage').html('<span class="">' + data + '</span>');
                         } else {
                             //success
                             $('#ActionMessage').html('<span class="">' + data + '</span>');
-                            if(data.indexOf('cs')>0){
-                                window.location.href = "/CustomerSupport/Index";
-                            }
-
-                            if(data.indexOf('ad')>0){
-                                window.location.href = "/SysAdmin/Index";
-                            }
+                            window.location.href = "/Home/TranMonitor";
                         }
                     
                     });
