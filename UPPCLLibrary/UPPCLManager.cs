@@ -1565,6 +1565,10 @@ namespace UPPCLLibrary
 
                         if(br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
                         {
+                            if(br == null)
+                            {
+                                br = new CheckEligibility();
+                            }
                             br.Status = "error";
                             br.Message = "Failed to check eligibility";
                         }
@@ -1574,9 +1578,19 @@ namespace UPPCLLibrary
                             br.Status = br.Data.Status;
                             br.Message = br.Data.Message;
                         }
+
+                        if (br != null && br.Data != null && br.Data.Result == "False")
+                        {
+                            br.Status = "error";
+                            br.Message = "Account Id is not eleigible for OTS.";
+                        }
                     }
                     catch
                     {
+                        if (br == null)
+                        {
+                            br = new CheckEligibility();
+                        }
                         br.Status = "error";
                         br.Message = "Failed to check eligibility";
                     }
@@ -1587,6 +1601,10 @@ namespace UPPCLLibrary
             }
             catch (Exception ex)
             {
+                if (br == null)
+                {
+                    br = new CheckEligibility();
+                }
                 br.Status = "error";
                 br.Message = ex.Message;
             }
@@ -1625,6 +1643,10 @@ namespace UPPCLLibrary
                         br = JsonConvert.DeserializeObject<AmountDetails>(response.Content);
                         if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
                         {
+                            if (br == null)
+                            {
+                                br = new AmountDetails();
+                            }
                             br.Status = "error";
                             br.Message = "Failed to get Amount Details";
                         }
@@ -1637,6 +1659,10 @@ namespace UPPCLLibrary
                     }
                     catch
                     {
+                        if (br == null)
+                        {
+                            br = new AmountDetails();
+                        }
                         br.Status = "error";
                         br.Message = "Failed to get Amount Details";
                     }                    
@@ -1647,6 +1673,10 @@ namespace UPPCLLibrary
             }
             catch (Exception ex)
             {
+                if (br == null)
+                {
+                    br = new AmountDetails();
+                }
                 br.Status = "error";
                 br.Message = ex.Message;
             }
@@ -1699,6 +1729,10 @@ namespace UPPCLLibrary
                         br = JsonConvert.DeserializeObject<CaseInitResponse>(response.Content);
                         if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
                         {
+                            if (br == null)
+                            {
+                                br = new CaseInitResponse();
+                            }
                             br.Status = "error";
                             br.Message = "Failed to initiate OTS case";
                         }
@@ -1717,6 +1751,10 @@ namespace UPPCLLibrary
                     }
                     catch
                     {
+                        if (br == null)
+                        {
+                            br = new CaseInitResponse();
+                        }
                         br.Status = "error";
                         br.Message = "Failed to initiate OTS case";
                     }
@@ -1727,6 +1765,10 @@ namespace UPPCLLibrary
             }
             catch (Exception ex)
             {
+                if (br == null)
+                {
+                    br = new CaseInitResponse();
+                }
                 br.Status = "error";
                 br.Message = ex.Message;
             }
