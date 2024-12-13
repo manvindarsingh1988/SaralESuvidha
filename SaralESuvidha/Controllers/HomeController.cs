@@ -134,7 +134,46 @@ namespace SaralESuvidha.Controllers
             return Content(StaticData.OperatorListJson());
         }
         
+        public IActionResult MonitorLogin()
+        {
+            return View();
+        }
         
+        public IActionResult TranLog()
+        {
+            if (HttpContext.Session.GetString("monitor") != null && HttpContext.Session.GetString("monitor") == "9415004756")
+            {
+                return Content(StaticData.TranListJson());
+            }
+            else
+            {
+                return Content("Invalid request");
+            }
+        }
+        
+        public IActionResult TranMonitor()
+        {
+            if (HttpContext.Session.GetString("monitor") != null && HttpContext.Session.GetString("monitor") == "9415004756")
+            {
+                return View();
+            }
+            else
+            {
+                return Content("Invalid request");
+            }
+        }
+        
+        public IActionResult WalletBalance()
+        {
+            if (HttpContext.Session.GetString("monitor") != null && HttpContext.Session.GetString("monitor") == "9415004756")
+            {
+                return Content(StaticData.WalletBalanceJson());
+            }
+            else
+            {
+                return Content("Invalid request");
+            }
+        }
 
         public IActionResult RetailLogin(string m, string p, string s="w", string f="", string d="")
         {
@@ -317,6 +356,36 @@ namespace SaralESuvidha.Controllers
                     else
                     {
                         result = "Errors: User not found or not active.";
+                    }
+                }
+                else
+                {
+                    result = "Errors: Invalid login details.";
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: " + ex.Message;
+            }
+            return Content(result);
+        }
+        
+        public IActionResult MonitorLoginResult(string m, string p)
+        {
+            string result = string.Empty;
+            try
+            {
+                if (m.Length == 10 && p.Length > 5)
+                {
+                    if (m == "9415004756" && p == "9651788888")
+                    {
+                        HttpContext.Session.SetString("monitor", "9415004756");
+                        result = "Success: login ok. " + m;
+                        
+                    }
+                    else
+                    {
+                        result = "Errors: Invalid user or password.";
                     }
                 }
                 else

@@ -2588,6 +2588,44 @@ namespace SaralESuvidha.ViewModel
             return retailuserPin;
         }
         
+        public static string TranListJson()
+        {
+            string result = "[]";
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    List<TransactionLog> transactionLogs = con.Query<TransactionLog>("usp_TransactionLog", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    result = JsonConvert.SerializeObject(transactionLogs);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+            return result;
+        }
+        
+        public static string WalletBalanceJson()
+        {
+            string result = "";
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    WalletBalance walletBalance = con.Query<WalletBalance>("usp_WalletBalance", parameters, commandType: System.Data.CommandType.StoredProcedure).SingleOrDefault();
+                    result = JsonConvert.SerializeObject(walletBalance);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+            return result;
+        }
+        
         public static string UPPCLReportByDate(DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
         {
             var aaIData = new UPPCLReport();
