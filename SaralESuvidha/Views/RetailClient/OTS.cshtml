@@ -91,7 +91,7 @@
                 <table class="table">
                     <tr class="bg-primary">
                         <th class="text-white">
-                            Registration Amount (पंजीकरण राशि)
+                            Principal Amount
                         </th>
                         <th class="text-white">
                             LPSC Waive Off (एलपीएससी छूट)
@@ -138,7 +138,7 @@
                             Installment Amount (किस्त राशि)
                         </th>
                         <th class="text-white">
-                            Registration Amount (पंजीकरण राशि)
+                            Principal Amount
                         </th>
                         <th class="text-white">
                             LPSC Waive Off (एलपीएससी छूट)
@@ -162,8 +162,8 @@
             </div>
             <div class="row" id="amountdiv">
                <div class="col-lg-2 form-group">
-                    <label>Amount:</label>
-                    <input id="amount" name="amount" type="number" class="form-control"/>
+                    <label>Pay Amount:</label>
+                    <input id="amount" name="amount" type="number" class="form-control"  />
                 </div>
             </div>
             <div class="row">
@@ -212,6 +212,16 @@
             </div>
         </div>
     </div>
+    <div class="card d-none" id="result">
+        <div class="card-body">
+            <h4 class="card-title text-center">Consumer Information</h4>
+            <div class="row">
+                <div class="col-sm-12 form-group">
+                    <span id="EBillActionMessage" name="EBillActionMessage"></span>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 <script type="text/javascript">
 
@@ -235,11 +245,11 @@
                                 $('#optioncard').removeClass('d-none');
                                 $('#checkeligiblecard').addClass('d-none');
                                 $('#AccountRO').val(data1.Data.AccountId);
-                                $('#registrationAmount').html(data1.Data.FullPaymentList[0].Downpayment);
-                                $('#lpscWaiveOff').html(data1.Data.FullPaymentList[0].WaveOffPercent);
+                                $('#registrationAmount').html(data1.Data.Payment31);
+                                $('#lpscWaiveOff').html(data1.Data.FullPaymentList[0].LPSCWaivOff);
                                 $('#registationPayableAmount').html(data1.Data.FullPaymentList[0].RegistrationAmount);
-                                $('#registrationAmountI').html(data1.Data.InstallmentList1[0].Downpayment);
-                                $('#lpscWaiveOffI').html(data1.Data.InstallmentList1[0].WaveOffPercent);
+                                $('#registrationAmountI').html(data1.Data.Payment31);
+                                $('#lpscWaiveOffI').html(data1.Data.InstallmentList1[0].LPSCWaivOff);
                                 $('#registationPayableAmountI').html(data1.Data.InstallmentList1[0].RegistrationAmount);
                                 $('#installments').html(data1.Data.InstallmentList1[0].NoOfInstallments);
                                 $('#installmentAmount').html(data1.Data.InstallmentList1[0].InstallmentAmount);
@@ -247,7 +257,7 @@
                                 $('#Address').html('NA');
                                 $('#Mobile').html('NA');
                                 $('#Category').html(data1.Data.TarrifType);
-                                $('#principalamount').html(data1.Data.TotoalOutStandingAmount);
+                                $('#principalamount').html(data1.Data.Payment31);
                                 $('#lpscamount').html(data1.Data.LPSC31);
                                 $('#sanctionload').html(data1.Data.SanctionLoad);
                                 $('#supplytype').html(data1.Data.SupplyType);
@@ -266,7 +276,13 @@
                 if(data.Status == "success") {
                     console.log(data);
                     $('#Name1').html(data.Data.BillDetails.ConsumerName);
-                    $('#ramount').html(data.Data.BillDetails.BillAmount);
+                    if (isFull) {
+                        $('#ramount').html($('#amount').val());
+                    }
+                    else {
+                        $('#ramount').html($('#registationPayableAmountI').text());
+                    }
+                    
                     $('#AccountRO1').val(data.Data.BillDetails.KNumber);
                     $('#eligiblecard').addClass('d-none');
                     $('#optioncard').addClass('d-none');
@@ -279,16 +295,17 @@
     }
 
     function Submit() {
-        $.get("@Url.Action("SubmitOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val(),
+        var isFull = $("#full").prop("checked") ? 1 : 0;
+        $.get("@Url.Action("SubmitOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + isFull,
             function (data) {
                 console.log(data);
                 if (data.indexOf('Errors:') > -1) {
                     $('#InfoDetail2').html(data).removeClass('text-success').addClass('text-danger');
                 } else {
                     //success
-                    $('#checkeligiblecard').removeClass('d-none');
+                    $('#result').removeClass('d-none');
                     $('#submitcard').addClass('d-none');
-                    $('#InfoDetail').html(data.Message).addClass('text-success').removeClass('text-danger');
+                    $('#EBillActionMessage').html('<span class="text-success">' + data + '</span>');
                     $('#Account').val('');
                 }
             });
@@ -314,6 +331,13 @@
         }else{
             $("#amountdiv").hide();
         }
+        
     });
+        $("#amount").keypress(function (e) {
+            console.log(e)
+            console.log(1)
+            if (e.which < 48 || 57 < e.which)
+                e.preventDefault();
+        });
     });
 </script>

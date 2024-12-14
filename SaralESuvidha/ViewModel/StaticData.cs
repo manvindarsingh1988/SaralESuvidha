@@ -1920,7 +1920,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, string inputSource = "web")
+        public static string PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, decimal amount, string inputSource = "web")
         {
             var billTran = new RTran();
             string result = string.Empty;
@@ -1930,7 +1930,7 @@ namespace SaralESuvidha.ViewModel
                 billTran.RetailUserId = retailerId;
                 billTran.TelecomOperatorName = operatorName;
                 billTran.RechargeMobileNumber = accountNumber;
-                billTran.Amount = Convert.ToDecimal(initResponse.Data.BillDetails.BillAmount);
+                billTran.Amount = amount;
                 var dueAmount = (int)Math.Round(Convert.ToDecimal(initResponse.Data.BillDetails.AccountInfo), MidpointRounding.AwayFromZero);
                 string retailerName = "" + dueAmount.ToString();
                 try

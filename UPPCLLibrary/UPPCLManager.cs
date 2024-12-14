@@ -1689,6 +1689,17 @@ namespace UPPCLLibrary
             try
             {
                 var amountDetails = GetAmountDetails(divisionName, consumerNumber);
+                decimal downPayment;
+                if (isFull)
+                {
+                    var diff = Convert.ToDecimal(amount) - amountDetails.Data.FullPaymentList[0].RegistrationAmount;
+                    downPayment = amountDetails.Data.FullPaymentList[0].Downpayment - diff;
+                }
+                else
+                {
+                    downPayment = amountDetails.Data.InstallmentList1[0].Downpayment;
+                }
+                
                 var postData = uppclConfig.OTS_Init_PostData
                                     .Replace("_account_", consumerNumber)
                                     .Replace("_discom_", divisionName)
@@ -1697,10 +1708,10 @@ namespace UPPCLLibrary
                                     .Replace("_totalOutstandingAmt_", amountDetails.Data.TotoalOutStandingAmount.ToString())
                                     .Replace("_principalAmt_", amountDetails.Data.Payment31.ToString())
                                     .Replace("_registrationFee_", isFull ? amount : amountDetails.Data.InstallmentList1[0].RegistrationAmount.ToString())
-                                    .Replace("_downPayment_", isFull ? amountDetails.Data.FullPaymentList[0].Downpayment.ToString() : amountDetails.Data.InstallmentList1[0].Downpayment.ToString())
+                                    .Replace("_downPayment_", downPayment.ToString())
                                     .Replace("_existingLoad_", amountDetails.Data.SanctionLoad.ToString())
-                                    .Replace("_installmentAmt_", isFull ? "" : amountDetails.Data.InstallmentList1[0].InstallmentAmount.ToString())
-                                    .Replace("_noOfInstallment_", isFull ? "" : amountDetails.Data.InstallmentList1[0].NoOfInstallments.ToString())
+                                    .Replace("_installmentAmt_", isFull ? "0" : amountDetails.Data.InstallmentList1[0].InstallmentAmount.ToString())
+                                    .Replace("_noOfInstallment_", isFull ? "0" : amountDetails.Data.InstallmentList1[0].NoOfInstallments.ToString())
                                     .Replace("_registrationOption_", "SARAL")
                                     .Replace("_lpscWaiveOff_", isFull ? amountDetails.Data.FullPaymentList[0].LPSCWaivOff.ToString() : amountDetails.Data.InstallmentList1[0].LPSCWaivOff.ToString());
                 var client = new RestClient(uppclConfig.OTS_Init_Url);

@@ -401,6 +401,8 @@ namespace SaralESuvidha.Controllers
         {
             UPPCLManager.CheckTokenExpiry();
             var obj = UPPCLManager.GetAmountDetails(discomId, accountId);
+            var amountdetail = JsonConvert.SerializeObject(obj);
+            HttpContext.Session.SetString("amountdetail", amountdetail);
             return Content(JsonConvert.SerializeObject(obj));
         }
 
@@ -408,13 +410,13 @@ namespace SaralESuvidha.Controllers
         {
             if(isFull == 1)
             {
-                var totalAmount = Convert.ToDecimal(downPayment) + Convert.ToDecimal(registrationAmount);
+                var totalAmount = Convert.ToDecimal(registrationAmount);
                 if (amount == null)
                 {
                     var caseInitResponse = new CaseInitResponse
                     {
                         Data = null,
-                        Message = $"Input amount can not be blank and must be equal or greater than the 30% of total amount ({totalAmount})",
+                        Message = $"Input amount can not be blank and must be equal or greater than Registation Payable Amount (पंजीकरण देय राशि)  ({totalAmount})",
                         Status = "error"
                     };
                     return Content(JsonConvert.SerializeObject(caseInitResponse));
@@ -423,12 +425,12 @@ namespace SaralESuvidha.Controllers
                 {
                     var val = Convert.ToDecimal(amount);
                     
-                    if (val < (totalAmount * 30 / 100))
+                    if (val < (totalAmount))
                     {
                         var caseInitResponse = new CaseInitResponse
                         {
                             Data = null,
-                            Message = $"Input amount can not be less than the 30% of total amount ({totalAmount})",
+                            Message = $"Input amount can not be less than Registation Payable Amount (पंजीकरण देय राशि)  ({totalAmount})",
                             Status = "error"
                         };
                         return Content(JsonConvert.SerializeObject(caseInitResponse));
@@ -443,7 +445,7 @@ namespace SaralESuvidha.Controllers
             return Content(ots);
         }
 
-        public IActionResult SubmitOTSCase(string accountId, string discomId)
+        public IActionResult SubmitOTSCase(string accountId, string discomId, string amount, int isFull)
         {
             string result = string.Empty;
             string retailerId = HttpContext.Session.GetString("RetailerId");
@@ -452,7 +454,17 @@ namespace SaralESuvidha.Controllers
             string requestIp = HttpContext.Connection.RemoteIpAddress?.ToString();
             //string retailerId, string eBillInfo, string retailUserOrderNo, string retailUserName, string userAgent, string requestIp
             var obj = JsonConvert.DeserializeObject<CaseInitResponse>(HttpContext.Session.GetString("otsinfo"));
-            result = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent);
+            var obj1 = JsonConvert.DeserializeObject<AmountDetails>(HttpContext.Session.GetString("amountdetail"));
+            decimal amount1;
+            if (isFull == 1)
+            {
+                amount1 = Convert.ToDecimal(amount);
+            }
+            else
+            {
+                amount1 = Convert.ToDecimal(obj1.Data.InstallmentList1[0].RegistrationAmount);
+            }
+            result = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent, amount1);
             return Content(result);
         }
     }
