@@ -83,7 +83,9 @@ update [UPPCLConfig] set OTS_Submit_PostData =
 "type": "_project_area_from_bill_fetch_api_",
 "vanNo": "_van_no_",
 "walletId": "_our_agent_id_",
-"scheme": "OTS"
+"scheme": "OTS",
+"param1": "_param1_",
+"city": "_city_"
 }'
 Go
 

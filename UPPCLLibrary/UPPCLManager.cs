@@ -1694,6 +1694,10 @@ namespace UPPCLLibrary
                 {
                     var diff = Convert.ToDecimal(amount) - amountDetails.Data.FullPaymentList[0].RegistrationAmount;
                     downPayment = amountDetails.Data.FullPaymentList[0].Downpayment - diff;
+                    if (downPayment < 0)
+                    {
+                        downPayment = 0;
+                    }
                 }
                 else
                 {
