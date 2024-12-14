@@ -464,6 +464,7 @@ namespace SaralESuvidha.Controllers
             {
                 amount1 = Convert.ToDecimal(obj1.Data.InstallmentList1[0].RegistrationAmount);
             }
+            HttpContext.Session.SetString("isFull", isFull.ToString());
             result = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent, amount1);
             return Content(result);
         }
