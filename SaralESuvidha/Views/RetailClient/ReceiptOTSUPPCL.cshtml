@@ -1,4 +1,5 @@
-﻿@{
+﻿@model SaralESuvidha.ViewModel.UPPCLOTSReciptModal
+@{
     Layout = "_LayoutBlank";
 }
     <html>
@@ -42,6 +43,10 @@
                 font-size: 12px;
                 padding: 5px;
             }
+            .table {
+              border: 1px solid black;
+              border-collapse: collapse;
+            }
         </style>
     </head>
     <body>
@@ -55,33 +60,86 @@
                         <h1>@Model.TelecomOperatorName</h1>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <div style="text-align: center;">
+                            <strong>एक मुश्त समाधान योजना पंजीकरण पावती</strong>
+                        </div>
+                    </td>                    
+                </tr>
+                <tr>
+                    <td>
+                        <div style="text-align: center;" id="info">
+                        </div>
+                    </td>
+                </tr>
+                 <tr>
+                    <td>
+                        <div style="text-align: left;" id="info">
+                            प्रिय उपभोक्ता,
+                        </div>                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="text-align: center;" id="para">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="text-align: center;" id="installment">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                         <div style="text-align: center;">
+                            <p>
+                                <strong>
+                                    नोट: उक्त बकाये किश्तों का भुगतान अग्रिम भुगतान (Advance Payment) के रूप में भी किया जा सकता है।
+                                </strong>
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                         <div style="text-align: center;">
+                            <p>
+                                धन्यवाद|
+                            </p>
+                        </div>
+                    </td>
+                </tr>
             </table>
         </div>
-        <div style="text-align: center;">
-        <strong>एक मुश्त समाधान योजना पंजीकरण पावती</strong>
-        </div>
-    <div style="text-align: center;">
-    </div>
-    <div style="text-align: center;">
-    </div>
-    <div style="text-align: center;">
-    </div>
-    <div style="text-align: center;">
-        <p>
-            <strong>
-                नोट: उक्त बकाये किश्तों का भुगतान अग्रिम भुगतान (Advance Payment) के रूप में भी किया जा सकता है।
-            </strong>
-        </p>
-    </div>
-    <div style="text-align: center;">
-        <p>
-            धन्यवाद|
-        </p>
-    </div>
         <script type="text/javascript">
             function PrintReceipt() {
                 window.print();
             }
+        var div = document.getElementById('info');
+        var abc = '@Model.InfoTable'
+         abc = abc.replace(/&gt;/g, '>');
+            abc = abc.replace(/&lt;/g, '<');
+            abc = abc.replace(/&quot;/g, '"');
+            abc = abc.replace(/&apos;/g, "'");
+            abc = abc.replace(/&amp;/g, '&');
+            div.innerHTML += abc;
+
+            var div1 = document.getElementById('para');
+            div1.innerHTML += '@Model.Para1';
+            console.log(abc)
+            abc = '@Model.InstallmentTable';
+            var div2 = document.getElementById('installment');
+            abc = abc.replace(/&gt;/g, '>');
+            abc = abc.replace(/&lt;/g, '<');
+            abc = abc.replace(/&quot;/g, '"');
+            abc = abc.replace(/&apos;/g, "'");
+            abc = abc.replace(/&amp;/g, '&');
+            abc = abc.replace(/&amp;/g, '&');
+            console.log(abc)
+            div2.innerHTML += abc;
         </script>
     </body>
     </html>

@@ -469,95 +469,191 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
 
-        //public IActionResult ReceiptOTSUPPCL(string accountId, string discomId, string amount, int isFull)
-        //{
-        //    var obj = JsonConvert.DeserializeObject<CaseInitResponse>(HttpContext.Session.GetString("otsinfo"));
-        //    var obj1 = JsonConvert.DeserializeObject<AmountDetails>(HttpContext.Session.GetString("amountdetail"));
-        //    string discomName = "";
-        //    discomName = StaticData.UPPCLOperatorName(discomId);
-        //    var modal = new UPPCLOTSReciptModal();
-        //    modal.TelecomOperatorName = discomName;
-        //    modal.ApiOperatorCode = discomId;
+        public IActionResult ReceiptOTSUPPCL(string accountId, string discomId, string amount, int isFull)
+        {
+            var obj = JsonConvert.DeserializeObject<CaseInitResponse>(HttpContext.Session.GetString("otsinfo"));
+            var obj1 = JsonConvert.DeserializeObject<AmountDetails>(HttpContext.Session.GetString("amountdetail"));
+            string discomName = "";
+            discomName = StaticData.UPPCLOperatorName(discomId);
+            var append = string.Empty;
+            if(obj.Data.BillDetails.PurposeOfSupply == "LMV1")
+            {
+                obj.Data.BillDetails.PurposeOfSupply += " (घरेलू)";
+            }
+            if (obj.Data.BillDetails.PurposeOfSupply == "LMV2")
+            {
+                obj.Data.BillDetails.PurposeOfSupply += " (वाणिज्य)";
+            }
+            if (obj.Data.BillDetails.PurposeOfSupply == "LMV4")
+            {
+                obj.Data.BillDetails.PurposeOfSupply += " (निजी संस्थान)";
+            }
+            if (obj.Data.BillDetails.PurposeOfSupply == "LMV6")
+            {
+                obj.Data.BillDetails.PurposeOfSupply += " (औद्योगिक)";
+            }
+            var modal = new UPPCLOTSReciptModal();
+            modal.RechargeMobileNumber = obj.Data.BillDetails.ConsumerName;
+            modal.TelecomOperatorName = discomName;
+            modal.ApiOperatorCode = discomId.Trim();
 
-        //    modal.InfoTable = "<table>";
-        //    modal.InfoTable += "<tr>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += "श्रीमती/श्री";
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += obj.Data.BillDetails.ConsumerName;
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "</tr>";
-        //    modal.InfoTable += "<tr>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += "अकाउंट आईडी";
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += obj.Data.BillDetails.KNumber;
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "</tr>";
-        //    modal.InfoTable += "<tr>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += "विधा";
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += obj.Data.BillDetails.PurposeOfSupply;
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "</tr>";
-        //    modal.InfoTable += "<tr>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += "स्वीकृत भार";
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += obj.Data.BillDetails.SanctionedLoadInKW + "KW";
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "</tr>";
-        //    if (isFull == 1)
-        //    {
-        //        modal.Para1 = "आपके द्वारा OTS योजना के अंतर्गत दिनांक <Date of Application> को पंजीकरण किया गया है। इस योजना के अंतर्गत अधिकतम <Waiver LPSC> की छूट प्राप्त करने के लिये शेष बकाया धनराशि रू. <Remaining Principal Amount> का भुगतान दिनांक <Registration Date+ 30 Days> तक विभागीय खण्ड/उपखण्ड कार्यालय/कैश काउन्टर, जनसेवा केन्द्र, विद्युत सखी, फिनटेक प्रतिनिधि अथवा मीटर रीडर (बिलिगं एजेन्सी) अथवा UPPCL वेबसाइट (uppcl.org) के माध्यम से किया जा सकेगा";
-               
-        //        modal.InfoTable += "<tr>";
-        //        modal.InfoTable += "<td>";
-        //        modal.InfoTable += "चयनित विकल्प";
-        //        modal.InfoTable += "</td>";
-        //        modal.InfoTable += "<td>";
-        //        modal.InfoTable += "एकमुश्त";
-        //        modal.InfoTable += "</td>";
-        //        modal.InfoTable += "</tr>";
+            modal.InfoTable = "<table class='table'>";
+            modal.InfoTable += "<tr class='table'>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "श्रीमती/श्री";
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += obj.Data.BillDetails.ConsumerName;
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "</tr>";
+            modal.InfoTable += "<tr class='table'>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "अकाउंट आईडी";
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += obj.Data.BillDetails.KNumber;
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "</tr>";
+            modal.InfoTable += "<tr class='table'>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "विधा";
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += obj.Data.BillDetails.PurposeOfSupply;
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "</tr>";
+            modal.InfoTable += "<tr class='table'>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "स्वीकृत भार";
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += obj.Data.BillDetails.SanctionedLoadInKW + " KW";
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "</tr>";
+            if (isFull == 1)
+            {
+                modal.Para1 = $"आपके द्वारा OTS योजना के अंतर्गत दिनांक {DateTime.Now.ToString("dd-MM-yyyy")} को पंजीकरण किया गया है। इस योजना के अंतर्गत अधिकतम <Waiver LPSC> की छूट प्राप्त करने के लिये शेष बकाया धनराशि रू. <Remaining Principal Amount> का भुगतान दिनांक {DateTime.Now.AddDays(30).ToString("dd-MM-yyyy")} तक विभागीय खण्ड/उपखण्ड कार्यालय/कैश काउन्टर, जनसेवा केन्द्र, विद्युत सखी, फिनटेक प्रतिनिधि अथवा मीटर रीडर (बिलिगं एजेन्सी) अथवा UPPCL वेबसाइट (uppcl.org) के माध्यम से किया जा सकेगा";
+
+                modal.InfoTable += "<tr class='table'>";
+                modal.InfoTable += "<td class='table'>";
+                modal.InfoTable += "चयनित विकल्प";
+                modal.InfoTable += "</td>";
+                modal.InfoTable += "<td class='table'>";
+                modal.InfoTable += "एकमुश्त";
+                modal.InfoTable += "</td>";
+                modal.InfoTable += "</tr>";
+
+            }
+            else
+            {
+                modal.Para1 = $"आपके द्वारा OTS योजना के अंतर्गत दिनांक {DateTime.Now.ToString("dd-MM-yyyy")} को पंजीकरण किया गया है। इस योजना के अंतर्गत अधिकतम <Waiver LPSC> की छूट प्राप्त करने के लिये शेष बकाया धनराशि रू. <Remaining Principal Amount> का भुगतान निम्नांकित किश्तों में अपने मासिक विद्युत बिल के साथ विभागीय खण्ड/उपखण्ड कार्यालय/कैश काउन्टर, जनसेवा केन्द्र, विद्युत सखी, फिनटेक प्रतिनिधि अथवा मीटर रीडर (बिलिगं एजेन्सी) अथवा UPPCL वेबसाइट (uppcl.org) के माध्यम से किया जा सकेगा";
+                modal.InfoTable += "<tr class='table'>";
+                modal.InfoTable += "<td class='table'>";
+                modal.InfoTable += "चयनित विकल्प";
+                modal.InfoTable += "</td>";
+                modal.InfoTable += "<td class='table'>";
+                modal.InfoTable += "किश्त";
+                modal.InfoTable += "</td>";
+                modal.InfoTable += "</tr>";
+
+                modal.InstallmentTable = "<table class='table'>";
                 
-        //    }
-        //    else
-        //    {
-        //        modal.Para1 = "आपके द्वारा OTS योजना के अंतर्गत दिनांक <Date of Application> को पंजीकरण किया गया है। इस योजना के अंतर्गत अधिकतम <Waiver LPSC> की छूट प्राप्त करने के लिये शेष बकाया धनराशि रू. <Remaining Principal Amount> का भुगतान निम्नांकित किश्तों में अपने मासिक विद्युत बिल के साथ विभागीय खण्ड/उपखण्ड कार्यालय/कैश काउन्टर, जनसेवा केन्द्र, विद्युत सखी, फिनटेक प्रतिनिधि अथवा मीटर रीडर (बिलिगं एजेन्सी) अथवा UPPCL वेबसाइट (uppcl.org) के माध्यम से किया जा सकेगा";
-        //    }
-        //    modal.InfoTable += "<tr>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += "मूल बकाया";
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += "";
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "</tr>";
-        //    modal.InfoTable += "<tr>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += "ब्याज";
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += "";
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "</tr>";
-        //    modal.InfoTable += "<tr>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += "माफ़ी योग्य";
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "<td>";
-        //    modal.InfoTable += "";
-        //    modal.InfoTable += "</td>";
-        //    modal.InfoTable += "</tr>";
+                var months = new string[12]
+                {
+                    "जनवरी 2025",
+                    "फ़रवरी 2025",
+                    "मार्च 2025",
+                    "अप्रैल 2025",
+                    "मई 2025",
+                    "जून 2025",
+                    "जुलाई 2025",
+                    "अगस्त 2025",
+                    "सितम्बर 2025",
+                    "अक्टूबर 2025",
+                    "नवंबर 2025",
+                    "दिसंबर 2025"
+                };
+                var installmet = new string[12]
+                {
+                    "पहली",
+                    "दूसरी",
+                    "तीसरी",
+                    "चौथी",
+                    "पांचवी",
+                    "छटवी",
+                    "सातवी",
+                    "आठवी",
+                    "नवमी",
+                    "दसवी",
+                    "ग्यारवी",
+                    "बारहवीं"
+                };
+                modal.InstallmentTable += "<tr class='table'>";
+                modal.InstallmentTable += "<td class='table'>";
+                modal.InstallmentTable += "क्र.";
+                modal.InstallmentTable += "</td>";
+                modal.InstallmentTable += "<td class='table'>";
+                modal.InstallmentTable += "किश्त धनराशि (रू.)";
+                modal.InstallmentTable += "</td>";
+                modal.InstallmentTable += "<td class='table'>";
+                modal.InstallmentTable += "माह";
+                modal.InstallmentTable += "</td>";
+                modal.InstallmentTable += "</tr>";
+                for (int i =0; i< obj1.Data.InstallmentList1[0].NoOfInstallments; i++)
+                {
+                    if(i < 12)
+                    {
+                        modal.InstallmentTable += "<tr class='table'>";
+                        modal.InstallmentTable += "<td class='table'>";
+                        modal.InstallmentTable += installmet[i] + " किश्त";
+                        modal.InstallmentTable += "</td>";
+                        modal.InstallmentTable += "<td class='table'>";
+                        modal.InstallmentTable += obj1.Data.InstallmentList1[0].InstallmentAmount;
+                        modal.InstallmentTable += "</td>";
+                        modal.InstallmentTable += "<td class='table'>";
+                        modal.InstallmentTable += months[i];
+                        modal.InstallmentTable += "</td>";
+                        modal.InstallmentTable += "</tr>";
+                    }
+                }
+                modal.InstallmentTable += "</table>";
+            }
+            modal.InfoTable += "<tr class='table'>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "मूल बकाया";
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += obj1.Data.Payment31;
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "</tr>";
+            modal.InfoTable += "<tr class='table'>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "ब्याज";
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "";
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "</tr>";
+            modal.InfoTable += "<tr class='table'>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "माफ़ी योग्य अधिकतम ब्याज";
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "";
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "</tr>";
+            modal.InfoTable += "<tr class='table'>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "पंजीकरण धनराशि प्राप्त";
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += isFull == 1 ? amount : obj1.Data.InstallmentList1[0].RegistrationAmount;
+            modal.InfoTable += "</td>";
+            modal.InfoTable += "</tr>";
+            modal.InfoTable += "</table>";
 
-        //    modal.InfoTable += "</table>";
-
-        //    return View();
-        //}
+            
+            return View(modal);
+        }
     }
 }

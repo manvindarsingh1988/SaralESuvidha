@@ -91,13 +91,13 @@
                 <table class="table">
                     <tr class="bg-primary">
                         <th class="text-white">
-                            Principal Amount
+                            Remaining Principal Amount
                         </th>
                         <th class="text-white">
                             LPSC Waive Off (एलपीएससी छूट)
                         </th>
                         <th class="text-white">
-                            Registation Payable Amount (पंजीकरण देय राशि)
+                            Registation Amount (पंजीकरण देय राशि)
                         </th>
                         <th class="text-white">
                             Select Option
@@ -138,13 +138,13 @@
                             Installment Amount (किस्त राशि)
                         </th>
                         <th class="text-white">
-                            Principal Amount
+                            Remaining Principal Amount
                         </th>
                         <th class="text-white">
                             LPSC Waive Off (एलपीएससी छूट)
                         </th>
                         <th class="text-white">
-                            Registation Payable Amount (पंजीकरण देय राशि)
+                            Registation Amount (पंजीकरण देय राशि)
                         </th>
                         <th class="text-white">
                             Select Option
@@ -218,6 +218,19 @@
             <div class="row">
                 <div class="col-sm-12 form-group">
                     <span id="EBillActionMessage" name="EBillActionMessage"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card" id="result">
+        <div class="card-body">
+            <h4 class="card-title text-center">Consumer Information</h4>
+            <div class="row">
+                <div class="col-sm-2 form-group">
+                    <button type="button" class="btn btn-primary" onclick="Full()"></button>
+                </div>
+                <div class="col-sm-2 form-group">
+                    <button type="button" class="btn btn-primary" onclick="Installment()"></button>
                 </div>
             </div>
         </div>
@@ -309,6 +322,15 @@
                     $('#Account').val('');
                 }
             });
+    }
+
+    function Full() {
+        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + ' &discomId=' + $('#selectEOperator').val() + ' &amount=' + $('#amount').val() + ' &isFull=' + 1;
+        
+    }
+
+    function Installment() {
+        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + ' &discomId=' + $('#selectEOperator').val() + ' &amount=' + $('#amount').val() + ' &isFull=' + 0;
     }
 
     function LoadEOperatorDdl() {
