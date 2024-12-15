@@ -473,9 +473,25 @@ namespace SaralESuvidha.Controllers
         {
             var obj = JsonConvert.DeserializeObject<CaseInitResponse>(HttpContext.Session.GetString("otsinfo"));
             var obj1 = JsonConvert.DeserializeObject<AmountDetails>(HttpContext.Session.GetString("amountdetail"));
-            string discomName = "";
-            discomName = StaticData.UPPCLOperatorName(discomId);
-            var append = string.Empty;
+            decimal downPayment;
+            if (isFull == 1)
+            {
+                var diff = Convert.ToDecimal(amount) - obj1.Data.FullPaymentList[0].RegistrationAmount;
+                downPayment = obj1.Data.FullPaymentList[0].Downpayment - diff;
+                if (downPayment < 0)
+                {
+                    downPayment = 0;
+                }
+            }
+            else
+            {
+                downPayment = obj1.Data.InstallmentList1[0].Downpayment;
+            }
+            if(Decimal.TryParse(obj.Data.BillDetails.SanctionedLoadInKW, out decimal load))
+            {
+                obj.Data.BillDetails.SanctionedLoadInKW = load.ToString("0.00");
+            }
+
             if(obj.Data.BillDetails.PurposeOfSupply == "LMV1")
             {
                 obj.Data.BillDetails.PurposeOfSupply += " (घरेलू)";
@@ -494,7 +510,7 @@ namespace SaralESuvidha.Controllers
             }
             var modal = new UPPCLOTSReciptModal();
             modal.RechargeMobileNumber = obj.Data.BillDetails.ConsumerName;
-            modal.TelecomOperatorName = discomName;
+            modal.TelecomOperatorName = obj.Data.BillDetails.Discom;
             modal.ApiOperatorCode = discomId.Trim();
 
             modal.InfoTable = "<table class='table'>";
@@ -532,7 +548,7 @@ namespace SaralESuvidha.Controllers
             modal.InfoTable += "</tr>";
             if (isFull == 1)
             {
-                modal.Para1 = $"आपके द्वारा OTS योजना के अंतर्गत दिनांक {DateTime.Now.ToString("dd-MM-yyyy")} को पंजीकरण किया गया है। इस योजना के अंतर्गत अधिकतम <Waiver LPSC> की छूट प्राप्त करने के लिये शेष बकाया धनराशि रू. <Remaining Principal Amount> का भुगतान दिनांक {DateTime.Now.AddDays(30).ToString("dd-MM-yyyy")} तक विभागीय खण्ड/उपखण्ड कार्यालय/कैश काउन्टर, जनसेवा केन्द्र, विद्युत सखी, फिनटेक प्रतिनिधि अथवा मीटर रीडर (बिलिगं एजेन्सी) अथवा UPPCL वेबसाइट (uppcl.org) के माध्यम से किया जा सकेगा";
+                modal.Para1 = $"आपके द्वारा OTS योजना के अंतर्गत दिनांक {DateTime.Now.ToString("dd-MM-yyyy")} को पंजीकरण किया गया है। इस योजना के अंतर्गत अधिकतम {obj1.Data.FullPaymentList[0].LPSCWaivOff} की छूट प्राप्त करने के लिये शेष बकाया धनराशि रू. {downPayment} का भुगतान दिनांक {DateTime.Now.AddDays(30).ToString("dd-MM-yyyy")} तक विभागीय खण्ड/उपखण्ड कार्यालय/कैश काउन्टर, जनसेवा केन्द्र, विद्युत सखी, फिनटेक प्रतिनिधि अथवा मीटर रीडर (बिलिगं एजेन्सी) अथवा UPPCL वेबसाइट (uppcl.org) के माध्यम से किया जा सकेगा";
 
                 modal.InfoTable += "<tr class='table'>";
                 modal.InfoTable += "<td class='table'>";
@@ -546,7 +562,7 @@ namespace SaralESuvidha.Controllers
             }
             else
             {
-                modal.Para1 = $"आपके द्वारा OTS योजना के अंतर्गत दिनांक {DateTime.Now.ToString("dd-MM-yyyy")} को पंजीकरण किया गया है। इस योजना के अंतर्गत अधिकतम <Waiver LPSC> की छूट प्राप्त करने के लिये शेष बकाया धनराशि रू. <Remaining Principal Amount> का भुगतान निम्नांकित किश्तों में अपने मासिक विद्युत बिल के साथ विभागीय खण्ड/उपखण्ड कार्यालय/कैश काउन्टर, जनसेवा केन्द्र, विद्युत सखी, फिनटेक प्रतिनिधि अथवा मीटर रीडर (बिलिगं एजेन्सी) अथवा UPPCL वेबसाइट (uppcl.org) के माध्यम से किया जा सकेगा";
+                modal.Para1 = $"आपके द्वारा OTS योजना के अंतर्गत दिनांक {DateTime.Now.ToString("dd-MM-yyyy")} को पंजीकरण किया गया है। इस योजना के अंतर्गत अधिकतम {obj1.Data.InstallmentList1[0].LPSCWaivOff} की छूट प्राप्त करने के लिये शेष बकाया धनराशि रू. {downPayment} का भुगतान निम्नांकित किश्तों में अपने मासिक विद्युत बिल के साथ विभागीय खण्ड/उपखण्ड कार्यालय/कैश काउन्टर, जनसेवा केन्द्र, विद्युत सखी, फिनटेक प्रतिनिधि अथवा मीटर रीडर (बिलिगं एजेन्सी) अथवा UPPCL वेबसाइट (uppcl.org) के माध्यम से किया जा सकेगा";
                 modal.InfoTable += "<tr class='table'>";
                 modal.InfoTable += "<td class='table'>";
                 modal.InfoTable += "चयनित विकल्प";
@@ -631,7 +647,7 @@ namespace SaralESuvidha.Controllers
             modal.InfoTable += "ब्याज";
             modal.InfoTable += "</td>";
             modal.InfoTable += "<td class='table'>";
-            modal.InfoTable += "";
+            modal.InfoTable += obj1.Data.LPSC31;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
             modal.InfoTable += "<tr class='table'>";
@@ -639,7 +655,7 @@ namespace SaralESuvidha.Controllers
             modal.InfoTable += "माफ़ी योग्य अधिकतम ब्याज";
             modal.InfoTable += "</td>";
             modal.InfoTable += "<td class='table'>";
-            modal.InfoTable += "";
+            modal.InfoTable += isFull == 1 ? obj1.Data.FullPaymentList[0].LPSCWaivOff : obj1.Data.InstallmentList1[0].LPSCWaivOff;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
             modal.InfoTable += "<tr class='table'>";
