@@ -130,6 +130,11 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 10px;">
+                        <input type="button" name="btnPrint" value="PRINT" onclick="javascript: PrintReceipt();" />
+                    </td>
+                </tr>
             </table>
         </div>
         <script type="text/javascript">
@@ -147,7 +152,7 @@
 
             var div1 = document.getElementById('para');
             div1.innerHTML += '@Model.Para1';
-            console.log(abc)
+            
             abc = '@Model.InstallmentTable';
             var div2 = document.getElementById('installment');
             abc = abc.replace(/&gt;/g, '>');
@@ -156,7 +161,7 @@
             abc = abc.replace(/&apos;/g, "'");
             abc = abc.replace(/&amp;/g, '&');
             abc = abc.replace(/&amp;/g, '&');
-            console.log(abc)
+            
             div2.innerHTML += abc;
         </script>
     </body>
