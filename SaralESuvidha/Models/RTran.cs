@@ -641,7 +641,7 @@ namespace SaralESuvidha.Models
                         result = "Success: Bill payment / recharge status of " + TelecomOperatorName +
                                  " of account " + RechargeMobileNumber + " of Amount " + Amount?.ToString("N2") +
                                  ". " + resp.OperationMessage + " Balance: " + resp.ClosingBalance?.ToString("N2") +
-                                 printMessage;
+                                 (printMessage.Trim().StartsWith("<span") ? "" : printMessage);
                     }
                 }
             }

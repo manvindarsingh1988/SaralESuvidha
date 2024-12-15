@@ -218,6 +218,7 @@
             <div class="row">
                 <div class="col-sm-12 form-group">
                     <span id="EBillActionMessage" name="EBillActionMessage"></span>
+                    <button type="button" class="btn btn-primary" onclick="PrintReceipt()"></button>
                 </div>
             </div>
         </div>
@@ -353,13 +354,9 @@
             });
     }
 
-    function PrintReceipt(idToPrint) {
-        if (navigator.userAgent.includes('etopapp')) {
-            printrec(idToPrint);
-        } else {
-            var url = window.location.origin;
-            window.open(url + '/Home/ReceiptUPPCL?t=' + idToPrint, "_blank");
-        }
+    function PrintReceipt() {
+        var isFull = $("#full").prop("checked") ? 1 : 0;
+        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + ' &discomId=' + $('#selectEOperator').val() + ' &amount=' + $('#amount').val() + ' &isFull=' + isFull;
     }
 
     $(function () {
