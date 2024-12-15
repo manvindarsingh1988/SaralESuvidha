@@ -442,6 +442,7 @@ namespace SaralESuvidha.Controllers
             var obj = UPPCLManager.InitiateOTSCase(discomId, accountId, isFull == 1 ? true : false, amount);
             var ots = JsonConvert.SerializeObject(obj);
             HttpContext.Session.SetString("otsinfo", ots);
+            HttpContext.Session.SetString("discom", discomId);
             return Content(ots);
         }
 
@@ -465,12 +466,14 @@ namespace SaralESuvidha.Controllers
                 amount1 = Convert.ToDecimal(obj1.Data.InstallmentList1[0].RegistrationAmount);
             }
             HttpContext.Session.SetString("isFull", isFull.ToString());
+            
             result = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent, amount1, obj1.Data.TotoalOutStandingAmount);
             return Content(result);
         }
 
         public IActionResult ReceiptOTSUPPCL(string accountId, string discomId, string amount, int isFull)
         {
+            discomId = HttpContext.Session.GetString("discom");
             var obj = JsonConvert.DeserializeObject<CaseInitResponse>(HttpContext.Session.GetString("otsinfo"));
             var obj1 = JsonConvert.DeserializeObject<AmountDetails>(HttpContext.Session.GetString("amountdetail"));
             decimal downPayment;
