@@ -516,36 +516,36 @@ namespace SaralESuvidha.Controllers
             modal.TelecomOperatorName = obj.Data.BillDetails.Discom;
             modal.ApiOperatorCode = discomId.Trim();
 
-            modal.InfoTable = "<table class='table'>";
-            modal.InfoTable += "<tr class='table'>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable = "<table class=tableData>";
+            modal.InfoTable += "<tr>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += "श्रीमती/श्री";
             modal.InfoTable += "</td>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += obj.Data.BillDetails.ConsumerName;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
-            modal.InfoTable += "<tr class='table'>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<tr>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += "अकाउंट आईडी";
             modal.InfoTable += "</td>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += obj.Data.BillDetails.KNumber;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
-            modal.InfoTable += "<tr class='table'>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<tr>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += "विधा";
             modal.InfoTable += "</td>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += obj.Data.BillDetails.PurposeOfSupply;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
-            modal.InfoTable += "<tr class='table'>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<tr>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += "स्वीकृत भार";
             modal.InfoTable += "</td>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += obj.Data.BillDetails.SanctionedLoadInKW + " KW";
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
@@ -553,11 +553,11 @@ namespace SaralESuvidha.Controllers
             {
                 modal.Para1 = $"आपके द्वारा OTS योजना के अंतर्गत दिनांक {DateTime.Now.ToString("dd-MM-yyyy")} को पंजीकरण किया गया है। इस योजना के अंतर्गत अधिकतम {obj1.Data.FullPaymentList[0].LPSCWaivOff} की छूट प्राप्त करने के लिये शेष बकाया धनराशि रू. {downPayment} का भुगतान दिनांक {DateTime.Now.AddDays(30).ToString("dd-MM-yyyy")} तक विभागीय खण्ड/उपखण्ड कार्यालय/कैश काउन्टर, जनसेवा केन्द्र, विद्युत सखी, फिनटेक प्रतिनिधि अथवा मीटर रीडर (बिलिगं एजेन्सी) अथवा UPPCL वेबसाइट (uppcl.org) के माध्यम से किया जा सकेगा";
 
-                modal.InfoTable += "<tr class='table'>";
-                modal.InfoTable += "<td class='table'>";
+                modal.InfoTable += "<tr>";
+                modal.InfoTable += "<td>";
                 modal.InfoTable += "चयनित विकल्प";
                 modal.InfoTable += "</td>";
-                modal.InfoTable += "<td class='table'>";
+                modal.InfoTable += "<td>";
                 modal.InfoTable += "एकमुश्त";
                 modal.InfoTable += "</td>";
                 modal.InfoTable += "</tr>";
@@ -566,16 +566,16 @@ namespace SaralESuvidha.Controllers
             else
             {
                 modal.Para1 = $"आपके द्वारा OTS योजना के अंतर्गत दिनांक {DateTime.Now.ToString("dd-MM-yyyy")} को पंजीकरण किया गया है। इस योजना के अंतर्गत अधिकतम {obj1.Data.InstallmentList1[0].LPSCWaivOff} की छूट प्राप्त करने के लिये शेष बकाया धनराशि रू. {downPayment} का भुगतान निम्नांकित किश्तों में अपने मासिक विद्युत बिल के साथ विभागीय खण्ड/उपखण्ड कार्यालय/कैश काउन्टर, जनसेवा केन्द्र, विद्युत सखी, फिनटेक प्रतिनिधि अथवा मीटर रीडर (बिलिगं एजेन्सी) अथवा UPPCL वेबसाइट (uppcl.org) के माध्यम से किया जा सकेगा";
-                modal.InfoTable += "<tr class='table'>";
-                modal.InfoTable += "<td class='table'>";
+                modal.InfoTable += "<tr>";
+                modal.InfoTable += "<td>";
                 modal.InfoTable += "चयनित विकल्प";
                 modal.InfoTable += "</td>";
-                modal.InfoTable += "<td class='table'>";
+                modal.InfoTable += "<td>";
                 modal.InfoTable += "किश्त";
                 modal.InfoTable += "</td>";
                 modal.InfoTable += "</tr>";
 
-                modal.InstallmentTable = "<table class='table'>";
+                modal.InstallmentTable = "<table class=tableData>";
                 
                 var months = new string[12]
                 {
@@ -607,14 +607,14 @@ namespace SaralESuvidha.Controllers
                     "ग्यारवी",
                     "बारहवीं"
                 };
-                modal.InstallmentTable += "<tr class='table'>";
-                modal.InstallmentTable += "<td class='table'>";
+                modal.InstallmentTable += "<tr>";
+                modal.InstallmentTable += "<td>";
                 modal.InstallmentTable += "क्र.";
                 modal.InstallmentTable += "</td>";
-                modal.InstallmentTable += "<td class='table'>";
+                modal.InstallmentTable += "<td>";
                 modal.InstallmentTable += "किश्त धनराशि (रू.)";
                 modal.InstallmentTable += "</td>";
-                modal.InstallmentTable += "<td class='table'>";
+                modal.InstallmentTable += "<td>";
                 modal.InstallmentTable += "माह";
                 modal.InstallmentTable += "</td>";
                 modal.InstallmentTable += "</tr>";
@@ -622,14 +622,14 @@ namespace SaralESuvidha.Controllers
                 {
                     if(i < 12)
                     {
-                        modal.InstallmentTable += "<tr class='table'>";
-                        modal.InstallmentTable += "<td class='table'>";
+                        modal.InstallmentTable += "<tr>";
+                        modal.InstallmentTable += "<td>";
                         modal.InstallmentTable += installmet[i] + " किश्त";
                         modal.InstallmentTable += "</td>";
-                        modal.InstallmentTable += "<td class='table'>";
+                        modal.InstallmentTable += "<td>";
                         modal.InstallmentTable += obj1.Data.InstallmentList1[0].InstallmentAmount;
                         modal.InstallmentTable += "</td>";
-                        modal.InstallmentTable += "<td class='table'>";
+                        modal.InstallmentTable += "<td>";
                         modal.InstallmentTable += months[i];
                         modal.InstallmentTable += "</td>";
                         modal.InstallmentTable += "</tr>";
@@ -637,35 +637,35 @@ namespace SaralESuvidha.Controllers
                 }
                 modal.InstallmentTable += "</table>";
             }
-            modal.InfoTable += "<tr class='table'>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<tr>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += "मूल बकाया";
             modal.InfoTable += "</td>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += obj1.Data.Payment31;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
-            modal.InfoTable += "<tr class='table'>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<tr>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += "ब्याज";
             modal.InfoTable += "</td>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += obj1.Data.LPSC31;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
-            modal.InfoTable += "<tr class='table'>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<tr>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += "माफ़ी योग्य अधिकतम ब्याज";
             modal.InfoTable += "</td>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += isFull == 1 ? obj1.Data.FullPaymentList[0].LPSCWaivOff : obj1.Data.InstallmentList1[0].LPSCWaivOff;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
-            modal.InfoTable += "<tr class='table'>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<tr>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += "पंजीकरण धनराशि प्राप्त";
             modal.InfoTable += "</td>";
-            modal.InfoTable += "<td class='table'>";
+            modal.InfoTable += "<td>";
             modal.InfoTable += isFull == 1 ? amount : obj1.Data.InstallmentList1[0].RegistrationAmount;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";

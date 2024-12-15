@@ -47,67 +47,85 @@
               border: 1px solid black;
               border-collapse: collapse;
             }
+            
+            .tableData td{
+              border-bottom: 1px solid black;
+              border-left: 1px solid black;
+              border-right: 1px solid black;
+              border-top: 1px solid black;
+              padding: 5px;
+            }
         </style>
     </head>
     <body>
         <div style="text-align: center;">
             <table cellpadding="0" cellspacing="0" border="0" style="width:1050px;">
                 <tr>
-                    <td style="text-align: center;" class="border_bottom">
+                    <td style="text-align: center;" class="">
                         <img src="~/images/@(Model.ApiOperatorCode).png" style="" alt="@Model.TelecomOperatorName" />
                     </td>
-                    <td colspan="2" style="text-align: left; vertical-align: middle;" class="border_bottom">
+                    <td colspan="2" style="text-align: left; vertical-align: middle;" class="">
                         <h1>@Model.TelecomOperatorName</h1>
+                    </td>
+                    <td style="text-align: center;" class="border_bottom">
+                        &nbsp; &nbsp;
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td colspan="4"><hr /></td>
+                </tr>
+                <tr>
+                    <td colspan="4">
                         <div style="text-align: center;">
-                            <strong>एक मुश्त समाधान योजना पंजीकरण पावती</strong>
+                            <h1>एक मुश्त समाधान योजना पंजीकरण पावती</h1>
                         </div>
                     </td>                    
                 </tr>
+                <tr>
+                    <td colspan="4"><hr /></td>
+                </tr>
                  <tr>
-                    <td>
-                        <div style="text-align: center;" id="info">                            
+                    <td colspan="4">
+                        <div style="text-align: center; margin-left: 20px;" id="info">                            
                         </div>                        
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div style="text-align: left;" >
+                    <td colspan="4">
+                        <div style="text-align: left; margin: 20px 20px;" >
                             प्रिय उपभोक्ता,
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div style="text-align: center;" id="para">
+                    <td colspan="4">
+                        <div style="text-align: justify; margin-bottom: 20px; margin-left: 20px;" id="para">
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div style="text-align: center;" id="installment">
+                    <td colspan="4" style="padding-top: 10px; padding-bottom: 10px;">
+                        <hr />
+                        <div style="text-align: center; margin-left: 20px;" id="installment">
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                         <div style="text-align: center;">
+                    <td colspan="4">
+                        <div style="text-align: center;">
                             <p>
                                 <strong>
-                                    नोट: उक्त बकाये किश्तों का भुगतान अग्रिम भुगतान (Advance Payment) के रूप में भी किया जा सकता है।
+                                    नोट: उक्त बकाये किश्तों का भुगतान अग्रिम भुगतान (Advance Payment) के रूप में भी किया जा सकता है। धन्यवाद|
                                 </strong>
                             </p>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td colspan="4">
                          <div style="text-align: center;">
                             <p>
-                                धन्यवाद|
+                                Agency: Saral ECommerce Pvt Ltd
                             </p>
                         </div>
                     </td>
@@ -115,9 +133,9 @@
             </table>
         </div>
         <script type="text/javascript">
-            function PrintReceipt() {
-                window.print();
-            }
+        function PrintReceipt() {
+            window.print();
+        }
         var div = document.getElementById('info');
         var abc = '@Model.InfoTable'
          abc = abc.replace(/&gt;/g, '>');
@@ -125,7 +143,7 @@
             abc = abc.replace(/&quot;/g, '"');
             abc = abc.replace(/&apos;/g, "'");
             abc = abc.replace(/&amp;/g, '&');
-            div.innerHTML += abc;
+            div.innerHTML += '<center>' + abc + '</center>';
 
             var div1 = document.getElementById('para');
             div1.innerHTML += '@Model.Para1';
