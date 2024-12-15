@@ -1,0 +1,87 @@
+﻿@{
+    Layout = "_LayoutBlank";
+}
+    <html>
+    <head>
+        <title>RECEIPT PRINT - @Model.TelecomOperatorName - @Model.RechargeMobileNumber</title>
+        <style type="text/css">
+            body {
+                font-family: sans-serif;
+            }
+
+            .head {
+                text-align: right;
+                padding: 10px 20px 10px 20px;
+                font-size: small;
+                width: 25%;
+            }
+            
+            h1{
+                font-size: larger;
+            }
+
+            .headvalue {
+                text-align: left;
+                padding: 10px 0 10px 0;
+                width: 25%;
+            }
+
+            .border_bottom {
+                border-bottom: 1px solid #CCCCCC;
+            }
+
+            .border_top {
+                border-top: 1px solid #CCCCCC;
+            }
+
+            .grey_color {
+                color: #888888;
+            }
+
+            .small_font {
+                font-size: 12px;
+                padding: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="text-align: center;">
+            <table cellpadding="0" cellspacing="0" border="0" style="width:1050px;">
+                <tr>
+                    <td style="text-align: center;" class="border_bottom">
+                        <img src="~/images/@(Model.ApiOperatorCode).png" style="" alt="@Model.TelecomOperatorName" />
+                    </td>
+                    <td colspan="2" style="text-align: left; vertical-align: middle;" class="border_bottom">
+                        <h1>@Model.TelecomOperatorName</h1>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="text-align: center;">
+        <strong>एक मुश्त समाधान योजना पंजीकरण पावती</strong>
+        </div>
+    <div style="text-align: center;">
+    </div>
+    <div style="text-align: center;">
+    </div>
+    <div style="text-align: center;">
+    </div>
+    <div style="text-align: center;">
+        <p>
+            <strong>
+                नोट: उक्त बकाये किश्तों का भुगतान अग्रिम भुगतान (Advance Payment) के रूप में भी किया जा सकता है।
+            </strong>
+        </p>
+    </div>
+    <div style="text-align: center;">
+        <p>
+            धन्यवाद|
+        </p>
+    </div>
+        <script type="text/javascript">
+            function PrintReceipt() {
+                window.print();
+            }
+        </script>
+    </body>
+    </html>

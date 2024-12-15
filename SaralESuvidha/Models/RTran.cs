@@ -368,7 +368,7 @@ namespace SaralESuvidha.Models
             return result;
         }
 
-        public string PayOTSUPPCL(CaseInitResponse initResponse, string inputSource = "web",
+        public string PayOTSUPPCL(CaseInitResponse initResponse, decimal outStandingAmount, string inputSource = "web",
             string clientReferenceId = "")
         {
             string result = string.Empty;
@@ -471,7 +471,7 @@ namespace SaralESuvidha.Models
                                 billPaymentRequest.division = initResponse.Data.BillDetails.Division;
                                 billPaymentRequest.divisionCode = initResponse.Data.BillDetails.DivCode;
                                 billPaymentRequest.mobile = string.IsNullOrEmpty(initResponse.Data.BillDetails.MobileNumber) ? "" : initResponse.Data.BillDetails.MobileNumber;
-                                billPaymentRequest.outstandingAmount = initResponse.Data.BillDetails.AccountInfo;
+                                billPaymentRequest.outstandingAmount = outStandingAmount.ToString();
                                 billPaymentRequest.paymentType = paymentTypeFullPartial;
                                 billPaymentRequest.referenceTransactionId = Id;
                                 billPaymentRequest.sourceType = initResponse.Data.BillDetails.ProjectArea;

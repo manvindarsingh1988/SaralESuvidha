@@ -155,4 +155,10 @@ AS
    
  SELECT 'Successfully updated token.' AS 'OperationMessage';  
   
- COMMIT  
+ COMMIT 
+
+update [UPPCLConfig] set OTS_EligibilityCheck_Url = 'https://ewallet.uppclonline.com:8280/ots/1.0.0/checkEligibility?accountId=_accountNo_&discom=_discomName_' where Id = 'CON001'
+update [UPPCLConfig] set OTS_AmountDetails_Url = 'https://ewallet.uppclonline.com:8280/ots/1.0.0/amountDetails?accountId=_accountNo_&discom=_discomName_' where Id = 'CON001'
+update [UPPCLConfig] set OTS_Init_Url = 'https://ewallet.uppclonline.com:8280/ots/1.0.0/caseInit' where Id = 'CON001'
+update [UPPCLConfig] set OTS_Consumer_key = '9fXecZIJ3zJjf3XC3RfpfX7bNcwa' where Id = 'CON001'
+update [UPPCLConfig] set OTS_Consumer_Secret = 'FhaY10guCBOMakIh5uhQmknJUwAa' where Id = 'CON001' 

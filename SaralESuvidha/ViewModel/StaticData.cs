@@ -1920,7 +1920,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, decimal amount, string inputSource = "web")
+        public static string PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, decimal amount, decimal outStandingAmount, string inputSource = "web")
         {
             var billTran = new RTran();
             string result = string.Empty;
@@ -1989,7 +1989,7 @@ namespace SaralESuvidha.ViewModel
                 billTran.UPPCL_BillId = initResponse.Data.BillDetails.BillId;
                 billTran.UPPCL_BillDate = initResponse.Data.BillDetails.BillDate;
                 billTran.UPPCL_Discom = operatorName;
-                result = billTran.PayOTSUPPCL(initResponse, inputSource);
+                result = billTran.PayOTSUPPCL(initResponse, outStandingAmount, inputSource);
             }
             catch (Exception ex)
             {

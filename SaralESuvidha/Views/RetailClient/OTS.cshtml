@@ -323,6 +323,23 @@
             });
 
     }
+
+    function printrec(idToPrint) {
+        $.get('@Url.Action("PrintReceiptThermal", "RetailClient")?t=' + idToPrint + '&dt=' + Date.now() + '&x=0',
+            function (data) {
+                RoboTemplatesWebViewApp.printThermalFromBase64(data);
+            });
+    }
+
+    function PrintReceipt(idToPrint) {
+        if (navigator.userAgent.includes('etopapp')) {
+            printrec(idToPrint);
+        } else {
+            var url = window.location.origin;
+            window.open(url + '/Home/ReceiptUPPCL?t=' + idToPrint, "_blank");
+        }
+    }
+
     $(function () {
         LoadEOperatorDdl();
         $("input[name=option]").change(function(){
