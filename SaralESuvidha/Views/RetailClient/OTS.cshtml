@@ -246,10 +246,10 @@
                                 $('#optioncard').removeClass('d-none');
                                 $('#checkeligiblecard').addClass('d-none');
                                 $('#AccountRO').val(data1.Data.AccountId);
-                                $('#registrationAmount').html(data1.Data.Payment31);
+                                $('#registrationAmount').html(data1.Data.FullPaymentList[0].Downpayment);
                                 $('#lpscWaiveOff').html(data1.Data.FullPaymentList[0].LPSCWaivOff);
                                 $('#registationPayableAmount').html(data1.Data.FullPaymentList[0].RegistrationAmount);
-                                $('#registrationAmountI').html(data1.Data.Payment31);
+                                $('#registrationAmountI').html(data1.Data.InstallmentList1[0].Downpayment);
                                 $('#lpscWaiveOffI').html(data1.Data.InstallmentList1[0].LPSCWaivOff);
                                 $('#registationPayableAmountI').html(data1.Data.InstallmentList1[0].RegistrationAmount);
                                 $('#installments').html(data1.Data.InstallmentList1[0].NoOfInstallments);
