@@ -173,6 +173,8 @@ namespace SaralESuvidha.Models
         public decimal? UPPCL_BalanceAfterPayment { get; set; }
         public decimal? UPPCL_DDR { get; set; }
 
+        public int IsOTS { get; set; }
+
 
         public string TransferFundToRetailUser()
         {
@@ -443,6 +445,7 @@ namespace SaralESuvidha.Models
                     queryParameters.Add("@UPPCL_PaymentType", UPPCL_PaymentType);
                     queryParameters.Add("@UPPCL_DDR", dueDateRebate);
                     queryParameters.Add("@ClientApiUserReferenceId", clientReferenceId);
+                    queryParameters.Add("@IsOTS", IsOTS);
 
                     RechargeStatus = "PROCESS";
 
@@ -735,6 +738,7 @@ namespace SaralESuvidha.Models
                         queryParameters.Add("@UPPCL_PaymentType", UPPCL_PaymentType);
                         queryParameters.Add("@UPPCL_DDR", dueDateRebate);
                         queryParameters.Add("@ClientApiUserReferenceId", clientReferenceId);
+                        queryParameters.Add("@IsOTS", IsOTS);
 
                         RechargeStatus = "PROCESS";
 

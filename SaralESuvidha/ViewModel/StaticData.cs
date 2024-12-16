@@ -1926,6 +1926,7 @@ namespace SaralESuvidha.ViewModel
             string result = string.Empty;
             try
             {
+                billTran.IsOTS = 1;
                 billTran.RetailUserOrderNo = Convert.ToInt32(retailUserOrderNo);
                 billTran.RetailUserId = retailerId;
                 billTran.TelecomOperatorName = operatorName;
