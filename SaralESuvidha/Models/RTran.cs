@@ -559,7 +559,7 @@ namespace SaralESuvidha.Models
 
                                     if (!string.IsNullOrEmpty(billPostResponse.message))
                                     {
-                                        if (billPostResponse.message.Contains("Internal: Exception: Value cannot be null.") || billPostResponse.message.Contains("Exception: Server:") || billPostResponse.message.Contains("The requested API is temporarily blocked"))
+                                        if (billPostResponse.message.Contains("Internal: Exception: Value cannot be null.") || billPostResponse.message.Contains("Exception: Server:") || billPostResponse.message.Contains("The requested API is temporarily blocked") || billPostResponse.message.Contains("JSON parse error"))
                                         {
                                             Remarks = "Errors: Can not send bill. Please check your recharge report after 1 minute for final status.";
 
