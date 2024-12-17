@@ -302,12 +302,16 @@
     }
 
     function Submit() {
+        if($('#AccountRO1').val() == null || $('#AccountRO1').val() == '') {
+            $('#InfoDetail2').html("Failed to fetch details. Please check Discom Id again.").removeClass('text-success').addClass('text-danger');
+            return;
+        }
         if ($('#UserPin').val().length != 6) {
             $('#InfoDetail2').html('<span class="text-danger">Invalid pin.</span>');
-            return false;
+            return;
         }
         var isFull = $("#full").prop("checked") ? 1 : 0;
-        $.get("@Url.Action("SubmitOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + isFull + "&pi=" + ascii2hex($('#UserPin').val()),
+        $.get("@Url.Action("SubmitOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + isFull  + "&pi=" + ascii2hex($('#UserPin').val()),
             function (data) {
                 console.log(data);
                 if (data.indexOf('Errors:') > -1) {

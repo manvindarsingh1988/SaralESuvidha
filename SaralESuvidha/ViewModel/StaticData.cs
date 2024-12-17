@@ -2015,6 +2015,7 @@ namespace SaralESuvidha.ViewModel
                 }
                 else
                 {
+                    billTran.IsOTS = 1;
                     billTran.RetailUserOrderNo = Convert.ToInt32(retailUserOrderNo);
                     billTran.RetailUserId = retailerId;
                     billTran.TelecomOperatorName = operatorName;
@@ -2079,7 +2080,7 @@ namespace SaralESuvidha.ViewModel
                     billTran.UPPCL_BillDate = initResponse.Data.BillDetails.BillDate;
                     billTran.UPPCL_Discom = operatorName;
                     result = billTran.PayOTSUPPCL(initResponse, outStandingAmount, inputSource);
-                }                
+                }
             }
             catch (Exception ex)
             {

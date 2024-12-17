@@ -173,6 +173,8 @@ namespace SaralESuvidha.Models
         public decimal? UPPCL_BalanceAfterPayment { get; set; }
         public decimal? UPPCL_DDR { get; set; }
 
+        public int IsOTS { get; set; }
+
 
         public string TransferFundToRetailUser()
         {
@@ -373,7 +375,8 @@ namespace SaralESuvidha.Models
         {
             string result = string.Empty;
             if (string.IsNullOrEmpty(RetailUserOrderNo.ToString()) || string.IsNullOrEmpty(RechargeMobileNumber) ||
-                    string.IsNullOrEmpty(Amount.ToString()) || string.IsNullOrEmpty(TelecomOperatorName))
+                    string.IsNullOrEmpty(Amount.ToString()) || string.IsNullOrEmpty(TelecomOperatorName) ||
+                    string.IsNullOrEmpty(initResponse.Data.BillDetails.BillId) || string.IsNullOrEmpty(initResponse.Data.BillDetails.KNumber))
             {
                 result = "Errors: Invalid user data. Can not process bill payment. Please try after login again.";
             }
@@ -443,6 +446,7 @@ namespace SaralESuvidha.Models
                     queryParameters.Add("@UPPCL_PaymentType", UPPCL_PaymentType);
                     queryParameters.Add("@UPPCL_DDR", dueDateRebate);
                     queryParameters.Add("@ClientApiUserReferenceId", clientReferenceId);
+                    queryParameters.Add("@IsOTS", IsOTS);
 
                     RechargeStatus = "PROCESS";
 
@@ -556,7 +560,7 @@ namespace SaralESuvidha.Models
 
                                     if (!string.IsNullOrEmpty(billPostResponse.message))
                                     {
-                                        if (billPostResponse.message.Contains("Internal: Exception: Value cannot be null.") || billPostResponse.message.Contains("Exception: Server:") || billPostResponse.message.Contains("The requested API is temporarily blocked"))
+                                        if (billPostResponse.message.Contains("Internal: Exception: Value cannot be null.") || billPostResponse.message.Contains("Exception: Server:") || billPostResponse.message.Contains("The requested API is temporarily blocked") || billPostResponse.message.Contains("JSON parse error"))
                                         {
                                             Remarks = "Errors: Can not send bill. Please check your recharge report after 1 minute for final status.";
 
@@ -735,6 +739,7 @@ namespace SaralESuvidha.Models
                         queryParameters.Add("@UPPCL_PaymentType", UPPCL_PaymentType);
                         queryParameters.Add("@UPPCL_DDR", dueDateRebate);
                         queryParameters.Add("@ClientApiUserReferenceId", clientReferenceId);
+                        queryParameters.Add("@IsOTS", IsOTS);
 
                         RechargeStatus = "PROCESS";
 
