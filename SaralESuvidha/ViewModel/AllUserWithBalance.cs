@@ -15,6 +15,8 @@ public class AllUserWithBalance
     public string EMail { get; set; }
     public string Address { get; set; }
     public bool Active { get; set; }
+    public string UPPCL_Commission { get; set; }
+    public int Salary { get; set; }
     
     
 }

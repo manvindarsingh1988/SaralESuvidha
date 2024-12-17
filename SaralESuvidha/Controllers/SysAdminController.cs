@@ -85,14 +85,18 @@ namespace SaralESuvidha.Controllers
         {
             return View();
         }
-        
+
+        public IActionResult PnLReport()
+        {
+            return View();
+        }
 
         //[HttpPost]
         //public IActionResult SaveMasterDistributor(RetailUserViewModel data) //FromBody
         //{
         //    return Json(data);
         //}
-        
+
         [HttpPost, ValidateAntiForgeryToken]
         public IActionResult SaveWhiteLabel(RetailUserViewModel retailUserViewModel)
         {
@@ -394,7 +398,7 @@ namespace SaralESuvidha.Controllers
             }
             return Content(result);
         }
-        
+
         public IActionResult AllUserReportResult(int x)
         {
             string result = string.Empty;
@@ -428,6 +432,48 @@ namespace SaralESuvidha.Controllers
             }
             return Content(result);
         }
+
+        public IActionResult AllPnLReportResultByUserAndDate(string dateFrom,string dateTo, int x, int orderNo)
+        {
+            string result = string.Empty;
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
+            DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(dateFrom));
+            DateTime dateT = Convert.ToDateTime(StaticData.ConvertHexToString(dateTo));
+            try
+            {
+                if (HttpContext.Session != null)
+                    result = StaticData.AllPnLReportResultByUserAndDate(x, dateF,dateT, orderNo, filePath);
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: " + ex.Message;
+            }
+            return Content(result);
+        }
+        
+        public IActionResult AddSalaryForUser(string userId, int salAmount)
+        {
+            string result = string.Empty;
+            if(string.IsNullOrEmpty(userId)) { return Content("Errors: Id cannot be null"); }
+            if (salAmount > 0)
+            {
+                try
+                {
+                    result = StaticData.AddSalary(userId, salAmount) + "Id - " + userId;
+                }
+                catch (Exception ex)
+                {
+                    result = "Errors: Exception: " + ex.Message;
+                }
+                return Content(result);
+            }
+            else
+            {
+                return Content(string.Empty);
+            }
+           
+        }
+
 
         public IActionResult DailyTopupReportResult(string dateFrom,string dateTo, int x)
         {

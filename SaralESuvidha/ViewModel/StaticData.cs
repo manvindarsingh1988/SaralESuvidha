@@ -1130,8 +1130,8 @@ namespace SaralESuvidha.ViewModel
                 aaIData = null;
             }
             return result;
-        }
-        
+        }       
+
         public static string AllUserReportResult(int excelExport, string filePath = "")
         {
             var aaIData = new UPPCLReport();
@@ -1206,6 +1206,78 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
+
+        public static string AllPnLReportResultByUserAndDate(int excelExport, DateTime dateFrom, DateTime dateTo, int id, string filePath = "")
+        {
+            var aaIData = new UPPCLReport();
+            string result = JsonConvert.SerializeObject(aaIData);
+            try
+            {
+                using (var con = new SqlConnection(StaticData.conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@dateFrom", dateFrom);
+                    parameters.Add("@dateTo", dateTo);
+                    if (id > 0)
+                    {
+                        parameters.Add("@Id", id);
+                    }
+                    else
+                    {
+                        parameters.Add("@Id", null);
+                    }
+                    List<AllUserWithBalance> allDailyRecharge = con.Query<AllUserWithBalance>("usp_RetailUserListWithUPPCLCommission", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    if (excelExport == 1)
+                    {
+                        result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "AllUsersReportByUserAndDate", filePath);
+                    }
+                    else
+                    {
+                        var aaData = new { data = allDailyRecharge };
+                        result = JsonConvert.SerializeObject(aaData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                aaIData.Account_Number = ex.Message;
+                result = JsonConvert.SerializeObject(aaIData);
+            }
+            finally
+            {
+                aaIData = null;
+            }
+            return result;
+        }
+
+        internal static string AddSalary(string retailerId, int salAmount)
+        {
+            string result = string.Empty;
+
+            if (string.IsNullOrEmpty(retailerId)) { throw new Exception(); }
+
+            try
+            { 
+                var parameters = new DynamicParameters();
+                parameters.Add("@RetailUserId", retailerId);
+                parameters.Add("@SalaryAmount", salAmount);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<OperationResponse>("usp_updateSalaryAmount", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception)
+            {
+                result = "Errors: Exception in updating salary.";// + ex.Message;
+            }
+            finally
+            {
+
+            }
+
+            return result;        
+        }
+
 
         public static string RechargeReportDistributorByDate(int retailClientOrderNo, DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
         {
@@ -3040,6 +3112,6 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-
+       
     }
 }
