@@ -375,7 +375,8 @@ namespace SaralESuvidha.Models
         {
             string result = string.Empty;
             if (string.IsNullOrEmpty(RetailUserOrderNo.ToString()) || string.IsNullOrEmpty(RechargeMobileNumber) ||
-                    string.IsNullOrEmpty(Amount.ToString()) || string.IsNullOrEmpty(TelecomOperatorName))
+                    string.IsNullOrEmpty(Amount.ToString()) || string.IsNullOrEmpty(TelecomOperatorName) ||
+                    string.IsNullOrEmpty(initResponse.Data.BillDetails.BillId) || string.IsNullOrEmpty(initResponse.Data.BillDetails.KNumber))
             {
                 result = "Errors: Invalid user data. Can not process bill payment. Please try after login again.";
             }

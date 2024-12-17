@@ -302,6 +302,10 @@
     }
 
     function Submit() {
+        if($('#AccountRO1').val() == null || $('#AccountRO1').val() == '') {
+            $('#InfoDetail2').html("Failed to fetch details. Please check Discom Id again.").removeClass('text-success').addClass('text-danger');
+            return;
+        }
         if ($('#UserPin').val().length != 6) {
             $('#InfoDetail2').html('<span class="text-danger">Invalid pin.</span>');
             return;
