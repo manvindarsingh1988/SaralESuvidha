@@ -1920,77 +1920,95 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, decimal amount, decimal outStandingAmount, string inputSource = "web")
+        public static string PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, decimal amount, decimal outStandingAmount, string pi = "", string inputSource = "web")
         {
             var billTran = new RTran();
             string result = string.Empty;
             try
             {
-                billTran.IsOTS = 1;
-                billTran.RetailUserOrderNo = Convert.ToInt32(retailUserOrderNo);
-                billTran.RetailUserId = retailerId;
-                billTran.TelecomOperatorName = operatorName;
-                billTran.RechargeMobileNumber = accountNumber;
-                billTran.Amount = amount;
-                var dueAmount = (int)Math.Round(Convert.ToDecimal(initResponse.Data.BillDetails.AccountInfo), MidpointRounding.AwayFromZero);
-                string retailerName = "" + dueAmount.ToString();
-                try
+                string pin = StaticData.RetailUserPin(retailerId);
+                if (pi != "pintest")
                 {
-                    retailerName += " >> " + retailUserOrderNo;
-                    retailerName += "-" + retailerName;
-                    retailerName = retailerName.Length > 48 ? retailerName.Substring(0, 46) : retailerName;
+                    pi = StaticData.ConvertHexToString(pi);
                 }
-                catch (Exception exName)
+                else
                 {
-                    return "Errors: Invalid consumer name in bill fetch." + exName.Message;
+                    pi = pin;
+
                 }
-                billTran.Parameter4 = retailerName;
-                billTran.RequestIp = requestIp;
-                billTran.RequestMachine = inputSource + ">" + userAgent;
-                billTran.EndCustomerName = initResponse.Data.BillDetails.ConsumerName;
-                billTran.EndCustomerMobileNumber = initResponse.Data.BillDetails.MobileNumber;
-                billTran.Extra1 = initResponse.Data.BillDetails.BillDueDate;
-                billTran.Extra2 = dueAmount.ToString();
-                billTran.UPPCL_ProjectArea = initResponse.Data.BillDetails.ProjectArea;
-                if (decimal.TryParse(initResponse.Data.BillDetails.Param1, out var res))
+
+                if (pi != pin)
                 {
-                    billTran.UPPCL_DDR = res;
+                    result = "Errors: Invalid pin.";
                 }
-                try
+                else
                 {
-                    billTran.UPPCL_AccountInfo = Convert.ToDecimal(initResponse.Data.BillDetails.AccountInfo);
+                    billTran.IsOTS = 1;
+                    billTran.RetailUserOrderNo = Convert.ToInt32(retailUserOrderNo);
+                    billTran.RetailUserId = retailerId;
+                    billTran.TelecomOperatorName = operatorName;
+                    billTran.RechargeMobileNumber = accountNumber;
+                    billTran.Amount = amount;
+                    var dueAmount = (int)Math.Round(Convert.ToDecimal(initResponse.Data.BillDetails.AccountInfo), MidpointRounding.AwayFromZero);
+                    string retailerName = "" + dueAmount.ToString();
+                    try
+                    {
+                        retailerName += " >> " + retailUserOrderNo;
+                        retailerName += "-" + retailerName;
+                        retailerName = retailerName.Length > 48 ? retailerName.Substring(0, 46) : retailerName;
+                    }
+                    catch (Exception exName)
+                    {
+                        return "Errors: Invalid consumer name in bill fetch." + exName.Message;
+                    }
+                    billTran.Parameter4 = retailerName;
+                    billTran.RequestIp = requestIp;
+                    billTran.RequestMachine = inputSource + ">" + userAgent;
+                    billTran.EndCustomerName = initResponse.Data.BillDetails.ConsumerName;
+                    billTran.EndCustomerMobileNumber = initResponse.Data.BillDetails.MobileNumber;
+                    billTran.Extra1 = initResponse.Data.BillDetails.BillDueDate;
+                    billTran.Extra2 = dueAmount.ToString();
+                    billTran.UPPCL_ProjectArea = initResponse.Data.BillDetails.ProjectArea;
+                    if (decimal.TryParse(initResponse.Data.BillDetails.Param1, out var res))
+                    {
+                        billTran.UPPCL_DDR = res;
+                    }
+                    try
+                    {
+                        billTran.UPPCL_AccountInfo = Convert.ToDecimal(initResponse.Data.BillDetails.AccountInfo);
+                    }
+                    catch (Exception exAccInfo)
+                    {
+                        return "Errors: Invalid Account Info." + exAccInfo.Message;
+                    }
+                    billTran.UPPCL_TDConsumer = initResponse.Data.BillDetails.TdStatus == "true" ? true : false;
+                    billTran.UPPCL_ConnectionType = initResponse.Data.BillDetails.ConnectionType;
+                    billTran.UPPCL_DivCode = initResponse.Data.BillDetails.DivCode;
+                    billTran.UPPCL_SDOCode = initResponse.Data.BillDetails.SdoCode;
+                    try
+                    {
+                        billTran.UPPCL_BillAmount = Convert.ToDecimal(initResponse.Data.BillDetails.BillAmount);
+                    }
+                    catch (Exception exBillAmount)
+                    {
+                        return "Errors: Invalid Bill Amount." + exBillAmount.Message;
+                    }
+                    billTran.UPPCL_Division = initResponse.Data.BillDetails.Division;
+                    billTran.UPPCL_SubDivision = initResponse.Data.BillDetails.SubDivision;
+                    billTran.UPPCL_PurposeOfSupply = initResponse.Data.BillDetails.PurposeOfSupply;
+                    try
+                    {
+                        billTran.UPPCL_SanctionedLoadInKW = Convert.ToDecimal(initResponse.Data.BillDetails.SanctionedLoadInKW);
+                    }
+                    catch (Exception exSanLoad)
+                    {
+                        return "Errors: Invalid Sanctioned Load." + exSanLoad.Message;
+                    }
+                    billTran.UPPCL_BillId = initResponse.Data.BillDetails.BillId;
+                    billTran.UPPCL_BillDate = initResponse.Data.BillDetails.BillDate;
+                    billTran.UPPCL_Discom = operatorName;
+                    result = billTran.PayOTSUPPCL(initResponse, outStandingAmount, inputSource);
                 }
-                catch (Exception exAccInfo)
-                {
-                    return "Errors: Invalid Account Info." + exAccInfo.Message;
-                }
-                billTran.UPPCL_TDConsumer = initResponse.Data.BillDetails.TdStatus == "true" ? true : false;
-                billTran.UPPCL_ConnectionType = initResponse.Data.BillDetails.ConnectionType;
-                billTran.UPPCL_DivCode = initResponse.Data.BillDetails.DivCode;
-                billTran.UPPCL_SDOCode = initResponse.Data.BillDetails.SdoCode;
-                try
-                {
-                    billTran.UPPCL_BillAmount = Convert.ToDecimal(initResponse.Data.BillDetails.BillAmount);
-                }
-                catch (Exception exBillAmount)
-                {
-                    return "Errors: Invalid Bill Amount." + exBillAmount.Message;
-                }
-                billTran.UPPCL_Division = initResponse.Data.BillDetails.Division;
-                billTran.UPPCL_SubDivision = initResponse.Data.BillDetails.SubDivision;
-                billTran.UPPCL_PurposeOfSupply = initResponse.Data.BillDetails.PurposeOfSupply;
-                try
-                {
-                    billTran.UPPCL_SanctionedLoadInKW = Convert.ToDecimal(initResponse.Data.BillDetails.SanctionedLoadInKW);
-                }
-                catch (Exception exSanLoad)
-                {
-                    return "Errors: Invalid Sanctioned Load." + exSanLoad.Message;
-                }
-                billTran.UPPCL_BillId = initResponse.Data.BillDetails.BillId;
-                billTran.UPPCL_BillDate = initResponse.Data.BillDetails.BillDate;
-                billTran.UPPCL_Discom = operatorName;
-                result = billTran.PayOTSUPPCL(initResponse, outStandingAmount, inputSource);
             }
             catch (Exception ex)
             {

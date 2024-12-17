@@ -208,6 +208,12 @@
                 </div>
             </div>
             <div class="row">
+                <div class="col-lg-3 form-group">
+                    <label class="form-label"> PIN <span class="text-danger">* </span></label>
+                    <input name="UserPin" id="UserPin" type="password" autocomplete="off" class="form-control d-inline w-25">
+                </div>
+            </div>
+            <div class="row">
                 <span id="InfoDetail2" name="InfoDetail2"></span>
             </div>
         </div>
@@ -296,8 +302,12 @@
     }
 
     function Submit() {
+        if ($('#UserPin').val().length != 6) {
+            $('#InfoDetail2').html('<span class="text-danger">Invalid pin.</span>');
+            return;
+        }
         var isFull = $("#full").prop("checked") ? 1 : 0;
-        $.get("@Url.Action("SubmitOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + isFull,
+        $.get("@Url.Action("SubmitOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + isFull  + "&pi=" + ascii2hex($('#UserPin').val()),
             function (data) {
                 console.log(data);
                 if (data.indexOf('Errors:') > -1) {

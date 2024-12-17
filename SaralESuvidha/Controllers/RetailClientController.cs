@@ -446,7 +446,7 @@ namespace SaralESuvidha.Controllers
             return Content(ots);
         }
 
-        public IActionResult SubmitOTSCase(string accountId, string discomId, string amount, int isFull)
+        public IActionResult SubmitOTSCase(string accountId, string discomId, string amount, int isFull, string pi = "")
         {
             string result = string.Empty;
             string retailerId = HttpContext.Session.GetString("RetailerId");
@@ -467,7 +467,7 @@ namespace SaralESuvidha.Controllers
             }
             HttpContext.Session.SetString("isFull", isFull.ToString());
             
-            result = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent, amount1, obj1.Data.TotoalOutStandingAmount);
+            result = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent, amount1, obj1.Data.TotoalOutStandingAmount, pi);
             return Content(result);
         }
 
