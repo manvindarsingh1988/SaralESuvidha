@@ -402,7 +402,6 @@ namespace SaralESuvidha.Controllers
             UPPCLManager.CheckTokenExpiry();
             var obj = UPPCLManager.GetAmountDetails(discomId, accountId);
             var amountdetail = JsonConvert.SerializeObject(obj);
-            HttpContext.Session.SetString("amountdetail", amountdetail);
             return Content(JsonConvert.SerializeObject(obj));
         }
 
@@ -441,8 +440,6 @@ namespace SaralESuvidha.Controllers
             UPPCLManager.CheckTokenExpiry();
             var obj = UPPCLManager.InitiateOTSCase(discomId, accountId, isFull == 1 ? true : false, amount);
             var ots = JsonConvert.SerializeObject(obj);
-            HttpContext.Session.SetString("otsinfo", ots);
-            HttpContext.Session.SetString("discom", discomId);
             return Content(ots);
         }
 
@@ -454,8 +451,8 @@ namespace SaralESuvidha.Controllers
             string userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
             string requestIp = HttpContext.Connection.RemoteIpAddress?.ToString();
             //string retailerId, string eBillInfo, string retailUserOrderNo, string retailUserName, string userAgent, string requestIp
-            var obj = JsonConvert.DeserializeObject<CaseInitResponse>(HttpContext.Session.GetString("otsinfo"));
-            var obj1 = JsonConvert.DeserializeObject<AmountDetails>(HttpContext.Session.GetString("amountdetail"));
+            var obj = JsonConvert.DeserializeObject<CaseInitResponse>(StaticData.RetailUserOrderNoNameMobile(accountId, "OTS_CaseInit"));
+            var obj1 = JsonConvert.DeserializeObject<AmountDetails>(StaticData.RetailUserOrderNoNameMobile(accountId, "OTS_AmountDetails"));
             decimal amount1;
             if (isFull == 1)
             {
@@ -465,7 +462,6 @@ namespace SaralESuvidha.Controllers
             {
                 amount1 = Convert.ToDecimal(obj1.Data.InstallmentList1[0].RegistrationAmount);
             }
-            HttpContext.Session.SetString("isFull", isFull.ToString());
             
             result = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent, amount1, obj1.Data.TotoalOutStandingAmount, pi);
             return Content(result);
@@ -473,9 +469,8 @@ namespace SaralESuvidha.Controllers
 
         public IActionResult ReceiptOTSUPPCL(string accountId, string discomId, string amount, int isFull)
         {
-            discomId = HttpContext.Session.GetString("discom");
-            var obj = JsonConvert.DeserializeObject<CaseInitResponse>(HttpContext.Session.GetString("otsinfo"));
-            var obj1 = JsonConvert.DeserializeObject<AmountDetails>(HttpContext.Session.GetString("amountdetail"));
+            var obj = JsonConvert.DeserializeObject<CaseInitResponse>(StaticData.RetailUserOrderNoNameMobile(accountId, "OTS_CaseInit"));
+            var obj1 = JsonConvert.DeserializeObject<AmountDetails>(StaticData.RetailUserOrderNoNameMobile(accountId, "OTS_AmountDetails"));
             decimal downPayment;
             if (isFull == 1)
             {
@@ -514,7 +509,7 @@ namespace SaralESuvidha.Controllers
             var modal = new UPPCLOTSReciptModal();
             modal.RechargeMobileNumber = obj.Data.BillDetails.ConsumerName;
             modal.TelecomOperatorName = obj.Data.BillDetails.Discom;
-            modal.ApiOperatorCode = discomId.Trim();
+            modal.ApiOperatorCode = obj.Data.BillDetails.Discom.Split('-')[0].Trim();
 
             modal.InfoTable = "<table class=tableData>";
             modal.InfoTable += "<tr>";

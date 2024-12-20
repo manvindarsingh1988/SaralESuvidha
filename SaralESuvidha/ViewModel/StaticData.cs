@@ -1992,6 +1992,26 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
+        public static string RetailUserOrderNoNameMobile(string consumerNumber, string apiType)
+        {
+            var result = string.Empty;
+            try
+            {
+                using (var con = new SqlConnection(StaticData.conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ConsumerNumber", consumerNumber);
+                    parameters.Add("@ApiType", apiType);
+                    result = con.QuerySingleOrDefault<string>("usp_GetApiResponseByApiTypeAndConsumerId", parameters, commandType: System.Data.CommandType.StoredProcedure);
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
         public static string PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, decimal amount, decimal outStandingAmount, string pi = "", string inputSource = "web")
         {
             var billTran = new RTran();
