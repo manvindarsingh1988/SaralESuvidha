@@ -59,7 +59,7 @@
             $('#sendotp').removeClass('hide');
             return;
         }
-        $.getJSON("@Url.Action("SendAadharOTP", "RetailUserCommon")?aadharId=" + sid, function (data) {
+        $.getJSON("@Url.Action("SendAadharOTP", "Common")?aadharId=" + sid, function (data) {
             if (!data || !data.message) {
                 $("#KYCloaderInfo").html('Try with this Addhar card after 45 seconds').removeClass('text-success').addClass('text-danger');
                 $('#sendotp').button('reset');
@@ -99,7 +99,7 @@
             $('#verifyotp').removeClass('hide');
             return;
         }
-        $.getJSON("@Url.Action("VerifyAadharOTP", "RetailUserCommon")?referenceId=" + reference_id +"&otp=" + otp + "&aadharId=" + aadharid, function (data) {
+        $.getJSON("@Url.Action("VerifyAadharOTP", "Common")?referenceId=" + reference_id + "&otp=" + otp + "&aadharId=" + aadharid, function (data) {
             if (!data || !data.message) {
                 $("#KYCloaderInfo").html('Try with this Addhar card after sometime').removeClass('text-success').addClass('text-danger');
                 $('#verifyotp').button('reset');
@@ -141,7 +141,7 @@
             $('#verifypan').removeClass('hide');
             return;
         }
-        $.getJSON("@Url.Action("VerifyPAN", "RetailUserCommon")?pan=" + pan + "&name=" + name + "&dob=" + dob + "&referenceId=" + reference_id, function (data) {
+        $.getJSON("@Url.Action("VerifyPAN", "Common")?pan=" + pan + "&name=" + name + "&dob=" + dob + "&referenceId=" + reference_id, function (data) {
             if (data && (data.message || data.remarks)) {
                 $("#KYCloaderInfo").html(data.message != null ? data.message : data.remarks).removeClass('text-success').addClass('text-danger')
                 $('#verifypan').button('reset');

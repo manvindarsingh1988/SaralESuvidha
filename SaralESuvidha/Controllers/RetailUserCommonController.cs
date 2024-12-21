@@ -644,28 +644,5 @@ namespace SaralESuvidha.Controllers
             
             return Content(result);
         }
-
-        public IActionResult SendAadharOTP(string aadharId)
-        {
-            string result = string.Empty;
-            result = KYCHelper.SendOTP(aadharId);
-            return Content(result);
-        }
-
-        public IActionResult VerifyAadharOTP(string referenceId, string otp, string aadharId)
-        {
-            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, "KYCDocFiles/");
-            string result = string.Empty;
-            result = KYCHelper.VerifyOTP(referenceId, otp, folderPath, aadharId);
-            return Content(result);
-        }
-
-        public IActionResult VerifyPAN(string pan, string name, string dob, string referenceId)
-        {
-            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, "KYCDocFiles/");
-            string result = string.Empty;
-            result = KYCHelper.VerifyPan(pan, name, dob, folderPath, referenceId);
-            return Content(result);
-        }
     }
 }
