@@ -2012,7 +2012,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static (string, string) PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, decimal amount, decimal outStandingAmount, string pi = "", string inputSource = "web")
+        public static (string, string) PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, decimal amount, decimal outStandingAmount, int isFull, string pi = "", string inputSource = "web")
         {
             var billTran = new RTran();
             string result = string.Empty;
@@ -2037,6 +2037,7 @@ namespace SaralESuvidha.ViewModel
                 else
                 {
                     billTran.IsOTS = 1;
+                    billTran.IsFull = isFull;
                     billTran.RetailUserOrderNo = Convert.ToInt32(retailUserOrderNo);
                     billTran.RetailUserId = retailerId;
                     billTran.TelecomOperatorName = operatorName;

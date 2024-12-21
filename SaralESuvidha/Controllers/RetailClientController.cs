@@ -463,7 +463,7 @@ namespace SaralESuvidha.Controllers
             {
                 amount1 = Convert.ToDecimal(obj1.Data.InstallmentList1[0].RegistrationAmount);
             }
-            var res = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent, amount1, obj1.Data.TotoalOutStandingAmount, pi);
+            var res = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent, amount1, obj1.Data.TotoalOutStandingAmount, isFull, pi);
             result = res.Item1;
             result += "$$" + res.Item2;
             return Content(result);

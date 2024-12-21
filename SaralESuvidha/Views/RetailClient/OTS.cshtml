@@ -314,8 +314,9 @@
         $.get("@Url.Action("SubmitOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + isFull  + "&pi=" + ascii2hex($('#UserPin').val()),
             function (data) {
                 console.log(data);
+                var resText = data.split("$$")[0];
                 if (data.indexOf('Errors:') > -1) {
-                    $('#InfoDetail2').html(data).removeClass('text-success').addClass('text-danger');
+                    $('#InfoDetail2').html(resText).removeClass('text-success').addClass('text-danger');
                 } else {
                     //success
                     var resText = data.split("$$")[0];
@@ -324,18 +325,17 @@
                     $('#submitcard').addClass('d-none');
                     $('#EBillActionMessage').html('<span class="text-success">' + resText + '</span>');
                     $('#EBillActionMessage').attr("alt", reciptId);
-                    $('#Account').val('');
                 }
             });
     }
 
     function Full() {
-        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 1 + "&reciptId=" + $('EBillActionMessage').attr('alt');
+        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 1 + "&reciptId=" + $('#EBillActionMessage').attr('alt');
         
     }
 
     function Installment() {
-        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 0 + "&reciptId=" + $('EBillActionMessage').attr('alt');
+        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 0 + "&reciptId=" + $('#EBillActionMessage').attr('alt');
     }
 
     function LoadEOperatorDdl() {
@@ -360,10 +360,12 @@
 
     function PrintReceipt() {
         var isFull = $("#full").prop("checked") ? 1 : 0;
-        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + ' &discomId=' + $('#selectEOperator').val() + ' &amount=' + $('#amount').val() + ' &isFull=' + isFull;
+        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + ' &discomId=' + $('#selectEOperator').val() + ' &amount=' + $('#amount').val() + ' &isFull=' + isFull + "&reciptId=" + $('#EBillActionMessage').attr('alt');;
     }
 
     $(function () {
+        $('#Account').val('');
+        $('#amount').val('');
         LoadEOperatorDdl();
         $("input[name=option]").change(function(){
         if($("#full").is(':checked')){
