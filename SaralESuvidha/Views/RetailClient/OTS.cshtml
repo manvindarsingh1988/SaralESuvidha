@@ -318,21 +318,24 @@
                     $('#InfoDetail2').html(data).removeClass('text-success').addClass('text-danger');
                 } else {
                     //success
+                    var resText = data.split("$$")[0];
+                    var reciptId = data.split("$$")[1];
                     $('#result').removeClass('d-none');
                     $('#submitcard').addClass('d-none');
-                    $('#EBillActionMessage').html('<span class="text-success">' + data + '</span>');
+                    $('#EBillActionMessage').html('<span class="text-success">' + resText + '</span>');
+                    $('#EBillActionMessage').attr("alt", reciptId);
                     $('#Account').val('');
                 }
             });
     }
 
     function Full() {
-        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + ' &discomId=' + $('#selectEOperator').val() + ' &amount=' + $('#amount').val() + ' &isFull=' + 1;
+        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 1 + "&reciptId=" + $('EBillActionMessage').attr('alt');
         
     }
 
     function Installment() {
-        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + ' &discomId=' + $('#selectEOperator').val() + ' &amount=' + $('#amount').val() + ' &isFull=' + 0;
+        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 0 + "&reciptId=" + $('EBillActionMessage').attr('alt');
     }
 
     function LoadEOperatorDdl() {

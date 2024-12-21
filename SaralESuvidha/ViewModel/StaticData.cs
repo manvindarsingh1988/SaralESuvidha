@@ -1992,7 +1992,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string RetailUserOrderNoNameMobile(string consumerNumber, string apiType)
+        public static string GetApiResponseByApiTypeAndConsumerId(string consumerNumber, string apiType)
         {
             var result = string.Empty;
             try
@@ -2012,10 +2012,11 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, decimal amount, decimal outStandingAmount, string pi = "", string inputSource = "web")
+        public static (string, string) PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, decimal amount, decimal outStandingAmount, string pi = "", string inputSource = "web")
         {
             var billTran = new RTran();
             string result = string.Empty;
+            string reciptId = string.Empty;
             try
             {
                 string pin = StaticData.RetailUserPin(retailerId);
@@ -2051,7 +2052,7 @@ namespace SaralESuvidha.ViewModel
                     }
                     catch (Exception exName)
                     {
-                        return "Errors: Invalid consumer name in bill fetch." + exName.Message;
+                        return ("Errors: Invalid consumer name in bill fetch." + exName.Message, reciptId);
                     }
                     billTran.Parameter4 = retailerName;
                     billTran.RequestIp = requestIp;
@@ -2071,7 +2072,7 @@ namespace SaralESuvidha.ViewModel
                     }
                     catch (Exception exAccInfo)
                     {
-                        return "Errors: Invalid Account Info." + exAccInfo.Message;
+                        return ("Errors: Invalid Account Info." + exAccInfo.Message, reciptId);
                     }
                     billTran.UPPCL_TDConsumer = initResponse.Data.BillDetails.TdStatus == "true" ? true : false;
                     billTran.UPPCL_ConnectionType = initResponse.Data.BillDetails.ConnectionType;
@@ -2083,7 +2084,7 @@ namespace SaralESuvidha.ViewModel
                     }
                     catch (Exception exBillAmount)
                     {
-                        return "Errors: Invalid Bill Amount." + exBillAmount.Message;
+                        return ("Errors: Invalid Bill Amount." + exBillAmount.Message, reciptId);
                     }
                     billTran.UPPCL_Division = initResponse.Data.BillDetails.Division;
                     billTran.UPPCL_SubDivision = initResponse.Data.BillDetails.SubDivision;
@@ -2094,12 +2095,14 @@ namespace SaralESuvidha.ViewModel
                     }
                     catch (Exception exSanLoad)
                     {
-                        return "Errors: Invalid Sanctioned Load." + exSanLoad.Message;
+                        return ("Errors: Invalid Sanctioned Load." + exSanLoad.Message, reciptId);
                     }
                     billTran.UPPCL_BillId = initResponse.Data.BillDetails.BillId;
                     billTran.UPPCL_BillDate = initResponse.Data.BillDetails.BillDate;
                     billTran.UPPCL_Discom = operatorName;
-                    result = billTran.PayOTSUPPCL(initResponse, outStandingAmount, inputSource);
+                    var res1 = billTran.PayOTSUPPCL(initResponse, outStandingAmount, inputSource);
+                    result = res1.Item1;
+                    reciptId = res1.Item2;
                 }
             }
             catch (Exception ex)
@@ -2123,7 +2126,7 @@ namespace SaralESuvidha.ViewModel
                     result = "Errors: Can not pay bill, please try later.";
                 }
             }
-            return result;
+            return (result, reciptId);
         }
 
 

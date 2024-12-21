@@ -452,8 +452,8 @@ namespace SaralESuvidha.Controllers
             string userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
             string requestIp = HttpContext.Connection.RemoteIpAddress?.ToString();
             //string retailerId, string eBillInfo, string retailUserOrderNo, string retailUserName, string userAgent, string requestIp
-            var obj = JsonConvert.DeserializeObject<CaseInitResponse>(StaticData.RetailUserOrderNoNameMobile(accountId, "OTS_CaseInit"));
-            var obj1 = JsonConvert.DeserializeObject<AmountDetails>(StaticData.RetailUserOrderNoNameMobile(accountId, "OTS_AmountDetails"));
+            var obj = JsonConvert.DeserializeObject<CaseInitResponse>(StaticData.GetApiResponseByApiTypeAndConsumerId(accountId, "OTS_CaseInit"));
+            var obj1 = JsonConvert.DeserializeObject<AmountDetails>(StaticData.GetApiResponseByApiTypeAndConsumerId(accountId, "OTS_AmountDetails"));
             decimal amount1;
             if (isFull == 1)
             {
@@ -463,15 +463,16 @@ namespace SaralESuvidha.Controllers
             {
                 amount1 = Convert.ToDecimal(obj1.Data.InstallmentList1[0].RegistrationAmount);
             }
-            
-            result = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent, amount1, obj1.Data.TotoalOutStandingAmount, pi);
+            var res = StaticData.PayOTSUPPCL(discomId, accountId, retailerId, retailUserOrderNo, requestIp, obj, userAgent, amount1, obj1.Data.TotoalOutStandingAmount, pi);
+            result = res.Item1;
+            result += "$$" + res.Item2;
             return Content(result);
         }
 
-        public IActionResult ReceiptOTSUPPCL(string accountId, string discomId, string amount, int isFull)
+        public IActionResult ReceiptOTSUPPCL(string accountId, string discomId, string amount, int isFull, string reciptId)
         {
-            var obj = JsonConvert.DeserializeObject<CaseInitResponse>(StaticData.RetailUserOrderNoNameMobile(accountId, "OTS_CaseInit"));
-            var obj1 = JsonConvert.DeserializeObject<AmountDetails>(StaticData.RetailUserOrderNoNameMobile(accountId, "OTS_AmountDetails"));
+            var obj = JsonConvert.DeserializeObject<CaseInitResponse>(StaticData.GetApiResponseByApiTypeAndConsumerId(accountId, "OTS_CaseInit"));
+            var obj1 = JsonConvert.DeserializeObject<AmountDetails>(StaticData.GetApiResponseByApiTypeAndConsumerId(accountId, "OTS_AmountDetails"));
             decimal downPayment;
             if (isFull == 1)
             {
@@ -511,7 +512,7 @@ namespace SaralESuvidha.Controllers
             
             try
             {
-                string verifyUrl = "http://saralesuvidha.com/Home/ReceiptUPPCL?t=" + "t";//VerifyReceipt
+                string verifyUrl = "http://saralesuvidha.com/Home/ReceiptUPPCL?t=" + reciptId;//VerifyReceipt
                 QRCodeGenerator QrGenerator = new QRCodeGenerator();
                 QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(verifyUrl, QRCodeGenerator.ECCLevel.Q);
                 QRCoder.Base64QRCode qr = new Base64QRCode();

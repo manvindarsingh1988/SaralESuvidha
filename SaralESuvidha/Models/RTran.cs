@@ -370,10 +370,11 @@ namespace SaralESuvidha.Models
             return result;
         }
 
-        public string PayOTSUPPCL(CaseInitResponse initResponse, decimal outStandingAmount, string inputSource = "web",
+        public (string, string) PayOTSUPPCL(CaseInitResponse initResponse, decimal outStandingAmount, string inputSource = "web",
             string clientReferenceId = "")
         {
             string result = string.Empty;
+            string reciptId = string.Empty;
             if (string.IsNullOrEmpty(RetailUserOrderNo.ToString()) || string.IsNullOrEmpty(RechargeMobileNumber) ||
                     string.IsNullOrEmpty(Amount.ToString()) || string.IsNullOrEmpty(TelecomOperatorName) ||
                     string.IsNullOrEmpty(initResponse.Data.BillDetails.BillId) || string.IsNullOrEmpty(initResponse.Data.BillDetails.KNumber))
@@ -616,7 +617,7 @@ namespace SaralESuvidha.Models
                             //after post , update the details with poost data
 
                             //printMessage = " <a target='_blank' href='Home/PrintReceipt?t=" + StaticData.ConvertStringToHex(resp.Id) + "'>PRINT RECEIPT</a>";
-
+                            reciptId = StaticData.ConvertStringToHex(resp.Id);
                             printMessage = " <span class='btn btn-primary' onclick=\'PrintReceipt(\"" +
                                            StaticData.ConvertStringToHex(resp.Id) + "\");\'>PRINT RECEIPT</span>";
                         }
@@ -649,7 +650,7 @@ namespace SaralESuvidha.Models
                     }
                 }
             }
-            return result;
+            return (result, reciptId);
         }
 
         public string PayBillUPPCL(ESuvidhaBillFetchResponse eSuvidhaBillFetchResponse, string inputSource = "web",
