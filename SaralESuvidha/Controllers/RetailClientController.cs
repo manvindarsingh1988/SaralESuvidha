@@ -22,6 +22,7 @@ using UPPCLLibrary.BillFetch;
 using RTran = SaralESuvidha.Models.RTran;
 using UPPCLLibrary.OTS;
 using Microsoft.VisualBasic;
+using QRCoder;
 
 namespace SaralESuvidha.Controllers
 {
@@ -507,6 +508,21 @@ namespace SaralESuvidha.Controllers
                 obj.Data.BillDetails.PurposeOfSupply += " (औद्योगिक)";
             }
             var modal = new UPPCLOTSReciptModal();
+            
+            try
+            {
+                string verifyUrl = "http://saralesuvidha.com/Home/ReceiptUPPCL?t=" + "t";//VerifyReceipt
+                QRCodeGenerator QrGenerator = new QRCodeGenerator();
+                QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(verifyUrl, QRCodeGenerator.ECCLevel.Q);
+                QRCoder.Base64QRCode qr = new Base64QRCode();
+                qr.SetQRCodeData(QrCodeInfo);
+                modal.QrCode = "data:image/png;base64," + qr.GetGraphic(20);
+            }
+            catch (Exception)
+            {
+                    
+            }
+            
             modal.RechargeMobileNumber = obj.Data.BillDetails.ConsumerName;
             modal.TelecomOperatorName = obj.Data.BillDetails.Discom;
             modal.ApiOperatorCode = obj.Data.BillDetails.Discom.Split('-')[0].Trim();

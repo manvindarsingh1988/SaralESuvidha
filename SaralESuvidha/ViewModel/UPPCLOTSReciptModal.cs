@@ -8,5 +8,7 @@
         public string Para1 { get; set; }
         public string InstallmentTable { get; set; }
         public string RechargeMobileNumber { get; set; }
+        public string QrCode { get; set; }
+
     }
 }
