@@ -203,7 +203,8 @@
             <div class="row">
                 <div class="container my-3">
                     <div class="col-md-12 text-center">
-                        <button type="button" class="btn btn-primary" onclick="Submit()">Submit</button>
+                        <button type="button" class="btn btn-primary hide" id="sub" onclick="Submit()">Submit</button>
+                        <button type="button" class="btn btn-outline-primary" id="btnVerifyAmount" name="btnVerifyAmount" onclick="javascript: VerifyAmount();">Verify Amount</button>
                     </div>
                 </div>
             </div>
@@ -230,6 +231,33 @@
         </div>
     </div>
 </form>
+
+<div class="modal fade" id="modals-update">
+    <div class="modal-dialog editDialog">
+        <div class="modal-content">
+            <!--form-->
+            <div class="modal-header">
+                <h5 class="modal-title">Verify Amount Window</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+            </div>
+            <div id="modals-update-message" class="modal-body">
+                <div class="row">
+                    <div class="col-sm-2 form-group">
+                        <label class="form-label">Amount <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-sm-4 form-group">
+                        <input type="number" class="text-primary form-control" id="txtVerifyAmount" name="txtVerifyAmount" autocomplete="off" placeholder="Enter Amount" />
+                    </div>
+                </div>
+                <div id="updateMessage">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
 
     function CheckEligibility() {
@@ -301,6 +329,10 @@
             });        
     }
 
+    function VerifyAmount() {
+        $('#modals-update').modal('show');
+    }
+
     function Submit() {
         if($('#AccountRO1').val() == null || $('#AccountRO1').val() == '') {
             $('#InfoDetail2').html("Failed to fetch details. Please check Discom Id again.").removeClass('text-success').addClass('text-danger');
@@ -362,6 +394,20 @@
         var isFull = $("#full").prop("checked") ? 1 : 0;
         window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + ' &discomId=' + $('#selectEOperator').val() + ' &amount=' + $('#amount').val() + ' &isFull=' + isFull + "&reciptId=" + $('#EBillActionMessage').attr('alt');;
     }
+
+    $('#txtVerifyAmount').keyup(function () {
+        if (Number($(this).val()) > 0) {
+            if (Number($(this).val()) === Number($('#ramount').text())) {
+                $('#modals-update').modal('hide');
+                $('#txtVerifyAmount').val('');
+                $('#sub').removeClass("hide");
+                $('#btnVerifyAmount').addClass("hide");
+            } else {
+                $('#sub').addClass("hide");
+                $('#btnVerifyAmount').removeClass("hide");
+            }
+        }
+    });
 
     $(function () {
         $('#Account').val('');
