@@ -30,6 +30,8 @@ namespace UPPCLLibrary.BillPost
         public string vanNo { get; set; }
         public string walletId { get; set; }
         public string scheme { get; set; }
+        public string TDStatus { get; set; }
+        public string LifelineAct { get; set; }
 
     }
 }

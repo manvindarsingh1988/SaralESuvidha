@@ -176,7 +176,7 @@ namespace SaralESuvidha.Models
         public int IsOTS { get; set; }
         public int? IsFull { get; set; }
 
-
+        public string UPPCL_LifelineAct { get; set; }
         public string TransferFundToRetailUser()
         {
             string result = "Info: Starting transfer process";
@@ -450,7 +450,7 @@ namespace SaralESuvidha.Models
                     queryParameters.Add("@ClientApiUserReferenceId", clientReferenceId);
                     queryParameters.Add("@IsOTS", IsOTS);
                     queryParameters.Add("@IsFull", IsFull);
-
+                    queryParameters.Add("@UPPCL_LifelineAct", UPPCL_LifelineAct);
                     RechargeStatus = "PROCESS";
 
                     var resp = con.QuerySingleOrDefault<RTranValidateResponse>("usp_RTranValidateUPPCL", queryParameters, commandType: System.Data.CommandType.StoredProcedure);
@@ -744,6 +744,7 @@ namespace SaralESuvidha.Models
                         queryParameters.Add("@ClientApiUserReferenceId", clientReferenceId);
                         queryParameters.Add("@IsOTS", IsOTS);
                         queryParameters.Add("@IsFull", IsFull);
+                        queryParameters.Add("@UPPCL_LifelineAct", UPPCL_LifelineAct);
 
                         RechargeStatus = "PROCESS";
 
@@ -785,7 +786,10 @@ namespace SaralESuvidha.Models
                                         .PaymentDetailsResponse.ProjectArea;
                                     billPaymentRequest.vanNo = UPPCLManager.uppclConfig.AgentVANNo;
                                     billPaymentRequest.walletId = RetailUserId;
-
+                                    billPaymentRequest.TDStatus = eSuvidhaBillFetchResponse.BillFetchResponse
+                                        .Body.PaymentDetailsResponse.TDStatus;
+                                    billPaymentRequest.LifelineAct = eSuvidhaBillFetchResponse.BillFetchResponse
+                                        .Body.PaymentDetailsResponse.LifelineAct;
                                     string city = "NA";
                                     try
                                     {

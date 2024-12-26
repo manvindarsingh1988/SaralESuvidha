@@ -35,6 +35,7 @@ namespace UPPCLLibrary.BillFetch
         public string ProjectArea { get; set; }
         public object Param1 { get; set; }
         public object Param2 { get; set; }
+        public string LifelineAct { get; set; }
 
         public PaymentDetailsResponse()
         {

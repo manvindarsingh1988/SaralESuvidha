@@ -2226,6 +2226,7 @@ namespace SaralESuvidha.ViewModel
                                         billTran.EndCustomerMobileNumber = mobileNumber;
                                         billTran.Extra1 = dueDate;
                                         billTran.Extra2 = dueAmount;
+                                        billTran.UPPCL_LifelineAct = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.LifelineAct;
                                         billTran.UPPCL_ProjectArea = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.ProjectArea;
                                         try
                                         {

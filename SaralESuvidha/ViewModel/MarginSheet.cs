@@ -20,10 +20,11 @@ namespace SaralESuvidha.ViewModel
         public decimal? FixMargin { get; set; }
 
         public float? MarginPercent { get; set; }
+        public float? MarginPercentUpto200 { get; set; }
 
         public decimal? MaxMargin { get; set; }
         public decimal? MaxDailyLimit { get; set; }
-        public bool? Active { get; set; }
+        public bool? Active { get; set; }       
 
     }
 }

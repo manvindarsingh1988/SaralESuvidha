@@ -753,7 +753,9 @@ namespace UPPCLLibrary
                     .Replace("_van_no_", billPaymentRequest.vanNo)
                     .Replace("_our_agent_id_", billPaymentRequest.walletId)
                     .Replace("_city_", billPaymentRequest.city)
-                    .Replace("_param1_", billPaymentRequest.param1);
+                    .Replace("_param1_", billPaymentRequest.param1)
+                    .Replace("_TDStatus_", billPaymentRequest.TDStatus)
+                    .Replace("_LifelineAct_", billPaymentRequest.LifelineAct);
                 request.AddStringBody(postData, ContentType.Json);
 
                 response = client.Execute<BillPostResponse>(request);

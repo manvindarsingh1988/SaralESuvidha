@@ -9,7 +9,8 @@
 <div class="callout callout-@(Model.OperationMessage.Contains("Error:") ? "danger" : "success")">
     <h5>Retailer Name - @Model.FullName</h5>
     <p>OperatorName - @Model.OperatorName</p>
-    <p>Margin UPTO 2000 - @Model.FixMargin</p>
+    <p>Margin Percent UPTO 200 Full payment - @Model.MarginPercentUpto200 %</p>
+    <p>Margin Amount (201-4000 Full Payment) - @Model.FixMargin</p>
     <p>Margin Percent - @Model.MarginPercent %</p>
     <p>Max Margin - @Model.MaxMargin</p>
     <hr>

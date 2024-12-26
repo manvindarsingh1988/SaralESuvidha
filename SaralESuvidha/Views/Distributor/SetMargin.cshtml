@@ -25,18 +25,24 @@
                     <select asp-for="OperatorName" class="form-control"></select>
                 </div>
                 <div class="col-lg-2 form-group">
-                    <label class="form-label">UPTO 2000 <span asp-validation-for="FixMargin" class="text-danger"></span></label>
+                    <label class="form-label">Margin Percent UPTO 200 Full payment <span asp-validation-for="MarginPercentUpto200" class="text-danger"></span></label>
+                    <input asp-for="MarginPercentUpto200" type="text" class="form-control number required">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">Margin Amount (201-4000 Full Payment) <span asp-validation-for="FixMargin" class="text-danger"></span></label>
                     <input asp-for="FixMargin" type="text" class="form-control number required">
                 </div>
                 <div class="col-lg-2 form-group">
-                    <label class="form-label">Margin% <span asp-validation-for="MarginPercent" class="text-danger"></span></label>
+                    <label class="form-label">Margin Percent <span asp-validation-for="MarginPercent" class="text-danger"></span></label>
                     <input asp-for="MarginPercent" type="text" class="form-control number required">
                 </div>
                 <div class="col-lg-2 form-group">
                     <label class="form-label">Max Limit <span asp-validation-for="MaxMargin" class="text-danger"></span></label>
                     <input asp-for="MaxMargin" type="text" value="0" class="form-control number">
                 </div>
-                <div class="col-lg-2 form-group">
+            </div>
+            <div class="row">
+                <div class="col-lg-12 form-group">
                     <label class="form-label">Remarks</label>
                     <input asp-for="Remarks" type="text" class="form-control" />
                 </div>

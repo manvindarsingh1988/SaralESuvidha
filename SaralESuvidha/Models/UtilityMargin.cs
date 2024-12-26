@@ -33,6 +33,9 @@ namespace SaralESuvidha.Models
         
         [DisplayName("Fix Margin"), Required(ErrorMessage = "Required")]
         public decimal? FixMargin { get; set; }
+
+        [Required(ErrorMessage = "Required")]
+        public decimal? MarginPercentUpto200 { get; set; }
         public decimal? MaxDailyLimit { get; set; }
         public bool? Active { get; set; }
         public string OperationMessage { get; set; }
@@ -55,6 +58,7 @@ namespace SaralESuvidha.Models
                 parameters.Add("@CreatedByUser", CreatedByUser);
                 parameters.Add("@LastUpdateDate", DateTime.Now);
                 parameters.Add("@LastUpdateMachine", LastUpdateMachine);
+                parameters.Add("@MarginPercentUpto200", MarginPercentUpto200);
                 parameters.Add("@Active", true);
                 
                 return byAdmin

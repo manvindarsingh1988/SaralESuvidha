@@ -105,9 +105,23 @@ namespace UPPCLLibrary.BillFetch
                             MinimumPayAmount = (int) Math.Round((accountInfo * 25)/100, MidpointRounding.AwayFromZero);
                             
                         }
-                        else
+                        else if(PayAmount < 250 && BillFetchResponse.Body.PaymentDetailsResponse.LifelineAct == "Y")
                         {
-                            MinimumPayAmount = PayAmount > 250 ? 250 : PayAmount;
+                            MinimumPayAmount = PayAmount;
+                        }
+                        else if (PayAmount < 1000 && BillFetchResponse.Body.PaymentDetailsResponse.LifelineAct == "N")
+                        {
+                            MinimumPayAmount = PayAmount;
+                        }
+                        else if(BillFetchResponse.Body.PaymentDetailsResponse.LifelineAct == "Y")
+                        {
+                            var minAmount = (int)Math.Round((accountInfo * 10) / 100, MidpointRounding.AwayFromZero);
+                            MinimumPayAmount = minAmount > 250 ? minAmount : 250;
+                        }
+                        else if (BillFetchResponse.Body.PaymentDetailsResponse.LifelineAct == "N")
+                        {
+                            var minAmount = (int)Math.Round((accountInfo * 25) / 100, MidpointRounding.AwayFromZero);
+                            MinimumPayAmount = minAmount > 1000 ? minAmount : 1000;
                         }
 
                         if (PayAmount < 250)

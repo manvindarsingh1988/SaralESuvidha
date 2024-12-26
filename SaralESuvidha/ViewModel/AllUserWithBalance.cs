@@ -17,6 +17,6 @@ public class AllUserWithBalance
     public bool Active { get; set; }
     public string UPPCL_Commission { get; set; }
     public int Salary { get; set; }
-    
-    
+    public string Amount { get; set; }
+    public string CommissionPercentage { get; set; }
 }
