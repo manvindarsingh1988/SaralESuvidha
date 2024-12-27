@@ -1469,6 +1469,7 @@ namespace UPPCLLibrary
 
             try
             {
+                var url = uppclConfig.RefreshTokenUrl.Replace("_refresh_token_", uppclConfig.OTS_RefreshToken);
                 var client = new RestClient(uppclConfig.RefreshTokenUrl.Replace("_refresh_token_", uppclConfig.OTS_RefreshToken));
                 var request = new RestRequest("", Method.Post);
                 string basicAuth = "Basic " + EncodeBase64(Encoding.ASCII, uppclConfig.OTS_Consumer_key + ":" + uppclConfig.OTS_Consumer_Secret);
@@ -1499,7 +1500,7 @@ namespace UPPCLLibrary
                     tr.error_description = "Internal: Error: " + response.Content;
                 }
 
-                SaveHitLog("S", null, null, null, "OTSAccess", uppclConfig.TokenUrl, basicAuth, response?.Content, DateTime.Now, null);
+                SaveHitLog("S", null, null, null, "OTSRefreshToken", url, basicAuth, response?.Content, DateTime.Now, null);
 
             }
             catch (Exception ex)
