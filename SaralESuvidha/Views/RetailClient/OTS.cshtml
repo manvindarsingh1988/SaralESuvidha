@@ -265,6 +265,10 @@
             $('#InfoDetail').html("Account can not be blank.").removeClass('text-success').addClass('text-danger');
             return;
         }
+        if ($('#selectEOperator').val() == null || $('#selectEOperator').val() == '') {
+            $('#InfoDetail').html("Select valid operator.").removeClass('text-success').addClass('text-danger');
+            return;
+        }
         $('#InfoDetail').html('').addClass('text-success').removeClass('text-danger');
         $.getJSON("@Url.Action("CheckEligibilityForOTS", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val(),
             function (data) {
