@@ -1467,6 +1467,7 @@ namespace UPPCLLibrary
 
             try
             {
+                var url = uppclConfig.RefreshTokenUrl.Replace("_refresh_token_", uppclConfig.OTS_RefreshToken);
                 var client = new RestClient(uppclConfig.RefreshTokenUrl.Replace("_refresh_token_", uppclConfig.OTS_RefreshToken));
                 var request = new RestRequest("", Method.Post);
                 string basicAuth = "Basic " + EncodeBase64(Encoding.ASCII, uppclConfig.OTS_Consumer_key + ":" + uppclConfig.OTS_Consumer_Secret);
@@ -1497,7 +1498,7 @@ namespace UPPCLLibrary
                     tr.error_description = "Internal: Error: " + response.Content;
                 }
 
-                SaveHitLog("S", null, null, null, "OTSAccess", uppclConfig.TokenUrl, basicAuth, response?.Content, DateTime.Now, null);
+                SaveHitLog("S", null, null, null, "OTSRefreshToken", url, basicAuth, response?.Content, DateTime.Now, null);
 
             }
             catch (Exception ex)
@@ -1534,6 +1535,7 @@ namespace UPPCLLibrary
 
         public static CheckEligibility CheckEligibility(string divisionName, string consumerNumber)
         {
+            Initialize();
             var br = new CheckEligibility();
 
             try
@@ -1551,7 +1553,7 @@ namespace UPPCLLibrary
                 if (response.IsSuccessful)
                 {
                     br = JsonConvert.DeserializeObject<CheckEligibility>(response.Content);
-                    if(br != null && br.Data != null && br.Data.Status == "error")
+                    if (br != null && br.Data != null && br.Data.Status == "error")
                     {
                         br.Status = br.Data.Status;
                         br.Message = br.Data.Message;
@@ -1562,10 +1564,40 @@ namespace UPPCLLibrary
                     try
                     {
                         br = JsonConvert.DeserializeObject<CheckEligibility>(response.Content);
-
-                        if(br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
+                        var respData = response?.Content;
+                        if (respData != null && respData.Contains("Invalid Credentials. Make sure you have provided the correct"))
                         {
-                            if(br == null)
+                            OTSToken();
+                            if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
+                            {
+                                if (br == null)
+                                {
+                                    br = new CheckEligibility();
+                                }
+                                br.Status = "error";
+                                br.Message = "Invalid Credentials";
+                            }
+                        }
+                        else if (respData != null && respData.Contains("ams:fault"))
+                        {
+                            string? errorCode = GetRegExFirstMatch(respData, "ams:message>(.*)</ams:message>");
+                            if (errorCode != null && errorCode == "Invalid Credentials")
+                            {
+                                OTSToken();
+                                if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
+                                {
+                                    if (br == null)
+                                    {
+                                        br = new CheckEligibility();
+                                    }
+                                    br.Status = "error";
+                                    br.Message = "Invalid Credentials";
+                                }
+                            }
+                        }
+                        if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
+                        {
+                            if (br == null)
                             {
                                 br = new CheckEligibility();
                             }
@@ -1613,6 +1645,7 @@ namespace UPPCLLibrary
 
         public static AmountDetails GetAmountDetails(string divisionName, string consumerNumber)
         {
+            Initialize();
             var br = new AmountDetails();
 
             try
@@ -1641,6 +1674,37 @@ namespace UPPCLLibrary
                     try
                     {
                         br = JsonConvert.DeserializeObject<AmountDetails>(response.Content);
+                        var respData = response?.Content;
+                        if (respData != null && respData.Contains("Invalid Credentials. Make sure you have provided the correct"))
+                        {
+                            OTSToken();
+                            if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
+                            {
+                                if (br == null)
+                                {
+                                    br = new AmountDetails();
+                                }
+                                br.Status = "error";
+                                br.Message = "Invalid Credentials";
+                            }
+                        }
+                        else if (respData != null && respData.Contains("ams:fault"))
+                        {
+                            string? errorCode = GetRegExFirstMatch(respData, "ams:message>(.*)</ams:message>");
+                            if (errorCode != null && errorCode == "Invalid Credentials")
+                            {
+                                OTSToken();
+                                if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
+                                {
+                                    if (br == null)
+                                    {
+                                        br = new AmountDetails();
+                                    }
+                                    br.Status = "error";
+                                    br.Message = "Invalid Credentials";
+                                }
+                            }
+                        }
                         if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
                         {
                             if (br == null)
@@ -1665,7 +1729,7 @@ namespace UPPCLLibrary
                         }
                         br.Status = "error";
                         br.Message = "Failed to get Amount Details";
-                    }                    
+                    }
                 }
 
                 SaveHitLog("S", null, null, consumerNumber, "OTS_AmountDetails", url, basicAuth, response?.Content, DateTime.Now, null);
@@ -1685,6 +1749,7 @@ namespace UPPCLLibrary
 
         public static CaseInitResponse InitiateOTSCase(string divisionName, string consumerNumber, bool isFull, string amount)
         {
+            Initialize();
             var br = new CaseInitResponse();
             try
             {
@@ -1703,7 +1768,7 @@ namespace UPPCLLibrary
                 {
                     downPayment = amountDetails.Data.InstallmentList1[0].Downpayment;
                 }
-                
+
                 var postData = uppclConfig.OTS_Init_PostData
                                     .Replace("_account_", consumerNumber)
                                     .Replace("_discom_", divisionName)
@@ -1742,6 +1807,37 @@ namespace UPPCLLibrary
                     try
                     {
                         br = JsonConvert.DeserializeObject<CaseInitResponse>(response.Content);
+                        var respData = response?.Content;
+                        if (respData != null && respData.Contains("Invalid Credentials. Make sure you have provided the correct"))
+                        {
+                            OTSToken();
+                            if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
+                            {
+                                if (br == null)
+                                {
+                                    br = new CaseInitResponse();
+                                }
+                                br.Status = "error";
+                                br.Message = "Invalid Credentials";
+                            }
+                        }
+                        else if (respData != null && respData.Contains("ams:fault"))
+                        {
+                            string? errorCode = GetRegExFirstMatch(respData, "ams:message>(.*)</ams:message>");
+                            if (errorCode != null && errorCode == "Invalid Credentials")
+                            {
+                                OTSToken();
+                                if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
+                                {
+                                    if (br == null)
+                                    {
+                                        br = new CaseInitResponse();
+                                    }
+                                    br.Status = "error";
+                                    br.Message = "Invalid Credentials";
+                                }
+                            }
+                        }
                         if (br == null || string.IsNullOrEmpty(br.Status) || string.IsNullOrEmpty(br.Message))
                         {
                             if (br == null)
@@ -1789,6 +1885,6 @@ namespace UPPCLLibrary
             }
             return br;
         }
-       
+
     }
 }

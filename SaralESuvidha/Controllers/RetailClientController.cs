@@ -392,6 +392,7 @@ namespace SaralESuvidha.Controllers
 
         public IActionResult CheckEligibilityForOTS(string accountId, string discomId)
         {
+            UPPCLManager.Initialize();
             UPPCLManager.CheckTokenExpiry();
             var obj = UPPCLManager.CheckEligibility(discomId, accountId);
             
@@ -400,6 +401,7 @@ namespace SaralESuvidha.Controllers
 
         public IActionResult GetAmountDetailsForOTS(string accountId, string discomId)
         {
+            UPPCLManager.Initialize();
             UPPCLManager.CheckTokenExpiry();
             var obj = UPPCLManager.GetAmountDetails(discomId, accountId);
             var amountdetail = JsonConvert.SerializeObject(obj);
@@ -437,7 +439,7 @@ namespace SaralESuvidha.Controllers
                     }
                 }
             }
-            
+            UPPCLManager.Initialize();
             UPPCLManager.CheckTokenExpiry();
             var obj = UPPCLManager.InitiateOTSCase(discomId, accountId, isFull == 1 ? true : false, amount);
             var ots = JsonConvert.SerializeObject(obj);
