@@ -1432,28 +1432,32 @@ namespace UPPCLLibrary
 
             try
             {
-                var client = new RestClient(uppclConfig.TokenUrl);
-                var request = new RestRequest("", Method.Post);
-                string basicAuth = "Basic " + EncodeBase64(Encoding.ASCII, uppclConfig.OTS_Consumer_key + ":" + uppclConfig.OTS_Consumer_Secret);
-                request.AddHeader("Authorization", basicAuth);
-                var response = client.Execute<TokenResponse>(request);
-
-                if (response.IsSuccessful)
+                TokenExpiry tokenExpiry = UPPCLManager.TokenExpiryDetail();
+                if (tokenExpiry.OTS < 0)
                 {
-                    tr = JsonConvert.DeserializeObject<TokenResponse>(response.Content);
-                    if (tr.error != "invalid_grant" || tr.error == "invalid_client")
+                    var client = new RestClient(uppclConfig.TokenUrl);
+                    var request = new RestRequest("", Method.Post);
+                    string basicAuth = "Basic " + EncodeBase64(Encoding.ASCII, uppclConfig.OTS_Consumer_key + ":" + uppclConfig.OTS_Consumer_Secret);
+                    request.AddHeader("Authorization", basicAuth);
+                    var response = client.Execute<TokenResponse>(request);
+
+                    if (response.IsSuccessful)
                     {
-                        UpdateOTSToken(tr);
-                        Initialize();
+                        tr = JsonConvert.DeserializeObject<TokenResponse>(response.Content);
+                        if (tr.error != "invalid_grant" || tr.error == "invalid_client")
+                        {
+                            UpdateOTSToken(tr);
+                            Initialize();
+                        }
                     }
-                }
-                else
-                {
-                    tr.error_description = "Internal: Error: " + response.Content;
-                }
+                    else
+                    {
+                        tr.error_description = "Internal: Error: " + response.Content;
+                    }
 
 
-                SaveHitLog("S", null, null, null, "OTSAccess", uppclConfig.TokenUrl, basicAuth, response?.Content, DateTime.Now, null);
+                    SaveHitLog("S", null, null, null, "OTSAccess", uppclConfig.TokenUrl, basicAuth, response?.Content, DateTime.Now, null);
+                }
             }
             catch (Exception ex)
             {
@@ -1469,44 +1473,48 @@ namespace UPPCLLibrary
 
             try
             {
-                var url = uppclConfig.RefreshTokenUrl.Replace("_refresh_token_", uppclConfig.OTS_RefreshToken);
-                var client = new RestClient(uppclConfig.RefreshTokenUrl.Replace("_refresh_token_", uppclConfig.OTS_RefreshToken));
-                var request = new RestRequest("", Method.Post);
-                string basicAuth = "Basic " + EncodeBase64(Encoding.ASCII, uppclConfig.OTS_Consumer_key + ":" + uppclConfig.OTS_Consumer_Secret);
-                request.AddHeader("Authorization", basicAuth);
-                var response = client.Execute<TokenResponse>(request);
-
-                if (response.Content.Contains("access token data not"))
+                TokenExpiry tokenExpiry = UPPCLManager.TokenExpiryDetail();
+                if (tokenExpiry.OTS < 15)
                 {
-                    OTSToken();
-                }
+                    var url = uppclConfig.RefreshTokenUrl.Replace("_refresh_token_", uppclConfig.OTS_RefreshToken);
+                    var client = new RestClient(uppclConfig.RefreshTokenUrl.Replace("_refresh_token_", uppclConfig.OTS_RefreshToken));
+                    var request = new RestRequest("", Method.Post);
+                    string basicAuth = "Basic " + EncodeBase64(Encoding.ASCII, uppclConfig.OTS_Consumer_key + ":" + uppclConfig.OTS_Consumer_Secret);
+                    request.AddHeader("Authorization", basicAuth);
+                    var response = client.Execute<TokenResponse>(request);
 
-                if (response.IsSuccessful)
-                {
-                    tr = JsonConvert.DeserializeObject<TokenResponse>(response.Content);
-                    if (tr.error != "invalid_grant" || tr.error == "invalid_client")
+                    if (response.Content.Contains("access token data not"))
                     {
-                        UpdateOTSToken(tr);
-                        Initialize();
+                        OTSToken();
+                    }
+
+                    if (response.IsSuccessful)
+                    {
+                        tr = JsonConvert.DeserializeObject<TokenResponse>(response.Content);
+                        if (tr.error != "invalid_grant" || tr.error == "invalid_client")
+                        {
+                            UpdateOTSToken(tr);
+                            Initialize();
+                        }
+                        else
+                        {
+                            //Refresh token invalid, so get the fresh access token and refresh token.
+                            OTSToken();
+                        }
                     }
                     else
                     {
-                        //Refresh token invalid, so get the fresh access token and refresh token.
-                        OTSToken();
+                        tr.error_description = "Internal: Error: " + response.Content;
                     }
-                }
-                else
-                {
-                    tr.error_description = "Internal: Error: " + response.Content;
-                }
 
-                SaveHitLog("S", null, null, null, "OTSRefreshToken", url, basicAuth, response?.Content, DateTime.Now, null);
+                    SaveHitLog("S", null, null, null, "OTSRefreshToken", url, basicAuth, response?.Content, DateTime.Now, null);
+                }
 
             }
             catch (Exception ex)
             {
                 tr.error_description = "Internal: Exception: " + ex.Message;
-            }
+            }            
             return tr;
         }
 
