@@ -437,7 +437,7 @@ namespace SaralESuvidha.Controllers
             {
                 tranId = StaticData.ConvertHexToString(t);
                 var UPPCLReceipt = StaticData.PaymentOTSReceiptDataByTranId(tranId);
-                UPPCLOTSReciptModal modal = OTSReciptGenerator.GenerateOTSRecipt(UPPCLReceipt.AccountId, UPPCLReceipt.Amount, UPPCLReceipt.IsFull, tranId, UPPCLReceipt.RechargeStatus);
+                UPPCLOTSReciptModal modal = OTSReciptGenerator.GenerateOTSRecipt(UPPCLReceipt.AccountId, UPPCLReceipt.Amount, UPPCLReceipt.IsFull.GetValueOrDefault(), tranId, UPPCLReceipt.RechargeStatus);
                 return View(modal);
             }
             catch (Exception)

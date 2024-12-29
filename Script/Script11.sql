@@ -48,3 +48,30 @@ AS
  DebitAmount as Debit, CreditAmount as Credit,Margin, OpeningBalance as OB, ClosingBalance as CB,RechargeMobileNumber as RechargeNumber, CASE RechargeStatus WHEN 'PROCESS' THEN 'PROCESS' ELSE RechargeStatus END AS RechargeStatus, ISNULL(Remarks,'') as Remarks, CreateDate, LiveId, UPPCL_PaymentType AS PaymentType, ISOTS  from [RTran] WITH(NOLOCK) --  
  WHERE (CONVERT(DATE,CreateDate) BETWEEN @TranDateFrom AND @TranDateTo) AND   
  RetailUserId IN(SELECT Id FROM RetailUser WHERE MasterId=@RetailUserId) ORDER BY CreateDate  
+ 
+ Go
+ Alter Table [SystemSetting]
+ Add IsOTSDown bit
+
+ Go
+
+ Update [SystemSetting] set IsOTSDown = 0;
+ 
+ Go
+
+Alter PROC [dbo].[usp_SystemSettingUpdate]   
+    @IsDown bit = NULL,  
+    @IsDownMessage nvarchar(500) = NULL,
+	@IsOTSDown bit = null
+AS   
+ SET NOCOUNT ON   
+ SET XACT_ABORT ON    
+   
+ BEGIN TRAN  
+  
+ UPDATE [dbo].[SystemSetting]  
+ SET   [IsDown] = @IsDown, [IsDownMessage] = @IsDownMessage, IsOTSDown = @IsOTSDown;  
+  
+ SELECT 'Success: Successfully updated.' AS 'OperationMessage';  
+  
+ COMMIT  

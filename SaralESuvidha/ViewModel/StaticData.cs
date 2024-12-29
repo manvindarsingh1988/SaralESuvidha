@@ -245,6 +245,26 @@ namespace SaralESuvidha.ViewModel
             }
         }
 
+        public static CheckEligibility CheckEligibilityForOTS(string accountId, string discomId)
+        {
+            LoadSystemSetting();
+            if (systemSetting.IsOTSDown == true)
+            {
+                return new CheckEligibility()
+                {
+                    Data = null,
+                    Message = systemSetting.IsDownMessage,
+                    Status = "error"
+                };
+            }
+            else
+            {
+                UPPCLManager.Initialize();
+                UPPCLManager.CheckTokenExpiry();
+                return UPPCLManager.CheckEligibility(discomId, accountId);
+            }
+        }
+
         public static string OperatorListJson()
         {
             string result = "[]";
@@ -586,7 +606,7 @@ namespace SaralESuvidha.ViewModel
                 ESuvidhaBillFetchResponse eSuvidhaBillFetchResponse = new ESuvidhaBillFetchResponse();
                 
                 //System Down Message in case of maintenance or uppcl issue
-                //LoadSystemSetting();
+                LoadSystemSetting();
                 if (systemSetting.IsDown == true)
                 {
                     eSuvidhaBillFetchResponse.Reason = "Errors: " + systemSetting.IsDownMessage;

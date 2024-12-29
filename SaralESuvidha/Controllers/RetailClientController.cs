@@ -392,10 +392,7 @@ namespace SaralESuvidha.Controllers
 
         public IActionResult CheckEligibilityForOTS(string accountId, string discomId)
         {
-            UPPCLManager.Initialize();
-            UPPCLManager.CheckTokenExpiry();
-            var obj = UPPCLManager.CheckEligibility(discomId, accountId);
-            
+            var obj = StaticData.CheckEligibilityForOTS(accountId, discomId);            
             return Content(JsonConvert.SerializeObject(obj));
         }
 
