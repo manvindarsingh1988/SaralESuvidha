@@ -1992,7 +1992,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string GetApiResponseByApiTypeAndConsumerId(string consumerNumber, string apiType)
+        public static string GetApiResponseByApiTypeAndConsumerId(string consumerNumber, string apiType, string transId = null)
         {
             var result = string.Empty;
             try
@@ -2002,6 +2002,7 @@ namespace SaralESuvidha.ViewModel
                     var parameters = new DynamicParameters();
                     parameters.Add("@ConsumerNumber", consumerNumber);
                     parameters.Add("@ApiType", apiType);
+                    parameters.Add("@Transid", transId);
                     result = con.QuerySingleOrDefault<string>("usp_GetApiResponseByApiTypeAndConsumerId", parameters, commandType: System.Data.CommandType.StoredProcedure);
                     
                 }
@@ -2452,6 +2453,34 @@ namespace SaralESuvidha.ViewModel
                 {
                     pr.Amount = 0;
                     pr.LiveId = "PAYMENT FAILED";
+                }
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+
+            }
+
+            return pr;
+        }
+
+        public static OTSReciptModal PaymentOTSReceiptDataByTranId(string tranId)
+        {
+            OTSReciptModal pr = new OTSReciptModal();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Id", tranId);
+                using (var con = new SqlConnection(conString))
+                {
+                    pr = con.QuerySingleOrDefault<OTSReciptModal>("usp_PaymentOTSReceiptById", parameters, commandType: System.Data.CommandType.StoredProcedure);
+                }
+
+                if (pr.RechargeStatus == "FAILURE")
+                {
+                    pr.Amount = "0";
                 }
             }
             catch (Exception)

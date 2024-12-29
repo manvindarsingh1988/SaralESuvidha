@@ -22,6 +22,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using Dapper;
 using System.Data.SqlClient;
+using Razorpay.Api;
 
 namespace SaralESuvidha.Controllers
 {
@@ -428,7 +429,23 @@ namespace SaralESuvidha.Controllers
                 return View(new PaymentReceiptUPPCL() { TelecomOperatorName = "INVALID DETAILS", Amount = 0 });
             }
         }
-        
+
+        public IActionResult ReceiptOTSUPPCL(string t)
+        {
+            string tranId = "";
+            try
+            {
+                tranId = StaticData.ConvertHexToString(t);
+                var UPPCLReceipt = StaticData.PaymentOTSReceiptDataByTranId(tranId);
+                UPPCLOTSReciptModal modal = OTSReciptGenerator.GenerateOTSRecipt(UPPCLReceipt.AccountId, UPPCLReceipt.Amount, UPPCLReceipt.IsFull, tranId, UPPCLReceipt.RechargeStatus);
+                return View(modal);
+            }
+            catch (Exception)
+            {
+                return View(new UPPCLOTSReciptModal() { TelecomOperatorName = "INVALID DETAILS" });
+            }
+        }
+
 
         public IActionResult VerifyReceipt(string t)
         {

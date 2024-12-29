@@ -63,6 +63,15 @@
         }      
     }
 
+    function PrintReceipt1(idToPrint) {
+        if (navigator.userAgent.includes('etopapp')) {
+            printrec(idToPrint);
+        } else {
+            var url = window.location.origin;
+            window.open(url + '/Home/ReceiptOTSUPPCL?t=' + idToPrint, "_blank");
+        }
+    }
+
     function LoadRechargeReport() {
         $('#lblReport').html('Daily report between ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDateTo').val());
 
@@ -89,7 +98,14 @@
                 {
                     data: "Rid",
                     title: "Action",
-                    render: function (data,type,row) { return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS') ? "" : "d-none") + "' title='Print Receipt' onclick=PrintReceipt('" + a2hex(data) + "')>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>": ''); },
+                    render: function (data,type,row) { 
+                        if (row.IsOTS == 1) {
+                            return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS') ? "" : "d-none") + "' title='Print Receipt' onclick=PrintReceipt1('" + a2hex(data) + "')>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
+
+                        } else {
+                            return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS') ? "" : "d-none") + "' title='Print Receipt' onclick=PrintReceipt('" + a2hex(data) + "')>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
+                        }                        
+                    },
                     "width": "70px"
                 }
             ]
