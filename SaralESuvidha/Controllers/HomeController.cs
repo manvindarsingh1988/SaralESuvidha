@@ -340,6 +340,10 @@ namespace SaralESuvidha.Controllers
                                     //Redirect("CustomerSupport");
                                     usr = "cs";
                                     break;
+                                case 9:
+                                    //Redirect("SecondaryAdmin");
+                                    usr = "sadm";
+                                    break;
 
                                 default:
                                     break;
