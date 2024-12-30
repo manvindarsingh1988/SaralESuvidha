@@ -1543,7 +1543,6 @@ namespace UPPCLLibrary
 
         public static CheckEligibility CheckEligibility(string divisionName, string consumerNumber)
         {
-            Initialize();
             var br = new CheckEligibility();
 
             try
@@ -1653,7 +1652,6 @@ namespace UPPCLLibrary
 
         public static AmountDetails GetAmountDetails(string divisionName, string consumerNumber)
         {
-            Initialize();
             var br = new AmountDetails();
 
             try
@@ -1757,7 +1755,6 @@ namespace UPPCLLibrary
 
         public static CaseInitResponse InitiateOTSCase(string divisionName, string consumerNumber, bool isFull, string amount)
         {
-            Initialize();
             var br = new CaseInitResponse();
             try
             {

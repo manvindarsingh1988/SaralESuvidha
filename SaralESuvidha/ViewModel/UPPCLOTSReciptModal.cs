@@ -11,4 +11,13 @@
         public string QrCode { get; set; }
 
     }
+
+    public class OTSReciptModal
+    {
+        public string Amount { get; set; }
+        public string AccountId { get; set; }
+        public int? IsFull { get; set; }
+        public string RechargeStatus { get; set; }
+
+    }
 }

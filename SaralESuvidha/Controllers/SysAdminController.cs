@@ -494,14 +494,15 @@ namespace SaralESuvidha.Controllers
             }
             return Content(result);
         }
-        
-        public IActionResult SaveSystemMaintain(string m, int active)
+
+        public IActionResult SaveSystemMaintain(string m, int active, int ots)
         {
             string result = string.Empty;
             SystemSetting ss = new SystemSetting
             {
                 IsDown = active == 1 ? true : false,
-                IsDownMessage = m
+                IsDownMessage = m,
+                IsOTSDown = ots == 1 ? true : false
             };
             result = ss.SaveSystemMaintain();
             return Content(result);

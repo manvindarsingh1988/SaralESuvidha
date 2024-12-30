@@ -18,6 +18,7 @@ namespace SaralESuvidha.ViewModel
         public decimal? UPPCLMarginAmount { get; set; }
         public decimal? TestAmount { get; set; }
         public bool? IsDown { get; set; }
+        public bool? IsOTSDown { get; set; }
         public String IsDownMessage { get; set; }
         
         public string SaveSystemMaintain()
@@ -30,6 +31,7 @@ namespace SaralESuvidha.ViewModel
                     var parameters = new DynamicParameters();
                     parameters.Add("@IsDownMessage", IsDownMessage);
                     parameters.Add("@IsDown", IsDown);
+                    parameters.Add("@IsOTSDown", IsOTSDown);
                     var res = con.Query<string>("usp_SystemSettingUpdate", parameters,
                         commandType: System.Data.CommandType.StoredProcedure).SingleOrDefault();
                     result = res;

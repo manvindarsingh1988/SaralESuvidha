@@ -245,6 +245,26 @@ namespace SaralESuvidha.ViewModel
             }
         }
 
+        public static CheckEligibility CheckEligibilityForOTS(string accountId, string discomId)
+        {
+            LoadSystemSetting();
+            if (systemSetting.IsOTSDown == true)
+            {
+                return new CheckEligibility()
+                {
+                    Data = null,
+                    Message = systemSetting.IsDownMessage,
+                    Status = "error"
+                };
+            }
+            else
+            {
+                UPPCLManager.Initialize();
+                UPPCLManager.CheckTokenExpiry();
+                return UPPCLManager.CheckEligibility(discomId, accountId);
+            }
+        }
+
         public static string OperatorListJson()
         {
             string result = "[]";
@@ -586,7 +606,7 @@ namespace SaralESuvidha.ViewModel
                 ESuvidhaBillFetchResponse eSuvidhaBillFetchResponse = new ESuvidhaBillFetchResponse();
                 
                 //System Down Message in case of maintenance or uppcl issue
-                //LoadSystemSetting();
+                LoadSystemSetting();
                 if (systemSetting.IsDown == true)
                 {
                     eSuvidhaBillFetchResponse.Reason = "Errors: " + systemSetting.IsDownMessage;
@@ -1992,7 +2012,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string GetApiResponseByApiTypeAndConsumerId(string consumerNumber, string apiType)
+        public static string GetApiResponseByApiTypeAndConsumerId(string consumerNumber, string apiType, string transId = null)
         {
             var result = string.Empty;
             try
@@ -2002,6 +2022,7 @@ namespace SaralESuvidha.ViewModel
                     var parameters = new DynamicParameters();
                     parameters.Add("@ConsumerNumber", consumerNumber);
                     parameters.Add("@ApiType", apiType);
+                    parameters.Add("@Transid", transId);
                     result = con.QuerySingleOrDefault<string>("usp_GetApiResponseByApiTypeAndConsumerId", parameters, commandType: System.Data.CommandType.StoredProcedure);
                     
                 }
@@ -2010,6 +2031,34 @@ namespace SaralESuvidha.ViewModel
             {
             }
             return result;
+        }
+
+        public static OTSReciptModal PaymentOTSReceiptDataByTranId(string tranId)
+        {
+            OTSReciptModal pr = new OTSReciptModal();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Id", tranId);
+                using (var con = new SqlConnection(conString))
+                {
+                    pr = con.QuerySingleOrDefault<OTSReciptModal>("usp_PaymentOTSReceiptById", parameters, commandType: System.Data.CommandType.StoredProcedure);
+                }
+
+                if (pr.RechargeStatus == "FAILURE")
+                {
+                    pr.Amount = "0";
+                }
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+
+            }
+
+            return pr;
         }
 
         public static (string, string) PayOTSUPPCL(string operatorName, string accountNumber, string retailerId, string retailUserOrderNo, string requestIp, CaseInitResponse initResponse, string userAgent, decimal amount, decimal outStandingAmount, int isFull, string pi = "", string inputSource = "web")

@@ -41,5 +41,6 @@ namespace SaralESuvidha.ViewModel
         public string RefundResponse { get; set; }
         public string RefundStatus { get; set; }
         public string PaymentType { get; set; }
+        public int? IsOTS { get; set; }
     }
 }

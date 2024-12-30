@@ -87,7 +87,13 @@
                 {
                     data: "Rid",
                     title: "Action",
-                    render: function (data,type,row) { return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS' || row["RechargeStatus"] === 'PROCESS') ? "" : "d-none") + "' title='Print Receipt' target='_blank' href='@Url.Action("ReceiptUPPCL", "Home")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>": ''); },
+                    render: function (data, type, row) {
+                        if (row.IsOTS == 1) {
+                            return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS' || row["RechargeStatus"] === 'PROCESS') ? "" : "d-none") + "' title='Print Receipt' target='_blank' href='@Url.Action("ReceiptOTSUPPCL", "Home")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
+                        } else {
+                            return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS' || row["RechargeStatus"] === 'PROCESS') ? "" : "d-none") + "' title='Print Receipt' target='_blank' href='@Url.Action("ReceiptUPPCL", "Home")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
+                        }
+                    }, 
                     "width": "70px"
                 }
             ]

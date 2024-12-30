@@ -201,6 +201,8 @@
                 { data: "City", title: "City" }, { data: "Address", title: "Address" },
                 { data: "EMail", title: "EMail" }, { data: "Active", title: "Active" } , { data: "UPPCL_Commission", title: "UPPCL_Commission" } ,
                 { data: "Salary", title: "Salary" }, 
+                { data: "Amount", title: "Amount" },
+                { data: "CommissionPercentage", title: "CommissionPercentage" },
                 {
                     data: null,
                     title: "Add Salary",
@@ -215,7 +217,7 @@
 
     function ExportExcelByUserAndDate() {
         $('#lblReport').html('Loading report...');
-        $.get('@Url.Action("AllPnLReportResultByUserAndDate", "SysAdmin")?x=0&dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&orderNo=' + $('#OrderNo').val(),
+        $.get('@Url.Action("AllPnLReportResultByUserAndDate", "SysAdmin")?x=1&dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&orderNo=' + $('#OrderNo').val(),
             function (data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
