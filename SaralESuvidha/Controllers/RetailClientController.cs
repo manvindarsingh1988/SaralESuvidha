@@ -471,7 +471,8 @@ namespace SaralESuvidha.Controllers
 
         public IActionResult ReceiptOTSUPPCL(string accountId, string discomId, string amount, int isFull, string reciptId)
         {
-            UPPCLOTSReciptModal modal = OTSReciptGenerator.GenerateOTSRecipt(accountId, amount, isFull, reciptId);
+            var tranId = StaticData.ConvertHexToString(reciptId);
+            UPPCLOTSReciptModal modal = OTSReciptGenerator.GenerateOTSRecipt(accountId, amount, isFull, tranId);
 
             return View(modal);
         }
