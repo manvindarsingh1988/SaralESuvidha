@@ -51,7 +51,8 @@ namespace SaralESuvidha.Controllers
 
             try
             {
-                string verifyUrl = "http://saralesuvidha.com/Home/ReceiptOTSUPPCL?t=" + reciptId;//VerifyReceipt
+                var hex = StaticData.ConvertStringToHex(reciptId);
+                string verifyUrl = "http://saralesuvidha.com/Home/ReceiptOTSUPPCL?t=" + hex;//VerifyReceipt
                 QRCodeGenerator QrGenerator = new QRCodeGenerator();
                 QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(verifyUrl, QRCodeGenerator.ECCLevel.Q);
                 QRCoder.Base64QRCode qr = new Base64QRCode();
