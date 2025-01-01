@@ -378,6 +378,95 @@ namespace SaralESuvidha.Controllers
             }
         }
 
+        public IActionResult PrintOTSReceiptThermal(string t)
+        {
+            //PaymentReceipt pr = new PaymentReceipt();
+            //pr.TelecomOperatorName = "Test";
+            string tranId = "";
+            try
+            {
+                string result = string.Empty;
+                tranId = StaticData.ConvertHexToString(t);
+                var uppclLReceipt = StaticData.PaymentOTSReceiptDataByTranId(tranId);
+                var obj = JsonConvert.DeserializeObject<CaseInitResponse>(StaticData.GetApiResponseByApiTypeAndConsumerId(uppclLReceipt.AccountId, "OTS_CaseInit", tranId));
+                var obj1 = JsonConvert.DeserializeObject<AmountDetails>(StaticData.GetApiResponseByApiTypeAndConsumerId(uppclLReceipt.AccountId, "OTS_AmountDetails", tranId));
+                //PaymentReceipt pr = JsonConvert.DeserializeObject<PaymentReceipt>(StaticData.ReceiptByTranId(tranId));
+                
+                if (obj != null && obj1 != null)
+                {
+                    decimal downPayment;
+                    if (uppclLReceipt.IsFull == 1)
+                    {
+                        var diff = Convert.ToDecimal(uppclLReceipt.Amount) - obj1.Data.FullPaymentList[0].RegistrationAmount;
+                        downPayment = obj1.Data.FullPaymentList[0].Downpayment - diff;
+                        if (downPayment < 0)
+                        {
+                            downPayment = 0;
+                        }
+                    }
+                    else
+                    {
+                        downPayment = obj1.Data.InstallmentList1[0].Downpayment;
+                    }
+                    var dueAmount = (int)Math.Round(Convert.ToDecimal(obj.Data.BillDetails.AccountInfo), MidpointRounding.AwayFromZero);
+                    result = "\n[C]<u><font size='big'>UPPCL BILL PAY" + "</font></u>\n" +
+                             "[C]================================\n" +
+                             "[L]<font size='tall'><b>" + obj.Data.BillDetails.Discom + "</b></font>\n" +
+                             "[C]--------------------------------\n" +
+                             "[C]<barcode type='128' height='10'>" + uppclLReceipt.LiveId +
+                             "</barcode>\n" +
+                             "[C]================================\n" +
+
+
+
+
+                             "[L]<b>RECEIPT NO: </b>" + uppclLReceipt.LiveId + "\n" +
+                             "[L]<b>BILL DATE: </b>" + obj.Data.BillDetails.BillDate + "\n" +
+                             "[L]<b>DUE DATE: </b>" + obj.Data.BillDetails.BillDueDate + "\n" +
+                             "[L]<b>PAYMENT DATE: </b>" + uppclLReceipt.CreateDate.ToString("dd-MM-yyyy HH:mm") + "\n" +
+                             "[C]--------------------------------\n" +
+                             "[L]<b>DIVISION: </b>" + obj.Data.BillDetails.Division + "\n" +
+                             "[L]<b>SUB DIVISION: </b>" + obj.Data.BillDetails.SubDivision + "\n" +
+                             "[L]<b>MOBILE: </b>" + obj.Data.BillDetails.MobileNumber + "\n" +
+                             "[L]<b>ACCOUNT NO: </b>" + uppclLReceipt.AccountId + "\n" +
+                             "[L]<b>CONSUMER NAME: " + obj.Data.BillDetails.ConsumerName + "</b>\n" +
+                             "[L]<b>BILL AMOUNT: </b>Rs. " + obj.Data.BillDetails.BillAmount + "\n" +
+                             "[L]<b>OUTSTANDING AMOUNT: </b>Rs. " + dueAmount + "\n" +
+                             "[L]<b>PAID AMOUNT: </b>Rs. " + uppclLReceipt.Amount + "\n" +
+                             "[L]<b>BALANCE AMOUNT: </b>Rs. " + downPayment + "\n" +
+                             "[L]<b>(" + StaticData.AmountToInr(Convert.ToDouble(uppclLReceipt.Amount)) + " Only" + ")</b>\n" +
+                             "[L]<b>STATUS: </b>" + uppclLReceipt.RechargeStatus + "\n" +
+                             "[L]<b>PAYMENT TYPE: </b>WALLET PAYMENT" + "\n" +
+
+                             "[L]\n" +
+                             "[C]--------------------------------\n" +
+                             "[R]<b>TOTAL AMOUNT : " + uppclLReceipt.Amount + "</b>\n" +
+                             "[R]DATE : " + uppclLReceipt.CreateDate.ToString("dd-MM-yyyy HH:mm") + "\n" +
+                             //"[R]PART PAYMENT : " + (pr.Parameter1 == "PartPayment" ? "YES" : "NO") + "\n" +
+                             "[L]\n" +
+                             "[C]================================\n" +
+                             "[L]<b>Printed By: </b>" + uppclLReceipt.RetailerName.ToUpper() + "\n" +
+                             "[L]<u><b>Printed On: </b>" + DateTime.Now.ToString("dd-MM-yyyy HH:mm") + "</u>\n" +
+                             "[L]<b>Agency: </b>" + "Saral ECommerce Pvt Ltd" + "\n" +
+                             "[L]<b>Agent Id: </b>" + uppclLReceipt.RetailUserId + "\n" +
+                             "[L]\n" + uppclLReceipt.ReceiptMessage + "\n" +
+                             "[L]This is computer generated receipt, does not require signature.\n" +
+                             "[L]Your bill will be updated within 1 days from the date of payment received. .\n" +
+
+                             "[C]\n<qrcode size='20'>http://saralesuvidha.com/Home/ReceiptOTSUPPCL?t=" + StaticData.ConvertStringToHex(tranId) +
+                             "</qrcode>\n" +
+                             "[L]\n[L]\n[L]\n";
+                    result = StaticData.EncodeBase64(Encoding.UTF8, result);
+
+                }
+                return Content(result);
+            }
+            catch (Exception)
+            {
+                return Content("INVALID DETAILS");
+            }
+        }
+
         public IActionResult AccountTopup()
         {
             return View();

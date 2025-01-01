@@ -388,7 +388,7 @@
     }
 
     function printrec(idToPrint) {
-        $.get('@Url.Action("PrintReceiptThermal", "RetailClient")?t=' + idToPrint + '&dt=' + Date.now() + '&x=0',
+        $.get('@Url.Action("PrintOTSReceiptThermal", "RetailClient")?t=' + idToPrint + '&dt=' + Date.now() + '&x=0',
             function (data) {
                 RoboTemplatesWebViewApp.printThermalFromBase64(data);
             });
