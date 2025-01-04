@@ -47,17 +47,17 @@ namespace SaralESuvidha.Models
         {
             if(MarginPercentUpto200 > 10)
             {
-                OperationMessage = "Error: Margin Percent Upto 200 can be greater than 10%.";
+                OperationMessage = "Error: Margin Percent Upto 200 can not be greater than 10%.";
                 return this;
             }
             if ( FixMargin > 20)
             {
-                OperationMessage = "Error: Fix Margin Amount upto 4000 can be greater than 20.";
+                OperationMessage = "Error: Fix Margin Amount upto 4000 can not be greater than 20.";
                 return this;
             }
             if (MarginPercent > .5)
             {
-                OperationMessage = "Error: Margin Percent for Part or more than 4000 full pament can be greater than 0.5%.";
+                OperationMessage = "Error: Margin Percent for Part or more than 4000 full pament can not be greater than 0.5%.";
                 return this;
             }
             using (var con = new SqlConnection(StaticData.conString))
