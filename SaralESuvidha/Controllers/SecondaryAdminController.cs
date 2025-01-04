@@ -91,6 +91,11 @@ namespace SaralESuvidha.Controllers
             return View("~/Views/SysAdmin/ChangePassword.cshtml");
         }
 
+        public IActionResult Pending()
+        {
+            return View("~/Views/SysAdmin/Pending.cshtml");
+        }
+
         public IActionResult Logout()
         {
             try
