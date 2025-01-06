@@ -44,4 +44,5 @@ public class RTranAdminReport
     public string RefundResponse { get; set; }
     public string RefundStatus { get; set; }
     public string InitialResponseData { get; set; }
+    public int IsOTS { get; set; }
 }
