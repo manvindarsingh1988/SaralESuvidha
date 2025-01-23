@@ -33,5 +33,7 @@ namespace SaralESuvidha.ViewModel
         public string FailureReason { get; set; }
         public short? DocVerificationFailed { get; set; }
         public short? AgreementAccepted { get; set; }
+        public string DefaultPrinter { get; set; }
+
     }
 }

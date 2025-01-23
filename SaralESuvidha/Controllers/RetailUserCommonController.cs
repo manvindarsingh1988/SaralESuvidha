@@ -617,6 +617,25 @@ namespace SaralESuvidha.Controllers
 
             return Content(result);
         }
+        
+        public IActionResult UpdateDefaultPrinter(string defaultPrinter)
+        {
+            string result = "";
+            try
+            {
+                result = StaticData.UpdateDefaultPrinter(defaultPrinter, HttpContext.Session.GetString("RetailerId"));
+                if (result.Contains("Success"))
+                {
+                    HttpContext.Session.SetString("DefaultPrinter", defaultPrinter);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Exception: " + ex.Message;
+            }
+
+            return Content(result);
+        }
 
         public IActionResult RofferMobile(string o, string m)
         {

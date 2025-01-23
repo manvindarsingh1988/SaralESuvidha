@@ -2595,6 +2595,31 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
+        
+        public static string UpdateDefaultPrinter(string defaultPrinter, string retailerId)
+        {
+            string result = string.Empty;
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@RetailUserId", retailerId);
+                parameters.Add("@DefaultPrinter", defaultPrinter);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<OperationResponse>("usp_RetailUserDefaultPrinter", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception)
+            {
+                result = "Exception in updating default printer.";// + ex.Message;
+            }
+            finally
+            {
+
+            }
+
+            return result;
+        }
 
         public static string UpdatePassword(string op, string np, string retailerId)
         {

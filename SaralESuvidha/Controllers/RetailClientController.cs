@@ -57,6 +57,11 @@ namespace SaralESuvidha.Controllers
             return View();
         }
         
+        public IActionResult DefaultPrinter()
+        {
+            return View();
+        }
+        
 
         public IActionResult DuplicateBillInfo()
         {
