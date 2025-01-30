@@ -504,6 +504,21 @@ namespace SaralESuvidha.Controllers
                 return View(new UPPCLOTSReciptModal() { TelecomOperatorName = "INVALID DETAILS" });
             }
         }
+        public IActionResult ReceiptOTSUPPCLT(string t)
+        {
+            string tranId = "";
+            try
+            {
+                tranId = StaticData.ConvertHexToString(t);
+                var UPPCLReceipt = StaticData.PaymentOTSReceiptDataByTranId(tranId);
+                UPPCLOTSReciptModal modal = OTSReciptGenerator.GenerateOTSRecipt(UPPCLReceipt.AccountId, UPPCLReceipt.Amount, UPPCLReceipt.IsFull.GetValueOrDefault(), tranId, UPPCLReceipt.RechargeStatus);
+                return View(modal);
+            }
+            catch (Exception)
+            {
+                return View(new UPPCLOTSReciptModal() { TelecomOperatorName = "INVALID DETAILS" });
+            }
+        }
 
 
         public IActionResult VerifyReceipt(string t)

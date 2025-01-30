@@ -81,9 +81,17 @@
     }
 
     function PrintReceipt1(idToPrint) {
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+        
         if (navigator.userAgent.includes('etopapp')) {
             printOTSrec(idToPrint);
-        } else {
+        }else if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+              var url = window.location.origin;
+              window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + idToPrint, "_blank");
+        }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+              var url = window.location.origin;
+              window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + idToPrint, "_blank");
+        }else {
             var url = window.location.origin;
             window.open(url + '/Home/ReceiptOTSUPPCL?t=' + idToPrint, "_blank");
         }

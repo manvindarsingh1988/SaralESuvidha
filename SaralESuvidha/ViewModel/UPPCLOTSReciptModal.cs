@@ -11,6 +11,16 @@ namespace SaralESuvidha.ViewModel
         public string InstallmentTable { get; set; }
         public string RechargeMobileNumber { get; set; }
         public string QrCode { get; set; }
+        public string ConsumerName { get; set; }
+        public string PurposeOfSupply { get; set; }
+        public decimal downPayment { get; set; }
+        public string SanctionedLoadInKW { get; set; }
+        public string RechargeStatus { get; set; }
+        public string ChoosenOption { get; set; }
+        public decimal RegistrationAmount_PanjikaranRashi { get; set; }
+        public decimal LPSCWaivOff_MafiYogyaAdhikatamByaj { get; set; }
+        public decimal LPSC31_Byaj { get; set; }
+        public decimal Payment31_Mulbakaya { get; set; }
 
     }
 
