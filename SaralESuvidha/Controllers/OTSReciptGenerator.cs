@@ -170,13 +170,13 @@ namespace SaralESuvidha.Controllers
                 modal.InstallmentTable += "माह";
                 modal.InstallmentTable += "</td>";
                 modal.InstallmentTable += "</tr>";
-                for (int i = 0; i < obj1.Data.InstallmentList1[0].NoOfInstallments; i++)
+                for (int i = DateTime.Now.Month, j = 0; i < obj1.Data.InstallmentList1[0].NoOfInstallments; i++, j++)
                 {
                     if (i < 12)
                     {
                         modal.InstallmentTable += "<tr>";
                         modal.InstallmentTable += "<td>";
-                        modal.InstallmentTable += installmet[i] + " किश्त";
+                        modal.InstallmentTable += installmet[j] + " किश्त";
                         modal.InstallmentTable += "</td>";
                         modal.InstallmentTable += "<td>";
                         modal.InstallmentTable += obj1.Data.InstallmentList1[0].InstallmentAmount;
