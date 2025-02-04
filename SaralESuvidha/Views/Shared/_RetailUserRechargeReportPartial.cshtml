@@ -1,4 +1,6 @@
-﻿<form id="frmReport" method="post" action="">
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+<form id="frmReport" method="post" action="">
     <div class="card">
         <div class="card-body">
             <div class="row">
@@ -62,18 +64,34 @@
     }
         
     function PrintReceipt(idToPrint){
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+        
         if (navigator.userAgent.includes('etopapp')){
             printrec(idToPrint);
-        }else{
+        }else if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+             var url = window.location.origin;
+             window.open(url+'/Home/ReceiptUPPCLT?t=' + idToPrint, "_blank");
+         }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+             var url = window.location.origin;
+             window.open(url+'/Home/ReceiptUPPCLTL?t=' + idToPrint, "_blank");
+         }else{
             var url = window.location.origin;
             window.open(url+'/Home/ReceiptUPPCL?t=' + idToPrint, "_blank");
         }      
     }
 
     function PrintReceipt1(idToPrint) {
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+        
         if (navigator.userAgent.includes('etopapp')) {
             printOTSrec(idToPrint);
-        } else {
+        }else if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+              var url = window.location.origin;
+              window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + idToPrint, "_blank");
+        }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+              var url = window.location.origin;
+              window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + idToPrint, "_blank");
+        }else {
             var url = window.location.origin;
             window.open(url + '/Home/ReceiptOTSUPPCL?t=' + idToPrint, "_blank");
         }

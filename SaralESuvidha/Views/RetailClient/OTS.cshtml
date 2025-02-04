@@ -366,12 +366,32 @@
     }
 
     function Full() {
-        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 1 + "&reciptId=" + $('#EBillActionMessage').attr('alt');
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+        
+        if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else {
+            window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 1 + "&reciptId=" + $('#EBillActionMessage').attr('alt');
+        }
         
     }
 
     function Installment() {
-        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 0 + "&reciptId=" + $('#EBillActionMessage').attr('alt');
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+                
+        if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else {
+            window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 0 + "&reciptId=" + $('#EBillActionMessage').attr('alt');            
+        }
     }
 
     function LoadEOperatorDdl() {
@@ -396,7 +416,17 @@
 
     function PrintReceipt() {
         var isFull = $("#full").prop("checked") ? 1 : 0;
-        window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + ' &discomId=' + $('#selectEOperator').val() + ' &amount=' + $('#amount').val() + ' &isFull=' + isFull + "&reciptId=" + $('#EBillActionMessage').attr('alt');;
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+        
+        if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else {
+            window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + ' &discomId=' + $('#selectEOperator').val() + ' &amount=' + $('#amount').val() + ' &isFull=' + isFull + "&reciptId=" + $('#EBillActionMessage').attr('alt');                        
+        }
     }
 
     $('#txtVerifyAmount').keyup(function () {
@@ -424,7 +454,8 @@
             $("#amountdiv").hide();
         }
         
-    });
+        });
+        
         $("#amount").keypress(function (e) {
             console.log(e)
             console.log(1)

@@ -211,6 +211,7 @@ namespace SaralESuvidha.Controllers
                             HttpContext.Session.SetInt32("RetailerType", retailUser.UserType);
                             HttpContext.Session.SetString("ApiEnabled", retailUser.ApiEnabled.ToString());
                             HttpContext.Session.SetString("DefaultUtilityOperator", string.IsNullOrEmpty(retailUser.DefaultUtilityOperator) ? "MVVNL" : retailUser.DefaultUtilityOperator);
+                            HttpContext.Session.SetString("DefaultPrinter", string.IsNullOrEmpty(retailUser.DefaultPrinter) ? "Normal" : retailUser.DefaultPrinter);
 
                             try
                             {
@@ -429,8 +430,81 @@ namespace SaralESuvidha.Controllers
                 return View(new PaymentReceiptUPPCL() { TelecomOperatorName = "INVALID DETAILS", Amount = 0 });
             }
         }
+        
+        public IActionResult ReceiptUPPCLT(string t)
+        {
+            string tranId = "";
+            try
+            {
+                tranId = StaticData.ConvertHexToString(t);
+                var UPPCLReceipt = StaticData.PaymentReceiptUPPCLByTranId(tranId);
+                try
+                {
+                    string verifyUrl = "http://saralesuvidha.com/Home/ReceiptUPPCL?t=" + t;//VerifyReceipt
+                    QRCodeGenerator QrGenerator = new QRCodeGenerator();
+                    QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(verifyUrl, QRCodeGenerator.ECCLevel.Q);
+                    QRCoder.Base64QRCode qr = new Base64QRCode();
+                    qr.SetQRCodeData(QrCodeInfo);
+                    UPPCLReceipt.QrCode = "data:image/png;base64," + qr.GetGraphic(20);
+                }
+                catch (Exception)
+                {
+                    
+                }
+                return View(UPPCLReceipt);
 
+            }
+            catch (Exception)
+            {
+                return View(new PaymentReceiptUPPCL() { TelecomOperatorName = "INVALID DETAILS", Amount = 0 });
+            }
+        }
+        
+        public IActionResult ReceiptUPPCLTL(string t)
+        {
+            string tranId = "";
+            try
+            {
+                tranId = StaticData.ConvertHexToString(t);
+                var UPPCLReceipt = StaticData.PaymentReceiptUPPCLByTranId(tranId);
+                try
+                {
+                    string verifyUrl = "http://saralesuvidha.com/Home/ReceiptUPPCL?t=" + t;//VerifyReceipt
+                    QRCodeGenerator QrGenerator = new QRCodeGenerator();
+                    QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(verifyUrl, QRCodeGenerator.ECCLevel.Q);
+                    QRCoder.Base64QRCode qr = new Base64QRCode();
+                    qr.SetQRCodeData(QrCodeInfo);
+                    UPPCLReceipt.QrCode = "data:image/png;base64," + qr.GetGraphic(20);
+                }
+                catch (Exception)
+                {
+                    
+                }
+                return View(UPPCLReceipt);
+
+            }
+            catch (Exception)
+            {
+                return View(new PaymentReceiptUPPCL() { TelecomOperatorName = "INVALID DETAILS", Amount = 0 });
+            }
+        }
+        
         public IActionResult ReceiptOTSUPPCL(string t)
+        {
+            string tranId = "";
+            try
+            {
+                tranId = StaticData.ConvertHexToString(t);
+                var UPPCLReceipt = StaticData.PaymentOTSReceiptDataByTranId(tranId);
+                UPPCLOTSReciptModal modal = OTSReciptGenerator.GenerateOTSRecipt(UPPCLReceipt.AccountId, UPPCLReceipt.Amount, UPPCLReceipt.IsFull.GetValueOrDefault(), tranId, UPPCLReceipt.RechargeStatus);
+                return View(modal);
+            }
+            catch (Exception)
+            {
+                return View(new UPPCLOTSReciptModal() { TelecomOperatorName = "INVALID DETAILS" });
+            }
+        }
+        public IActionResult ReceiptOTSUPPCLT(string t)
         {
             string tranId = "";
             try

@@ -1,0 +1,52 @@
+@using Microsoft.AspNetCore.Http
+@{
+    Layout = "_LayoutRetailClient";
+    ViewData["title"] = "Set Default Printer";
+}
+
+<form id="frmReport" method="post" action="">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 form-group">
+                    <label class="label" for="">Select Default Printer</label>
+                    <select id="selectPrinter" name="selectPrinter" class="form-control" data-style="btn-default">
+                        <option value="Normal">Normal</option>
+                        <option value="Thermal 4 Inch - Portrait">Thermal 4 Inch - Portrait</option>
+                        <option value="Thermal 4 Inch - Landscape">Thermal 4 Inch - Landscape</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="btn btn-outline-primary shadowed btn-block" onclick="Update();">Save</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 form-group" id="ActionMessage">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<script type="text/javascript">
+
+    function Update() {
+        $('#ActionMessage').html('Updating default printer ' + loaderImgInner);
+
+        $.get("@Url.Action("UpdateDefaultPrinter", "RetailUserCommon")?defaultPrinter=" + $('#selectPrinter').val(),
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#ActionMessage').html('<span class="text-danger">' + data + '</span>');
+                } else {
+                    $('#ActionMessage').html('<span class="text-success">' + data + '</span>');
+                }
+            });
+    }
+
+    $(document).ready(function () {
+        $('#selectPrinter option[value="@Context.Session.GetString("DefaultPrinter")"]').prop('selected', true);
+    });
+
+</script>
