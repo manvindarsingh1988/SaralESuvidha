@@ -384,10 +384,14 @@ namespace SaralESuvidha.Models
             }
             else
             {
+                outStandingAmount = Math.Round(outStandingAmount);
                 decimal accountInfoInt = Convert.ToDecimal(initResponse.Data.BillDetails.AccountInfo);
                 decimal billAmountInt = Convert.ToDecimal(initResponse.Data.BillDetails.BillAmount);
                 decimal dueDateRebate = Convert.ToDecimal(initResponse.Data.BillDetails.Param1);
-                UPPCL_DDR = Convert.ToDecimal(dueDateRebate);
+                dueDateRebate = Math.Ceiling(dueDateRebate);
+                UPPCL_DDR = dueDateRebate;
+                accountInfoInt = Math.Round(accountInfoInt);
+                billAmountInt = Math.Round(billAmountInt);
                 string paymentTypeFullPartial = "";
                 if ((accountInfoInt + dueDateRebate) >= billAmountInt && Amount >= accountInfoInt)
                 {
@@ -671,11 +675,13 @@ namespace SaralESuvidha.Models
                 else
                 {
                     string paymentTypeFullPartial = "";
-                    int accountInfoInt = Convert.ToInt32(eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.AccountInfo);
-                    int billAmountInt = Convert.ToInt32(eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillAmount);
-                    int dueDateRebate = Convert.ToInt32(eSuvidhaBillFetchResponse.DueDateRebate);
-                    UPPCL_DDR = Convert.ToDecimal(dueDateRebate);
-
+                    decimal accountInfoInt = Convert.ToDecimal(eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.AccountInfo);
+                    decimal billAmountInt = Convert.ToDecimal(eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillAmount);
+                    decimal dueDateRebate = Convert.ToDecimal(eSuvidhaBillFetchResponse.DueDateRebate);
+                    dueDateRebate = Math.Ceiling(dueDateRebate);
+                    UPPCL_DDR = dueDateRebate;
+                    accountInfoInt = Math.Round(accountInfoInt);
+                    billAmountInt = Math.Round(billAmountInt);
                     if ((accountInfoInt + dueDateRebate) >= billAmountInt && Amount >= accountInfoInt)
                     {
                         paymentTypeFullPartial = "FULL";
@@ -776,8 +782,7 @@ namespace SaralESuvidha.Models
                                     billPaymentRequest.divisionCode = eSuvidhaBillFetchResponse.BillFetchResponse
                                         .Body.PaymentDetailsResponse.DivCode;
                                     billPaymentRequest.mobile = string.IsNullOrEmpty(Parameter3) ? "" : Parameter3;
-                                    billPaymentRequest.outstandingAmount = eSuvidhaBillFetchResponse
-                                        .BillFetchResponse.Body.PaymentDetailsResponse.AccountInfo;
+                                    billPaymentRequest.outstandingAmount = accountInfoInt.ToString();
                                     billPaymentRequest.paymentType = paymentTypeFullPartial;
                                     billPaymentRequest.referenceTransactionId = Id;
                                     billPaymentRequest.sourceType = eSuvidhaBillFetchResponse.BillFetchResponse.Body
