@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using Dapper;
 using System.IO;
 using SaralESuvidha.Filters;
@@ -11,9 +7,8 @@ using SaralESuvidha.Models;
 using SaralESuvidha.ViewModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace SaralESuvidha.Controllers
 {
@@ -144,6 +139,7 @@ namespace SaralESuvidha.Controllers
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PoliceVerification, "PoliceVerification");
+                KYCHelper.UploadToKYCServer(folderPath, retailUserViewModel.Id);
             }
             return View(retailUserViewModel);
 
@@ -183,6 +179,7 @@ namespace SaralESuvidha.Controllers
                 docUpdated = docUpdated || KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
                 docUpdated = docUpdated || KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
                 docUpdated = docUpdated || KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PoliceVerification, "PoliceVerification");
+
                 if (docUpdated)
                 {
                     var parameters = new DynamicParameters();
@@ -192,6 +189,8 @@ namespace SaralESuvidha.Controllers
                         var retailUserToUpdate = con.QuerySingleOrDefault<RetailUserViewModel>("usp_UpdateDocumentUploadStatus", parameters, commandType: System.Data.CommandType.StoredProcedure);
 
                     }
+
+                    KYCHelper.UploadToKYCServer(folderPath, retailUserViewModel.Id);
                 }
 
                 return View(retailUserViewModel);

@@ -136,6 +136,7 @@ namespace SaralESuvidha.Controllers
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PoliceVerification, "PoliceVerification");
+                KYCHelper.UploadToKYCServer(folderPath, retailUserViewModel.Id);
             }
             return View(retailUserViewModel);
 
@@ -188,6 +189,7 @@ namespace SaralESuvidha.Controllers
                     var retailUserToUpdate = con.QuerySingleOrDefault<RetailUserViewModel>("usp_UpdateDocumentUploadStatus", parameters, commandType: System.Data.CommandType.StoredProcedure);
 
                 }
+                KYCHelper.UploadToKYCServer(folderPath, retailUserViewModel.Id);
             }
             return View(retailUserViewModel);
         }

@@ -3,22 +3,16 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dapper;
-using DocumentFormat.OpenXml.Spreadsheet;
 using SaralESuvidha.Filters;
 using SaralESuvidha.Models;
 using SaralESuvidha.ViewModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using Razorpay.Api;
 using UPPCLLibrary.BillFail;
-using System.IO.Compression;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
@@ -301,30 +295,67 @@ namespace SaralESuvidha.Controllers
 
         public ActionResult DownloadFiles(string id)
         {
+            var content = Array.Empty<byte>();
             try
             {
-                MemoryStream ms = new MemoryStream();
-                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "KYCDocFiles/" + id + "/");
-                DirectoryInfo from = new DirectoryInfo(filePath);
-                using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                string folderPath = Path.Combine(_webHostEnvironment.WebRootPath, "KYCDocFiles/" + id + "/");
+                if (!Directory.Exists(folderPath))
                 {
-                    foreach (var file in from.GetFiles().OfType<FileInfo>())
-                    {
-                        var relPath = file.FullName.Substring(from.FullName.Length);
-                        ZipArchiveEntry readmeEntry = archive.CreateEntryFromFile(file.FullName, relPath);
-                    }
+                    Directory.CreateDirectory(folderPath);
                 }
-                ms.Position = 0;
-                return File(ms, "application/zip", id + ".zip");
+                var fileName = id;
+                fileName = folderPath + fileName + ".zip";
+                if (System.IO.File.Exists(fileName))
+                {
+                    System.IO.File.Delete(fileName);
+                }
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                };
+
+                var client = new HttpClient(handler);
+
+                // Set the base address to simplify maintenance & requests
+                client.BaseAddress = new Uri("https://kycdoc.saralesuvidha.com/");
+
+                // Post to the endpoint
+
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                //GET Method
+
+                Task.Run(async () => {
+
+                    var response = await client.GetAsync($"/saralkycdoc/downloadfile?fileName={id}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var data = await response.Content.ReadAsAsync<FileItem>();
+                        //content = ;
+                        System.IO.File.WriteAllBytes(fileName, data.Content);
+                    }
+                }).Wait();
+                content = System.IO.File.ReadAllBytes(fileName);
+                System.IO.File.Delete(fileName);
+                return File(content, "application/zip", id + ".zip");
+
             }
             catch (FileNotFoundException ex)
             {
-                throw new Exception("Cound not file requested file.");
+                
             }
             catch (Exception ex)
             {
-                throw new Exception("There is a problem downloading file");
+                
             }
+            return File(content, "application/zip", id + ".zip");
+            //return File(content, "application/zip", id + ".zip");
+        }
+
+        public class FileItem
+        {
+            public string FileName { get; set; }
+            public byte[] Content { get; set; }
         }
 
         public IActionResult PendingResult()
