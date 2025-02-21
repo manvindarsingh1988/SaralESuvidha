@@ -2798,7 +2798,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
         
-        public static string RMonitorListJson(string a)
+        public static string RMonitorListJson(string a, int dt)
         {
             string result = "[]";
             try
@@ -2809,7 +2809,15 @@ namespace SaralESuvidha.ViewModel
                     parameters.Add("@MonitorUserId",null);
                     parameters.Add("@MonitorUserMobile",a);
                     List<MonitorUserRetailUserWatch> transactionLogs = con.Query<MonitorUserRetailUserWatch>("usp_MonitorUserRetailUserWatch", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
-                    result = JsonConvert.SerializeObject(transactionLogs);
+                    if (dt == 1)
+                    {
+                        var aaData = new {data = transactionLogs};
+                        result = JsonConvert.SerializeObject(aaData);
+                    }
+                    else
+                    {
+                        result = JsonConvert.SerializeObject(transactionLogs);
+                    }
                 }
             }
             catch (Exception ex)
