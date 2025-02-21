@@ -1,0 +1,107 @@
+@{
+    Layout = "_LayoutPlain";
+    ViewData["title"] = "Monitor";
+}
+
+<!-- Content
+============================================= -->
+
+<div id="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="bg-white shadow-md rounded p-4">
+
+                    <h4 class="mb-4">Report Time: <span id="balTime" class="text-google"></span> &nbsp; ||&|| &nbsp; Retailer List 
+                        <span class="text-instagram"> 15M-30M </span> <span class="text-facebook"> 30M-60M </span> 
+                        <span class="text-danger"> 60M Above </span></h4>
+                    <hr class="mx-n4">
+
+                    <div class="tab-content my-3" id="myTabContent">
+                        <div class="tab-pane fade show active" id="first" role="tabpanel" aria-labelledby="first-tab">
+                            <div class="table-responsive-md">
+                                <table class="table table-hover border" id="tranLog">
+                                    <thead>
+                                    <tr>
+                                        <th>Retailer</th>
+                                        <th>RetailerName</th>
+                                        <th>Mobile No</th>
+                                        <th>City</th>
+                                        <th>TCount</th>
+                                        <th>TAmount</th>
+                                        <th class="">Delay</th>
+                                        <th class="">F_2K</th>
+                                        <th class="">F_2K4K</th>
+                                        <th class="">FP_4KA</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Content end -->
+</div>
+
+<script type="text/javascript">
+    function getUrlVars() {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+    
+    var a;
+    $(document).ready(function () {
+        a = getUrlVars()["a"];
+        LoadData(a);
+    });
+
+    function LoadData(a) {
+        $('#tranLog').find('tbody').empty();
+        $('#balTime').html(''); 
+        
+        $.getJSON('RMonitorLog?a=' + a + '&d=_' + $.now(),
+        function (data) {             
+            data.sort(function(a, b) {
+                return b.Delay - a.Delay;
+            });
+            $.each(data,
+                function (index, value) {
+                    var colorCode = '';
+                    if (value.Delay>15 && value.Delay<30){
+                        colorCode = 'text-instagram';
+                    }else if (value.Delay>30 && value.Delay<60){
+                        colorCode = 'text-facebook';
+                    }else if (value.Delay>60){
+                        colorCode = 'text-danger';
+                    }
+                    
+                    $('#tranLog').find('tbody').append("<tr class='" + colorCode + "'>" + '<td>' + value.RetailerUSL + '(' + value.RetailUserId + ')' + '</td>' + 
+                    '<td>' + value.RetailerName + '</td>'+ '<td>' + value.RetailerMobile + '</td>'+ '<td>' + value.RetailerCity + '</td>'+ 
+                    '<td>' + value.All + '</td>'+ '<td>' + value.TAmount + '</td>'+ '<td>' + value.Delay + '</td>'+ 
+                    '<td>' + value.F_2K + '</td>'+ '<td>' + value.F_2K4K + '</td>' + 
+                    '<td>' + value.FP_4KA + '</td>' + "</tr>");
+                });            
+        });
+        
+       $('#balTime').html(moment(new Date()).format('DD-MM-YYYY HH:mm')); 
+        
+    }
+    
+    window.setInterval(function () {
+        LoadData(a);
+    }, 32000);
+    
+</script>

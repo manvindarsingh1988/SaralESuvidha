@@ -516,6 +516,46 @@ namespace SaralESuvidha.Controllers
         {
             return View();
         }
+        public IActionResult SaveMonitor(string ln, string p, string m)
+        {
+            return Content(StaticData.SaveMonitorUser(ln, p, m, 1));
+        }
+        
+        public IActionResult UpdateMonitor(string id, string p, string m)
+        {
+            return Content(StaticData.UpdateMonitor(id, p, m, 1));
+        }
+        
+        public IActionResult ListMonitor()
+        {
+            return Content(StaticData.ListMonitor());
+        }
+        
+        public IActionResult ListMapping()
+        {
+            return Content(StaticData.ListMapping());
+        }
+        
+        public IActionResult CreateMonitorUser()
+        {
+            return View();
+        }
+        
+        public IActionResult UpdateMapping(string id, int? usl)
+        {
+            if (usl.HasValue)
+            {
+                return Content(StaticData.UpdateMapping(id, usl));
+            }
+            else
+            {
+                return Content("Errors: Not a valid retailer id.");
+            }
+        }
+        public IActionResult DeleteMapping(string id)
+        {
+            return Content(StaticData.DeleteMapping(id));
+        }
 
     }
 }

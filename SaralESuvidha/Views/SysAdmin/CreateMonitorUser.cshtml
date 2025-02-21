@@ -1,0 +1,244 @@
+@model SaralESuvidha.Models.MonitorUser;
+@{
+    Layout = "_LayoutSysAdmin";
+    ViewData["title"] = "Monitor User";
+}
+
+
+<form id="frmFundTransfer" name="frmFundTransfer" method="post" action="#">
+    <div class="card mb-4">
+        <h6 class="card-header">Create User <span id="InfoDetail" name="InfoDetail" class=""></span></h6>
+        <div class="card-body">
+            @*<div class="row">
+            <div class="col-lg-12">
+
+            </div>
+        </div>*@
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">Login Name</label>
+                    <input name="txtLoginName" id="txtLoginName" type="text" class="form-control required" />
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">Password</label>
+                    <input name="txtPassword" id="txtPassword" type="text" class="form-control required" />
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input name="txtMobile" id="txtMobile" type="text" class="form-control required" />
+                </div>
+                <div class="col-lg-2 form-group">
+                    
+                </div>
+                <div class="col-lg-4 form-group">
+                    
+                </div>
+            </div>
+            <div id="ActionButton" name="ActionButton">
+                <button type="button" class="btn btn-primary" onclick="Save();">Save</button>
+                <button type="button" class="btn btn-primary" onclick="LoadReport();">Load Users</button>
+                <button type="button" class="btn btn-primary" onclick="LoadMapping();">Load Mapping</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h6 class="card-header alert-primary" id="lblReport">
+            Report
+        </h6>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-adminreport" data-url="#">
+                <thead>
+                <tr>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="MapPopUp" role="dialog">
+        <div class="modal-dialog err-pop" id="sdmodal1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="DivClose1" type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row text-center text-large">
+                        <input type="hidden" id="musersm" /><p id="confirmationp"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 form-group text-right">
+                            <span class="form-label">Enter retailer USL</span>
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            <input name="txtRUsl" id="txtRUsl" type="number" class="form-control required"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <p id="mapinfo"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 form-group">
+                            <input type="button" id="download" value="Save" onclick="MapRetailer()" class="form-control btn btn-primary">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        LoadReport();
+    });
+
+    function ShowAction() {
+        $('#ActionButton').removeClass('d-none');
+    }
+
+    function HideAction() {
+        $('#ActionButton').addClass('d-none');
+        $('#OrderNo').focus();
+    }
+    
+    function ValidateInput(){
+        if ($('#txtLoginName').val() === '') {
+            $('#EBillActionMessage').html('<span class="text-danger">Login name required.</span>');
+            $('#txtLoginName').focus();
+            return false;
+        }
+        if ($('#txtPassword').val() === '') {
+            $('#EBillActionMessage').html('<span class="text-danger">Password required.</span>');
+            $('#txtPassword').focus();
+            return false;
+        }
+        if ($('#txtMobile').val() === '') {
+            $('#EBillActionMessage').html('<span class="text-danger">Mobile required.</span>');
+            $('#txtMobile').focus();
+            return false;
+        }
+        return  true;
+    }
+
+    function Save() {
+        if (!ValidateInput()) {
+            $('#InfoMessage').html('Can not create monitor user.').removeClass('pam-info').addClass('pam-error');
+            return;
+        } else {
+            $.get("@Url.Action("SaveMonitor", "SysAdmin")?ln=" + $('#txtLoginName').val() + "&p=" + $('#txtPassword').val() + "&m=" + $('#txtMobile').val(), function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    LoadReport();
+                }
+            });
+        }
+    }
+    
+    function LoadReport() {
+        $('#lblReport').html('Monitor User List');
+
+        if ($.fn.DataTable.isDataTable('#datatable-adminreport')) {
+            $('#datatable-adminreport').DataTable().destroy();
+        }
+        $('#datatable-adminreport tbody').empty();
+        $('#datatable-adminreport thead').empty();
+
+        var $table = $('#datatable-adminreport');
+        $table.dataTable({
+            iDisplayLength: 100,
+            bAutoWidth: false,
+            sAjaxSource: '@Url.Action("ListMonitor", "SysAdmin")',
+            cache: false,
+            order: [[2, "asc"]],
+            columns: [
+                { data: "Id", title: "Id", visible: true }, { data: "LoginName", title: "Login Name" },
+                { data: "LoginPassword", title: "Login Password" }, { data: "MobileNumber", title: "Mobile Number" },
+                {
+                    data: null,
+                    title: "Action",
+                    render: function (data,type,row) { 
+                        return "<a title='Map Retailer' onclick=ShowMapRetailer('" + ascii2hex(JSON.stringify(data)) + "')>" + "<span class='lnr lnr-eye linear-datatable-icon text-success btnPrint' title='Map Retailer'></span></a>" + "<a title='Edit User' onclick=EditUser('" + data.Id + "')> " + "<span class='lnr lnr-construction linear-datatable-icon text-success btnPrint' title='EditUser'></span></a>";                     
+                    },
+                    "width": "70px"
+                }
+            ]
+        });
+    }
+    
+    function LoadMapping() {
+        $('#lblReport').html('Monitor User & Retailer Mapping List');
+
+        if ($.fn.DataTable.isDataTable('#datatable-adminreport')) {
+            $('#datatable-adminreport').DataTable().destroy();
+        }
+        $('#datatable-adminreport tbody').empty();
+        $('#datatable-adminreport thead').empty();
+
+        var $table = $('#datatable-adminreport');
+        $table.dataTable({
+            iDisplayLength: 500,
+            bAutoWidth: false,
+            sAjaxSource: '@Url.Action("ListMapping", "SysAdmin")',
+            cache: false,
+            order: [[2, "asc"],[5, "asc"]],
+            columns: [
+                { data: "Id", title: "Id", visible: true }, { data: "MonitorUserId", title: "Monitor" },
+                { data: "MonitorName", title: "MonitorName" }, { data: "RetailUserId", title: "RetailUser" },
+                { data: "RetailerUSL", title: "USL" }, { data: "RetailerName", title: "RetailerName" }, 
+                { data: "RetailerMobile", title: "RetailerMobile" }, { data: "RetailerCity", title: "City" },
+                {
+                    data: null,
+                    title: "Action",
+                    render: function (data,type,row) { 
+                        return "<button type='button' class='btnDelete' title='Delete Mapping' onclick=Delete('" + data.Id + "')>" + "<span class='lnr lnr-trash linear-datatable-icon text-success' title='Delete Mapping'></span></button>";                     
+                    },
+                    "width": "70px"
+                }
+            ]
+        });
+    }
+    
+    function ShowMapRetailer(mid){
+        let mdata = JSON.parse(HexToAscii(mid));
+        $('#mapinfo').html('');
+        $('#txtRUsl').val('')
+        $('#musersm').val(mdata.Id);
+        $('#confirmationp').html("Map Retailer to - <strong>" + mdata.LoginName + "</strong>, " + mdata.Id + ", " + mdata.MobileNumber);
+        $('#MapPopUp').modal('show');
+        
+    }
+    
+    function MapRetailer(){
+        if ($('#txtRUsl').val() === '') {
+            alert('Retailer USL is required to map.');
+        } else {
+            $.get("@Url.Action("UpdateMapping", "SysAdmin")?id=" + $('#musersm').val() + "&usl=" + $('#txtRUsl').val(), function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#mapinfo').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#mapinfo').html(data).removeClass('text-danger').addClass('text-success');
+                    
+                }
+            });
+        }
+    }
+    window.rid = 1;
+    
+    $('#datatable-adminreport').on('click', 'button.btnDelete', function (e) {
+        var $row = $(this).closest("tr");
+        window.rid = $row;
+    });
+
+    function Delete(id) {
+        $.get("@Url.Action("DeleteMapping", "SysAdmin")?id=" + id, function (data) {
+            $("#lblReport").html('<span class="text-success">' + data + '</span>');
+            window.rid.remove();
+        });
+    }
+
+</script>

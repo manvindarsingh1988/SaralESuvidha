@@ -587,6 +587,16 @@ namespace SaralESuvidha.Controllers
         {
             return View();
         }
+        
+        public IActionResult RMonitor()
+        {
+            return View();
+        }
+        
+        public IActionResult RMonitorLog(string a)
+        {
+            return Content(StaticData.RMonitorListJson(a));
+        }
 
     }
 }
