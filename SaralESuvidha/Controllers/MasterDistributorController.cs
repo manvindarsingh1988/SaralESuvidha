@@ -261,5 +261,28 @@ namespace SaralESuvidha.Controllers
             return View();
         }
 
+        public IActionResult PnLReport()
+        {
+            return View();
+        }
+
+        public IActionResult AllPnLReportResultByUserAndDate(string dateFrom, string dateTo, int x, int orderNo)
+        {
+            string result = string.Empty;
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
+            DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(dateFrom));
+            DateTime dateT = Convert.ToDateTime(StaticData.ConvertHexToString(dateTo));
+            try
+            {
+                if (HttpContext.Session != null)
+                    result = StaticData.AllPnLReportResultByUserAndDate(x, dateF, dateT, orderNo, filePath, HttpContext.Session.GetString("RetailerId"));
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: " + ex.Message;
+            }
+            return Content(result);
+        }
+
     }
 }

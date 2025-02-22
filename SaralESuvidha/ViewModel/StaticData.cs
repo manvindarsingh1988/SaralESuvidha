@@ -1227,7 +1227,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string AllPnLReportResultByUserAndDate(int excelExport, DateTime dateFrom, DateTime dateTo, int id, string filePath = "")
+        public static string AllPnLReportResultByUserAndDate(int excelExport, DateTime dateFrom, DateTime dateTo, int id, string filePath = "", string userId = "")
         {
             var aaIData = new UPPCLReport();
             string result = JsonConvert.SerializeObject(aaIData);
@@ -1246,7 +1246,20 @@ namespace SaralESuvidha.ViewModel
                     {
                         parameters.Add("@Id", null);
                     }
-                    List<AllUserWithBalance> allDailyRecharge = con.Query<AllUserWithBalance>("usp_RetailUserListWithUPPCLCommission", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    if(userId != "")
+                    {
+                        parameters.Add("@userId", userId);
+                    }
+                    List<AllUserWithBalance> allDailyRecharge = new List<AllUserWithBalance>();
+                    if(userId != "")
+                    {
+                        allDailyRecharge = con.Query<AllUserWithBalance>("usp_RetailUserListWithUPPCLCommissionByUserId", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    }
+                    else
+                    {
+                        allDailyRecharge = con.Query<AllUserWithBalance>("usp_RetailUserListWithUPPCLCommission", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    }
+                    
                     if (excelExport == 1)
                     {
                         result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "AllUsersReportByUserAndDate", filePath);
