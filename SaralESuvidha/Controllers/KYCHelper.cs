@@ -8,6 +8,9 @@ using System.Linq;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using Newtonsoft.Json;
+using System.IO.Compression;
+using System.Threading.Tasks;
 
 namespace SaralESuvidha.Controllers
 {
@@ -245,6 +248,38 @@ namespace SaralESuvidha.Controllers
                 retailUserToUpdate.Address = ex.Message;
             }
             return retailUserToUpdate;
+        }
+
+        public static void UploadToKYCServer(string path, string id)
+        {
+            MemoryStream ms = new MemoryStream();
+            DirectoryInfo from = new DirectoryInfo(path);
+            using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
+            {
+                foreach (var file in from.GetFiles().OfType<FileInfo>())
+                {
+                    var relPath = file.FullName.Substring(from.FullName.Length);
+                    ZipArchiveEntry readmeEntry = archive.CreateEntryFromFile(file.FullName, relPath);
+                }
+            }
+            ms.Seek(0, SeekOrigin.Begin);
+
+            var client = new HttpClient();
+            var data = new { FileName = id, Content = ms.ToArray() };
+            var payload = JsonConvert.SerializeObject(data);
+
+            // Wrap our JSON inside a StringContent object
+            var content = new StringContent(payload, Encoding.UTF8, "application/json");
+            Task.Run(async () => {
+                var response = await client.PostAsync("https://kycdoc.saralesuvidha.com/saralkycdoc/uploadfile", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                }
+                else
+                {
+                }
+            }).Wait();
         }
     }
 

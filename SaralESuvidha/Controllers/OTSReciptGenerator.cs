@@ -2,6 +2,7 @@
 using QRCoder;
 using SaralESuvidha.ViewModel;
 using System;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 using UPPCLLibrary.OTS;
 
 namespace SaralESuvidha.Controllers
@@ -30,6 +31,8 @@ namespace SaralESuvidha.Controllers
             {
                 obj.Data.BillDetails.SanctionedLoadInKW = load.ToString("0.00");
             }
+            
+            
 
             if (obj.Data.BillDetails.PurposeOfSupply == "LMV1")
             {
@@ -48,10 +51,14 @@ namespace SaralESuvidha.Controllers
                 obj.Data.BillDetails.PurposeOfSupply += " (औद्योगिक)";
             }
             var modal = new UPPCLOTSReciptModal();
-
+            modal.PurposeOfSupply = obj.Data.BillDetails.PurposeOfSupply;
+            modal.downPayment = downPayment;
+            modal.SanctionedLoadInKW = obj.Data.BillDetails.SanctionedLoadInKW + " KW";
+            
             try
             {
-                string verifyUrl = "http://saralesuvidha.com/Home/ReceiptOTSUPPCL?t=" + reciptId;//VerifyReceipt
+                var hex = StaticData.ConvertStringToHex(reciptId);
+                string verifyUrl = "http://saralesuvidha.com/Home/ReceiptOTSUPPCL?t=" + hex;//VerifyReceipt
                 QRCodeGenerator QrGenerator = new QRCodeGenerator();
                 QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(verifyUrl, QRCodeGenerator.ECCLevel.Q);
                 QRCoder.Base64QRCode qr = new Base64QRCode();
@@ -63,7 +70,7 @@ namespace SaralESuvidha.Controllers
 
             }
 
-            modal.RechargeMobileNumber = obj.Data.BillDetails.ConsumerName;
+            modal.RechargeMobileNumber = obj.Data.BillDetails.KNumber;
             modal.TelecomOperatorName = obj.Data.BillDetails.Discom;
             modal.ApiOperatorCode = obj.Data.BillDetails.Discom.Split('-')[0].Trim();
 
@@ -74,6 +81,7 @@ namespace SaralESuvidha.Controllers
             modal.InfoTable += "</td>";
             modal.InfoTable += "<td>";
             modal.InfoTable += obj.Data.BillDetails.ConsumerName;
+            modal.ConsumerName = obj.Data.BillDetails.ConsumerName;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
             modal.InfoTable += "<tr>";
@@ -110,6 +118,7 @@ namespace SaralESuvidha.Controllers
                 modal.InfoTable += "</td>";
                 modal.InfoTable += "<td>";
                 modal.InfoTable += "एकमुश्त";
+                modal.ChoosenOption = "एकमुश्त";
                 modal.InfoTable += "</td>";
                 modal.InfoTable += "</tr>";
 
@@ -123,6 +132,7 @@ namespace SaralESuvidha.Controllers
                 modal.InfoTable += "</td>";
                 modal.InfoTable += "<td>";
                 modal.InfoTable += "किश्त";
+                modal.ChoosenOption = "किश्त";
                 modal.InfoTable += "</td>";
                 modal.InfoTable += "</tr>";
 
@@ -181,7 +191,7 @@ namespace SaralESuvidha.Controllers
                         modal.InstallmentTable += obj1.Data.InstallmentList1[0].InstallmentAmount;
                         modal.InstallmentTable += "</td>";
                         modal.InstallmentTable += "<td>";
-                        modal.InstallmentTable += months[i];
+                        modal.InstallmentTable += months[i + DateTime.Now.Month];
                         modal.InstallmentTable += "</td>";
                         modal.InstallmentTable += "</tr>";
                     }
@@ -194,6 +204,7 @@ namespace SaralESuvidha.Controllers
             modal.InfoTable += "</td>";
             modal.InfoTable += "<td>";
             modal.InfoTable += obj1.Data.Payment31;
+            modal.Payment31_Mulbakaya = obj1.Data.Payment31;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
             modal.InfoTable += "<tr>";
@@ -202,6 +213,7 @@ namespace SaralESuvidha.Controllers
             modal.InfoTable += "</td>";
             modal.InfoTable += "<td>";
             modal.InfoTable += obj1.Data.LPSC31;
+            modal.LPSC31_Byaj = obj1.Data.LPSC31;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
             modal.InfoTable += "<tr>";
@@ -210,6 +222,7 @@ namespace SaralESuvidha.Controllers
             modal.InfoTable += "</td>";
             modal.InfoTable += "<td>";
             modal.InfoTable += isFull == 1 ? obj1.Data.FullPaymentList[0].LPSCWaivOff : obj1.Data.InstallmentList1[0].LPSCWaivOff;
+            modal.LPSCWaivOff_MafiYogyaAdhikatamByaj = isFull == 1 ? obj1.Data.FullPaymentList[0].LPSCWaivOff : obj1.Data.InstallmentList1[0].LPSCWaivOff;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
             modal.InfoTable += "<tr>";
@@ -218,6 +231,8 @@ namespace SaralESuvidha.Controllers
             modal.InfoTable += "</td>";
             modal.InfoTable += "<td>";
             modal.InfoTable += isFull == 1 ? amount : obj1.Data.InstallmentList1[0].RegistrationAmount;
+            modal.RegistrationAmount_PanjikaranRashi = isFull == 1 ? Convert.ToDecimal(amount) : obj1.Data.InstallmentList1[0].RegistrationAmount;
+            
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
             modal.InfoTable += "<tr>";
@@ -226,6 +241,7 @@ namespace SaralESuvidha.Controllers
             modal.InfoTable += "</td>";
             modal.InfoTable += "<td>";
             modal.InfoTable += rechargeStatus == null ? "Success" : rechargeStatus;
+            modal.RechargeStatus = rechargeStatus == null ? "Success" : rechargeStatus;
             modal.InfoTable += "</td>";
             modal.InfoTable += "</tr>";
             modal.InfoTable += "</table>";

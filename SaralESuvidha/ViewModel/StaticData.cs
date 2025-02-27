@@ -27,6 +27,7 @@ using UPPCLLibrary.BillFetch;
 using RTran = SaralESuvidha.Models.RTran;
 using DocumentFormat.OpenXml.Bibliography;
 using System.Drawing;
+using System.Threading;
 using Microsoft.VisualBasic;
 using Org.BouncyCastle.Asn1.Ocsp;
 using UPPCLLibrary.OTS;
@@ -1227,7 +1228,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string AllPnLReportResultByUserAndDate(int excelExport, DateTime dateFrom, DateTime dateTo, int id, string filePath = "")
+        public static string AllPnLReportResultByUserAndDate(int excelExport, DateTime dateFrom, DateTime dateTo, int id, string filePath = "", string userId = "")
         {
             var aaIData = new UPPCLReport();
             string result = JsonConvert.SerializeObject(aaIData);
@@ -1246,7 +1247,20 @@ namespace SaralESuvidha.ViewModel
                     {
                         parameters.Add("@Id", null);
                     }
-                    List<AllUserWithBalance> allDailyRecharge = con.Query<AllUserWithBalance>("usp_RetailUserListWithUPPCLCommission", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    if(userId != "")
+                    {
+                        parameters.Add("@userId", userId);
+                    }
+                    List<AllUserWithBalance> allDailyRecharge = new List<AllUserWithBalance>();
+                    if(userId != "")
+                    {
+                        allDailyRecharge = con.Query<AllUserWithBalance>("usp_RetailUserListWithUPPCLCommissionByUserId", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    }
+                    else
+                    {
+                        allDailyRecharge = con.Query<AllUserWithBalance>("usp_RetailUserListWithUPPCLCommission", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    }
+                    
                     if (excelExport == 1)
                     {
                         result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "AllUsersReportByUserAndDate", filePath);
@@ -2595,6 +2609,31 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
+        
+        public static string UpdateDefaultPrinter(string defaultPrinter, string retailerId)
+        {
+            string result = string.Empty;
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@RetailUserId", retailerId);
+                parameters.Add("@DefaultPrinter", defaultPrinter);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<OperationResponse>("usp_RetailUserDefaultPrinter", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception)
+            {
+                result = "Exception in updating default printer.";// + ex.Message;
+            }
+            finally
+            {
+
+            }
+
+            return result;
+        }
 
         public static string UpdatePassword(string op, string np, string retailerId)
         {
@@ -2763,6 +2802,35 @@ namespace SaralESuvidha.ViewModel
                     var parameters = new DynamicParameters();
                     List<TransactionLog> transactionLogs = con.Query<TransactionLog>("usp_TransactionLog", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
                     result = JsonConvert.SerializeObject(transactionLogs);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+            return result;
+        }
+        
+        public static string RMonitorListJson(string a, int dt)
+        {
+            string result = "[]";
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@MonitorUserId",null);
+                    parameters.Add("@MonitorUserMobile",a);
+                    List<MonitorUserRetailUserWatch> transactionLogs = con.Query<MonitorUserRetailUserWatch>("usp_MonitorUserRetailUserWatch", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    if (dt == 1)
+                    {
+                        var aaData = new {data = transactionLogs};
+                        result = JsonConvert.SerializeObject(aaData);
+                    }
+                    else
+                    {
+                        result = JsonConvert.SerializeObject(transactionLogs);
+                    }
                 }
             }
             catch (Exception ex)
@@ -3187,6 +3255,140 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
+
+        public static string SaveMonitorUser(string loginName, string loginPassword, string mobileNumber, int active)
+        {
+            RecordSaveResponse result = new RecordSaveResponse();
+            try
+            {
+                
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@LoginName", loginName);
+                    parameters.Add("@LoginPassword", loginPassword);
+                    parameters.Add("@MobileNumber", mobileNumber);
+                    parameters.Add("@Active", active);
+                    result = con.QuerySingleOrDefault<RecordSaveResponse>("usp_MonitorUserInsert", parameters, commandType: System.Data.CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                result.OperationMessage = "Errors: ExCodeNet " + ex.Message;
+            }
+
+            return result.OperationMessage; 
+        }
+        
+       public static string ListMonitor()
+       {
+           string result;
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    List<MonitorUser> muList = con.Query<MonitorUser>("usp_MonitorUserSelectAll", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    var aaData = new { data = muList };
+                    result = JsonConvert.SerializeObject(aaData);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: ExCodeNet " + ex.Message;
+            }
+            return result;
+       }
+       
+       public static string ListMapping()
+       {
+           string result;
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    List<MonitorUserRetailUser> muList = con.Query<MonitorUserRetailUser>("usp_MonitorUserRetailUserALL", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    var aaData = new { data = muList };
+                    result = JsonConvert.SerializeObject(aaData);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: ExCodeNet " + ex.Message;
+            }
+
+            return result;
+       }
+       
+       public static string UpdateMonitor(string id, string loginPassword, string mobileNumber, int active)
+       {
+           string result;
+            try
+            {
+                
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Id", id);
+                    parameters.Add("@LoginPassword", loginPassword);
+                    parameters.Add("@MobileNumber", mobileNumber);
+                    parameters.Add("@Active", active);
+                    result = con.QuerySingleOrDefault<RecordSaveResponse>("usp_MonitorUserUpdate", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: ExCodeNet " + ex.Message;
+            }
+
+            return result;
+       }
+       
+       public static string UpdateMapping(string id, int? usl)
+       {
+           string result;
+            try
+            {
+                
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@MonitorUserId", id);
+                    parameters.Add("@RetailUserOrderNo", usl);
+                    result = con.QuerySingleOrDefault<RecordSaveResponse>("usp_MonitorMappingInsert", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: ExCodeNet " + ex.Message;
+            }
+
+            return result;
+       }
+       
+       public static string DeleteMapping(string id)
+       {
+           string result;
+            try
+            {
+                
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Id", Convert.ToInt32(id));
+                    result = con.QuerySingleOrDefault<RecordSaveResponse>("usp_MonitorUserRetailUserDelete", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: ExCodeNet " + ex.Message;
+            }
+
+            return result;
+       }
+       
+       
        
     }
 }

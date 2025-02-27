@@ -136,6 +136,7 @@ namespace SaralESuvidha.Controllers
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PoliceVerification, "PoliceVerification");
+                KYCHelper.UploadToKYCServer(folderPath, retailUserViewModel.Id);
             }
             return View(retailUserViewModel);
 
@@ -188,6 +189,7 @@ namespace SaralESuvidha.Controllers
                     var retailUserToUpdate = con.QuerySingleOrDefault<RetailUserViewModel>("usp_UpdateDocumentUploadStatus", parameters, commandType: System.Data.CommandType.StoredProcedure);
 
                 }
+                KYCHelper.UploadToKYCServer(folderPath, retailUserViewModel.Id);
             }
             return View(retailUserViewModel);
         }
@@ -339,6 +341,29 @@ namespace SaralESuvidha.Controllers
         public IActionResult ChangePassword()
         {
             return View();
+        }
+
+        public IActionResult PnLReport()
+        {
+            return View();
+        }
+
+        public IActionResult AllPnLReportResultByUserAndDate(string dateFrom, string dateTo, int x, int orderNo)
+        {
+            string result = string.Empty;
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
+            DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(dateFrom));
+            DateTime dateT = Convert.ToDateTime(StaticData.ConvertHexToString(dateTo));
+            try
+            {
+                if (HttpContext.Session != null)
+                    result = StaticData.AllPnLReportResultByUserAndDate(x, dateF, dateT, orderNo, filePath, HttpContext.Session.GetString("RetailerId"));
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: " + ex.Message;
+            }
+            return Content(result);
         }
     }
 }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using Dapper;
 using System.IO;
 using SaralESuvidha.Filters;
@@ -11,9 +7,8 @@ using SaralESuvidha.Models;
 using SaralESuvidha.ViewModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace SaralESuvidha.Controllers
 {
@@ -144,6 +139,7 @@ namespace SaralESuvidha.Controllers
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
                 KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PoliceVerification, "PoliceVerification");
+                KYCHelper.UploadToKYCServer(folderPath, retailUserViewModel.Id);
             }
             return View(retailUserViewModel);
 
@@ -183,6 +179,7 @@ namespace SaralESuvidha.Controllers
                 docUpdated = docUpdated || KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Agreement, "Agreement");
                 docUpdated = docUpdated || KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.Affidavit, "Affidavit");
                 docUpdated = docUpdated || KYCHelper.SaveFile(retailUserViewModel, folderPath, retailUserViewModel.PoliceVerification, "PoliceVerification");
+
                 if (docUpdated)
                 {
                     var parameters = new DynamicParameters();
@@ -192,6 +189,8 @@ namespace SaralESuvidha.Controllers
                         var retailUserToUpdate = con.QuerySingleOrDefault<RetailUserViewModel>("usp_UpdateDocumentUploadStatus", parameters, commandType: System.Data.CommandType.StoredProcedure);
 
                     }
+
+                    KYCHelper.UploadToKYCServer(folderPath, retailUserViewModel.Id);
                 }
 
                 return View(retailUserViewModel);
@@ -516,6 +515,46 @@ namespace SaralESuvidha.Controllers
         public IActionResult ChangePassword()
         {
             return View();
+        }
+        public IActionResult SaveMonitor(string ln, string p, string m)
+        {
+            return Content(StaticData.SaveMonitorUser(ln, p, m, 1));
+        }
+        
+        public IActionResult UpdateMonitor(string id, string p, string m)
+        {
+            return Content(StaticData.UpdateMonitor(id, p, m, 1));
+        }
+        
+        public IActionResult ListMonitor()
+        {
+            return Content(StaticData.ListMonitor());
+        }
+        
+        public IActionResult ListMapping()
+        {
+            return Content(StaticData.ListMapping());
+        }
+        
+        public IActionResult CreateMonitorUser()
+        {
+            return View();
+        }
+        
+        public IActionResult UpdateMapping(string id, int? usl)
+        {
+            if (usl.HasValue)
+            {
+                return Content(StaticData.UpdateMapping(id, usl));
+            }
+            else
+            {
+                return Content("Errors: Not a valid retailer id.");
+            }
+        }
+        public IActionResult DeleteMapping(string id)
+        {
+            return Content(StaticData.DeleteMapping(id));
         }
 
     }

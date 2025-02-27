@@ -180,7 +180,7 @@ AS
     SELECT @OpeningBalance = [dbo].[RetailUserBalance](@RetailUserId);  
     SELECT @DebitAmount = 0;  
   
-    SELECT @RetailerTDS = (@CreditAmount * 2)/100;  
+    SELECT @RetailerTDS = (@CreditAmount * 5)/100;  
     SELECT @CreditAmount = @CreditAmount - @RetailerTDS;  
    END  
   
@@ -260,7 +260,7 @@ AS
      END  
                 END  
   
-    SELECT @DistributorTDS = (@CreditAmount * 2)/100;  
+    SELECT @DistributorTDS = (@CreditAmount * 5)/100;  
     SELECT @CreditAmount = @CreditAmount - @DistributorTDS;  
   
     IF(@CreditAmount>0)  
@@ -339,7 +339,7 @@ AS
        END  
                         END  
   
-      SELECT @MasterDistributorTDS = (@CreditAmount * 2)/100;  
+      SELECT @MasterDistributorTDS = (@CreditAmount * 5)/100;  
       SELECT @CreditAmount = @CreditAmount - @MasterDistributorTDS;  
         
       IF(@CreditAmount>0)  

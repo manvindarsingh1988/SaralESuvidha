@@ -141,6 +141,7 @@ namespace SaralESuvidha.Controllers
                         long rTax = Convert.ToInt64(payment.Attributes.tax.ToString());
                         long oFee = 0;
                         string r_status = payment.Attributes.status.ToString();
+                        string r_method = payment.Attributes.method.ToString();
                         string r_error = payment.Attributes.error_code.ToString();
                         RazorpayOrder razorpayOrder = StaticData.RazorpayOrderLoadByRazorpayId(o);
 
@@ -161,7 +162,15 @@ namespace SaralESuvidha.Controllers
                                     fundTransferRTran.RequestIp = HttpContext.Connection.RemoteIpAddress.ToString();
                                     fundTransferRTran.RequestMachine = HttpContext.Request.Headers["User-Agent"].ToString();
                                     fundTransferRTran.RetailUserOrderNo = (int)HttpContext.Session.GetInt32("RetailUserOrderNo"); //
-                                    fundTransferRTran.Amount = Convert.ToDecimal(((decimal)rAmount / 100) - ((decimal)rFee / 100) - ((decimal)oFee/100));
+
+                                    if (r_method == "upi" || r_method == "netbanking")
+                                    {
+                                        fundTransferRTran.Amount = Convert.ToDecimal((decimal)rAmount / 100);
+                                    }
+                                    else
+                                    {
+                                        fundTransferRTran.Amount = Convert.ToDecimal(((decimal)rAmount / 100) - ((decimal)rFee / 100) - ((decimal)oFee/100));
+                                    }
 
                                     fundTransferRTran.Extra1 = "razor";
                                     fundTransferRTran.Extra2 = o;
@@ -179,7 +188,7 @@ namespace SaralESuvidha.Controllers
                                     }
 
                                     fundTransferRTran.Remarks =
-                                        "Wallet topup via Razorpay order-" + o + ", payment id-" + p;
+                                        "Wallet topup via Razorpay order-" + o + ", payment id-" + p + ", method-" + r_method;
                                     //fundTransferRTran.Remarks = "Wallet topup of Rs. " + razorpayOrder.Amount.ToString() + " , fees-" + (rFee/100).ToString() + " via Razorpay order-" + o + ", payment id-" + p;
                                     fundTransferRTran.RequestMessage = "WEBPORTAL";
 
@@ -599,6 +608,25 @@ namespace SaralESuvidha.Controllers
                 if (result.Contains("Success"))
                 {
                     HttpContext.Session.SetString("DefaultUtilityOperator", op);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Exception: " + ex.Message;
+            }
+
+            return Content(result);
+        }
+        
+        public IActionResult UpdateDefaultPrinter(string defaultPrinter)
+        {
+            string result = "";
+            try
+            {
+                result = StaticData.UpdateDefaultPrinter(defaultPrinter, HttpContext.Session.GetString("RetailerId"));
+                if (result.Contains("Success"))
+                {
+                    HttpContext.Session.SetString("DefaultPrinter", defaultPrinter);
                 }
             }
             catch (Exception ex)
