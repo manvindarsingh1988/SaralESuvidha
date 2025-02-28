@@ -3256,7 +3256,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string SaveMonitorUser(string loginName, string loginPassword, string mobileNumber, int active)
+        public static string SaveMonitorUser(string loginName, string loginPassword, string mobileNumber, string startTime, string endTime, string oldId, int active)
         {
             RecordSaveResponse result = new RecordSaveResponse();
             try
@@ -3268,6 +3268,9 @@ namespace SaralESuvidha.ViewModel
                     parameters.Add("@LoginName", loginName);
                     parameters.Add("@LoginPassword", loginPassword);
                     parameters.Add("@MobileNumber", mobileNumber);
+                    parameters.Add("@StartTime", startTime);
+                    parameters.Add("@EndTime", endTime);
+                    parameters.Add("@OldId", oldId);
                     parameters.Add("@Active", active);
                     result = con.QuerySingleOrDefault<RecordSaveResponse>("usp_MonitorUserInsert", parameters, commandType: System.Data.CommandType.StoredProcedure);
                 }
@@ -3345,7 +3348,7 @@ namespace SaralESuvidha.ViewModel
             return result;
        }
        
-       public static string UpdateMapping(string id, int? usl)
+       public static string UpdateMapping(string id, int? usl, string startTime, string endTime)
        {
            string result;
             try
@@ -3356,6 +3359,8 @@ namespace SaralESuvidha.ViewModel
                     var parameters = new DynamicParameters();
                     parameters.Add("@MonitorUserId", id);
                     parameters.Add("@RetailUserOrderNo", usl);
+                    parameters.Add("@StartTime", startTime);
+                    parameters.Add("@EndTime", endTime);
                     result = con.QuerySingleOrDefault<RecordSaveResponse>("usp_MonitorMappingInsert", parameters, commandType: System.Data.CommandType.StoredProcedure).OperationMessage;
                 }
             }

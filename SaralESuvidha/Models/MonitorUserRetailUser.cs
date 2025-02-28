@@ -15,6 +15,8 @@ public class MonitorUserRetailUser
     public Int64 LastBillDelay { get; set; }
     public Int64 BillTotal { get; set; }
     public int BillCount { get; set; }
+    public string StartTime { get; set; }
+    public string EndTime { get; set; }
 }
 
 public class MonitorUser
@@ -23,6 +25,8 @@ public class MonitorUser
     public string LoginName { get; set; }
     public string LoginPassword { get; set; }
     public string MobileNumber { get; set; }
+    public string StartTime { get; set; }
+    public string EndTime { get; set; }
     public bool? Active { get; set; }
 }
 
@@ -42,6 +46,8 @@ public class MonitorUserRetailUserWatch
     public int F_2K4K { get; set; }
     public int FP_4KA { get; set; }
     public int All { get; set; }
+    public string StartTime { get; set; }
+    public string EndTime { get; set; }
     
 }
 
