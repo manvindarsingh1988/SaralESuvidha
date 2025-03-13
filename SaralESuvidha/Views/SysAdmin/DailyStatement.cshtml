@@ -62,11 +62,13 @@
                 bAutoWidth: true,
                 sAjaxSource: '@Url.Action("DailyAllClientStatementResult", "CommonAuthAction")?dateFrom=' +a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0',
                 cache: false,
-                order: [[9, "asc"], [10, "asc"]],
+                order: [[13, "asc"], [14, "asc"]],
                 columns: [
                 { data: "Rid", title: "Id", visible: "false" }, { data: "RetailerDetail", title: "RetailerDetail" }, { data: "ParentName", title: "Parent Name" }, { data: "OperatorName", title: "OperatorName" }, { data: "RechargeNumber", title: "RechargeNumber" },
                     { data: "RechargeStatus", title: "RechargeStatus" }, { data: "Amount", title: "Amount" }, { data: "LiveId", title: "LiveId" }, { data: "PaymentType", title: "PType" },
-                    { data: "Remarks", title: "Remarks" }, { data: "CreateDate", title: "Date", type: 'datetime', render: function(data) { return moment(data).format('MM-DD-YYYY'); } },
+                    { data: "AccountInfo", title: "AccInfo" }, { data: "BillAmount", title: "BillAmt" },{ data: "DDR", title: "DDR" },
+                    { data: "Remarks", title: "Remarks" }, 
+                    { data: "CreateDate", title: "Date", type: 'datetime', render: function(data) { return moment(data).format('MM-DD-YYYY'); } },
                     { data: "CreateDate", title: "Time", type: 'time', render: function(data) { return moment(data).format('HH:mm:ss'); } },
                 { data: "IsOTS", title: "OTS" }
                 ]

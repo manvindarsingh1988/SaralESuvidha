@@ -112,13 +112,14 @@
             bAutoWidth: false,
             sAjaxSource: '@Url.Action("DailyRechargeReportResult", "RetailClient")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0',
             cache: false,
-            order: [[12, "asc"], [13, "asc"]],
+            order: [[13, "asc"], [14, "asc"]],
             columns: [
                 { data: "Rid", title: "Id", visible: false },
                 { data: "RefundId", title: "Ref Id", visible: false }, { data: "OperatorName", title: "Operator" },
                 { data: "RechargeNumber", title: "Number" }, { data: "RechargeStatus", title: "RStatus" },
                 { data: "OB", title: "OB" }, { data: "Amount", title: "Amount" }, { data: "Debit", title: "Debit" }, { data: "Credit", title: "Credit" }, { data: "CB", title: "CB" },
-                { data: "LiveId", title: "LiveId", visible: false }, { data: "CreateDate", title: "Date", render: function (data) { return moment(data).format('MM-DD-YYYY'); } },
+                { data: "AccountInfo", title: "AccInfo" }, { data: "BillAmount", title: "BillAmt" },{ data: "DDR", title: "DDR" },
+                { data: "CreateDate", title: "Date", render: function (data) { return moment(data).format('MM-DD-YYYY'); } },
                 { data: "CreateDate", title: "Time", render: function (data) { return moment(data).format('HH:mm:ss'); } },
                 {
                     data: "Rid",
