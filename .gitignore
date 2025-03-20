@@ -12,8 +12,6 @@ SaralESuvidha/bin/*
 /UPPCLLibrary/StatusCheck/bin/*
 /UPPCLLibrary/StatusCheck/obj/*
 /UPPCLLibrary/bin/*
-/ForceFail/*.cs
-/ForceFail/*.csproj
 /ForceFail/bin/*
 /ForceFail/obj/*
 /SaralKYCDocManager/.vs/*
