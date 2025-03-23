@@ -36,13 +36,14 @@ public class Program
     public static void Main()
     {
         var date = DateTime.Now.ToString("yyyyMMdd");
+        var date1 = DateTime.Now.AddMinutes(-30).ToString("yyyy-MM-dd HH:mm:ss");
         UPPCLManager.DbConnection = constring;
         UPPCLManager.Initialize();
         UPPCLManager.CheckTokenExpiry();
         AgentVANNo = "UPCA1419609895";
         using var con = new SqlConnection(constring);
         var queryParameters = new DynamicParameters();
-        var query = $"select UPPCL_BillId, RechargeStatus, OtherApiId, LiveId, WorkStatus, TranType, UPPCL_BillId, RechargeMobileNumber, Amount, Id, RetailUserId, CallbackData, CallbackDataTime, OtherApiStatusCode, OriginalLiveId, UPPCL_PaymentType, CreateDate, UPPCL_DDR, RetailUserOrderNo, isOTs, UPPCL_Discom, isfull from RTran  with (nolock) where RechargeStatus = 'Process' and Createdate> '{date}' and UPPCL_PaymentType in ('Full', 'Partial')";
+        var query = $"select UPPCL_BillId, RechargeStatus, OtherApiId, LiveId, WorkStatus, TranType, UPPCL_BillId, RechargeMobileNumber, Amount, Id, RetailUserId, CallbackData, CallbackDataTime, OtherApiStatusCode, OriginalLiveId, UPPCL_PaymentType, CreateDate, UPPCL_DDR, RetailUserOrderNo, isOTs, UPPCL_Discom, isfull from RTran  with (nolock) where RechargeStatus = 'Process' and Createdate> '{date}' and CreateDate < '{date1}' and UPPCL_PaymentType in ('Full', 'Partial')";
         var result = con.Query<FaildRTran>(query, queryParameters, commandType: System.Data.CommandType.Text);
         foreach (var item in result)
         {
