@@ -617,6 +617,18 @@ namespace SaralESuvidha.Controllers
         {
             return Content(StaticData.DeleteMapping(id));
         }
+        
+        public IActionResult MonthlySalesByDay()
+        {
+            return View();
+        }
+        
+        public IActionResult GetMonthlySummaries(DateTime startDate, DateTime endDate, int x=0)
+        {
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
+            var data = StaticData.GetRetailUserMonthlySummaries(startDate, endDate, x, filePath);
+            return Ok(data);
+        }
 
     }
 }

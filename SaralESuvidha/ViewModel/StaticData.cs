@@ -27,6 +27,7 @@ using UPPCLLibrary.BillFetch;
 using RTran = SaralESuvidha.Models.RTran;
 using DocumentFormat.OpenXml.Bibliography;
 using System.Drawing;
+using System.Reflection;
 using System.Threading;
 using Microsoft.VisualBasic;
 using Org.BouncyCastle.Asn1.Ocsp;
@@ -3096,7 +3097,8 @@ namespace SaralESuvidha.ViewModel
                     var ws = excelPack.Workbook.Worksheets.Add(fileName.Split('-')[0]);
                     ws.Cells.LoadFromDataTable(dataTableExcel, true, OfficeOpenXml.Table.TableStyles.Light2);
                     int colNumber = 1;
-
+                    
+                    
                     foreach (DataColumn col in dataTableExcel.Columns) 
                     {        
                         if (col.DataType == typeof(DateTime))
@@ -3106,6 +3108,7 @@ namespace SaralESuvidha.ViewModel
                         //ws.Column(colNumber).AutoFit();
                         colNumber++;      
                     }
+                    
                     ws.Cells[ws.Dimension.Address].AutoFitColumns();
                     excelPack.Save();
                 }
@@ -3393,7 +3396,68 @@ namespace SaralESuvidha.ViewModel
             return result;
        }
        
+       public static string GetRetailUserMonthlySummaries(DateTime startDate, DateTime endDate, int excelExport, string filePath = "")
+       {
+           var days = Enumerable.Range(0, (endDate - startDate).Days + 1)
+               .Select(d => startDate.AddDays(d))
+               .ToList();
+
+           string dayColumns = string.Join(", ", days.Select(d => $"[{d:yyyy-MM-dd}]"));
+           string dayValues = string.Join(", ", days.Select(d => $"[{d:yyyy-MM-dd}]"));
+
+           using (var con = new SqlConnection(StaticData.conString))
+           {
+               var parameters = new DynamicParameters();
+               parameters.Add("@StartDate", startDate);
+               parameters.Add("@EndDate", endDate);
+               var rows = con.Query("usp_DailySalesWithMaster", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+               DataTable dataTable = DapperConvertToDataTable(rows);
+
+               if (excelExport==1)
+               {
+                   return DataTableToExcelEP(dataTable, "DailySalesByRetailUser", filePath);
+               }
+               else
+               {
+                   var aaData = new { data = rows };
+                   return JsonConvert.SerializeObject(aaData);
+               }
+                
+           }
+       }
        
+       public static DataTable DapperConvertToDataTable(IEnumerable<dynamic> dapperRows)
+       {
+           DataTable dataTable = new DataTable();
+           
+           if (dapperRows == null)
+           {
+               throw new ArgumentNullException(nameof(dapperRows), "DapperRow list cannot be null");
+           }
+
+           bool columnsAdded = false;
+
+           foreach (var row in dapperRows)
+           {
+               if (!columnsAdded)
+               {
+                   foreach (var column in (IDictionary<string, object>)row)
+                   {
+                       dataTable.Columns.Add(column.Key, column.Value?.GetType() ?? typeof(object));
+                   }
+                   columnsAdded = true;
+               }
+               
+               var newRow = dataTable.NewRow();
+               foreach (var column in (IDictionary<string, object>)row)
+               {
+                   newRow[column.Key] = column.Value ?? DBNull.Value;
+               }
+               dataTable.Rows.Add(newRow);
+           }
+
+           return dataTable;
+       }
        
     }
 }
