@@ -10,6 +10,6 @@ namespace SaralESuvidha.ViewModel
         public decimal Margin { get; set;}
         public DateTime CreateDate { get; set;}
 
-
+        public string CounterLocation { get; set; }
     }
 }

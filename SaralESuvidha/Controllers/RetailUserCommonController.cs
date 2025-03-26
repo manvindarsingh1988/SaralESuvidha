@@ -311,13 +311,14 @@ namespace SaralESuvidha.Controllers
         
         public IActionResult DailyClientStatementResult(string dateFrom, string dateTo, int x)
         {
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
             string result = string.Empty;
             try
             {
                 int orderNo = (int) HttpContext.Session.GetInt32("RetailUserOrderNo");
                 DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(dateFrom));
                 DateTime dateT = Convert.ToDateTime(StaticData.ConvertHexToString(dateTo));
-                result = StaticData.RechargeReportRetailClientByDate(orderNo, dateF, dateT, x);
+                result = StaticData.RechargeReportRetailClientByDate(orderNo, dateF, dateT, x, filePath);
             }
             catch (Exception ex)
             {

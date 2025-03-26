@@ -18,12 +18,12 @@
                 </div>
                 <div class="col-lg-2 form-group">
                     <label class="form-label">&nbsp;</label>
-                    <button type="button" class="form-control btn btn-primary hide" onclick="LoadRechargeSummaryReport();">Load Summary</button>
+                    <button type="button" class="form-control btn btn-primary" onclick="javascript: Export();">Export Excel</button>
                 </div>
                 <div class="col-lg-2 form-group">
                     <label class="form-label">&nbsp;</label>
-                    <button type="button" class="form-control btn btn-primary hide" onclick="javascript: Export();">Export Excel</button>
-                </div>
+                    <button type="button" class="form-control btn btn-primary hide" onclick="LoadRechargeSummaryReport();">Load Summary</button>
+                </div>                
             </div>
         </div>
     </div>
@@ -76,5 +76,17 @@
             $('#lblReport').html('Account report between date ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDateTo').val() + '.');
 
         }
+
+        function Export() {
+        $('#lblReport').html('Loading report...');
+        $.get('@Url.Action("DailyClientStatementResult", "RetailUserCommon")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1&orderNo=' + $('#OrderNo').val(),
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#lblReport').html('Account report between date ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDateTo').val() + '.' + data);
+                }
+            });
+    }
 
 </script>

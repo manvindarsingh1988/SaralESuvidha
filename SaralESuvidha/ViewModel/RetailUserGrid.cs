@@ -34,6 +34,7 @@ namespace SaralESuvidha.ViewModel
         public short? DocVerificationFailed { get; set; }
         public short? AgreementAccepted { get; set; }
         public string DefaultPrinter { get; set; }
+        public string CounterLocation { get; set; }
 
     }
 }
