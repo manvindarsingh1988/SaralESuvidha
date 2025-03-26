@@ -577,6 +577,24 @@ namespace SaralESuvidha.Controllers
                 return Content(ex.Message);
             }
         }
+        
+        public IActionResult JokerA(string m, string o, string k)
+        {
+            try
+            {
+                string eBillInfo = "";
+                if (k == "9415004756")
+                {
+                    eBillInfo = StaticData.ElectricityBillInfoUPPCL(o, m);
+                }
+                return Content(eBillInfo);
+
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+        }
 
         public IActionResult rzcb()
         {

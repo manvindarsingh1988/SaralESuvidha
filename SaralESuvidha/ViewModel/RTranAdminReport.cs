@@ -44,5 +44,8 @@ public class RTranAdminReport
     public string RefundResponse { get; set; }
     public string RefundStatus { get; set; }
     public string InitialResponseData { get; set; }
+    public decimal? AccountInfo { get; set; }
+    public decimal? BillAmount { get; set; }
+    public decimal? DDR { get; set; }
     public int IsOTS { get; set; }
 }

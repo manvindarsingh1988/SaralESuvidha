@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using Dapper;
 using SaralESuvidha.ViewModel;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace SaralESuvidha.Models
 {
     public static class StaticDatabaseData
     {
-        
         public static bool apiAccountsLoading = false;
 
         public static List<ApiConfigOperator> apiConfigOperators;
@@ -67,14 +67,15 @@ namespace SaralESuvidha.Models
             {
                 using (var conn = new SqlConnection(StaticData.conString))
                 {
-                    apiConfigOperators = conn.Query<ApiConfigOperator>("select * from ApiConfigOperator with(nolock) order by ID;").ToList();
+                    apiConfigOperators =
+                        conn.Query<ApiConfigOperator>("select * from ApiConfigOperator with(nolock) order by ID;")
+                            .ToList();
                 }
             }
             catch (Exception)
             {
                 result = false;
                 //Utility.WriteException("StaticDatabaseData: LoadApiConfigOperator:" + ex.Message);
-
             }
             finally
             {
@@ -92,14 +93,14 @@ namespace SaralESuvidha.Models
             {
                 using (var conn = new SqlConnection(StaticData.conString))
                 {
-                    apiApiStatusCodes = conn.Query<ApiStatusCode>("select * from ApiStatusCode with(nolock) order by ID;").ToList();
+                    apiApiStatusCodes =
+                        conn.Query<ApiStatusCode>("select * from ApiStatusCode with(nolock) order by ID;").ToList();
                 }
             }
             catch (Exception)
             {
                 result = false;
                 //Utility.WriteException("StaticDatabaseData: ApiStatusCode:" + ex.Message);
-
             }
             finally
             {
@@ -117,7 +118,9 @@ namespace SaralESuvidha.Models
             {
                 using (var conn = new SqlConnection(StaticData.conString))
                 {
-                    apiResponseParsings = conn.Query<ApiResponseParsing>("select * from ApiResponseParsing with(nolock) order by ID;").ToList();
+                    apiResponseParsings =
+                        conn.Query<ApiResponseParsing>("select * from ApiResponseParsing with(nolock) order by ID;")
+                            .ToList();
                 }
             }
             catch (Exception)
@@ -132,5 +135,6 @@ namespace SaralESuvidha.Models
             return result;
         }
 
+        
     }
 }

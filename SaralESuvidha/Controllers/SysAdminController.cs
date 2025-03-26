@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using Dapper;
 using System.IO;
+using System.Linq;
 using SaralESuvidha.Filters;
 using SaralESuvidha.Models;
 using SaralESuvidha.ViewModel;
@@ -516,9 +517,39 @@ namespace SaralESuvidha.Controllers
         {
             return View();
         }
-        public IActionResult SaveMonitor(string ln, string p, string m)
+        public IActionResult SaveMonitor(string ln, string p, string m, string st="00:00", string et="23:59", string oldid = "")
         {
-            return Content(StaticData.SaveMonitorUser(ln, p, m, 1));
+            string tempResult = "Errors: ";
+            if (st.IndexOf(":") < 0)
+            {
+                tempResult += "Invalid start time.";
+            }
+            else
+            {
+                var tempTime = st.Split(':').Select(int.Parse).ToArray();
+                if (tempTime[0] is < 0 or > 23) tempResult += "Invalid start time. Invalid hour.";
+                else if (tempTime[1] is < 0 or > 59) tempResult += "Invalid start time. Invalid minute.";
+            }
+            
+            if (et.IndexOf(":") < 0)
+            {
+                tempResult += "Invalid End time.";
+            }
+            else
+            {
+                var tempTime = et.Split(':').Select(int.Parse).ToArray();
+                if (tempTime[0] is < 0 or > 23) tempResult += "Invalid End time. Invalid hour.";
+                else if (tempTime[1] is < 0 or > 59) tempResult += "Invalid End time. Invalid minute.";
+            }
+
+            if (tempResult.Length > 12)
+            {
+                return Content(tempResult);
+            }
+            else
+            {
+                return Content(StaticData.SaveMonitorUser(ln, p, m, st, et, oldid,1));
+            }
         }
         
         public IActionResult UpdateMonitor(string id, string p, string m)
@@ -541,11 +572,41 @@ namespace SaralESuvidha.Controllers
             return View();
         }
         
-        public IActionResult UpdateMapping(string id, int? usl)
+        public IActionResult UpdateMapping(string id, int? usl, string st, string et)
         {
             if (usl.HasValue)
             {
-                return Content(StaticData.UpdateMapping(id, usl));
+                string tempResult = "Errors: ";
+                if (st.IndexOf(":") < 0)
+                {
+                    tempResult += "Invalid start time.";
+                }
+                else
+                {
+                    var tempTime = st.Split(':').Select(int.Parse).ToArray();
+                    if (tempTime[0] is < 0 or > 23) tempResult += "Invalid start time. Invalid hour.";
+                    else if (tempTime[1] is < 0 or > 59) tempResult += "Invalid start time. Invalid minute.";
+                }
+            
+                if (et.IndexOf(":") < 0)
+                {
+                    tempResult += "Invalid End time.";
+                }
+                else
+                {
+                    var tempTime = et.Split(':').Select(int.Parse).ToArray();
+                    if (tempTime[0] is < 0 or > 23) tempResult += "Invalid End time. Invalid hour.";
+                    else if (tempTime[1] is < 0 or > 59) tempResult += "Invalid End time. Invalid minute.";
+                }
+
+                if (tempResult.Length > 12)
+                {
+                    return Content(tempResult);
+                }
+                else
+                {
+                    return Content(StaticData.UpdateMapping(id, usl, st, et));
+                }
             }
             else
             {
@@ -555,6 +616,18 @@ namespace SaralESuvidha.Controllers
         public IActionResult DeleteMapping(string id)
         {
             return Content(StaticData.DeleteMapping(id));
+        }
+        
+        public IActionResult MonthlySalesByDay()
+        {
+            return View();
+        }
+        
+        public IActionResult GetMonthlySummaries(DateTime startDate, DateTime endDate, int x=0)
+        {
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
+            var data = StaticData.GetRetailUserMonthlySummaries(startDate, endDate, x, filePath);
+            return Ok(data);
         }
 
     }

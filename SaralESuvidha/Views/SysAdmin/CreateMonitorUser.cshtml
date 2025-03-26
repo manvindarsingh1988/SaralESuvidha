@@ -27,11 +27,16 @@
                     <label class="form-label">Mobile Number</label>
                     <input name="txtMobile" id="txtMobile" type="text" class="form-control required" />
                 </div>
-                <div class="col-lg-2 form-group">
-                    
+                <div class="col-lg-2 form-group d-none">
+                    <label class="form-label">Start Time</label>
+                    <input name="txtStartTime" id="txtStartTime" type="text" value="00:00" class="form-control required" />
                 </div>
-                <div class="col-lg-4 form-group">
-                    
+                <div class="col-lg-2 form-group d-none">
+                    <label class="form-label">End Time</label>
+                    <input name="txtEndTime" id="txtEndTime" type="text" value="23:59" class="form-control required" />
+                </div>
+                <div class="col-lg-2 form-group">
+                    <input type="hidden" id="oldid" name="oldid" />
                 </div>
             </div>
             <div id="ActionButton" name="ActionButton">
@@ -69,12 +74,25 @@
                         <input type="hidden" id="musersm" /><p id="confirmationp"></p>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6 form-group text-right">
-                            <span class="form-label">Enter retailer USL</span>
+                        <div class="col-lg-2 form-group text-right">
+                            <span class="form-label">USL</span>
                         </div>
-                        <div class="col-lg-6 form-group">
+                        <div class="col-lg-2 form-group">
                             <input name="txtRUsl" id="txtRUsl" type="number" class="form-control required"/>
                         </div>
+                        <div class="col-lg-2 form-group text-right">
+                            <span class="form-label">Start Time</span>
+                        </div>
+                        <div class="col-lg-2 form-group text-left">
+                            <input name="txtStartTimeUser" id="txtStartTimeUser" type="text" value="00:00" class="form-control required"/>
+                        </div>
+                        <div class="col-lg-2 form-group text-right">
+                            <span class="form-label">End Time</span>
+                        </div>
+                        <div class="col-lg-2 form-group text-left">
+                            <input name="txtEndTimeUser" id="txtEndTimeUser" type="text" value="23:59" class="form-control required"/>
+                        </div>
+
                     </div>
                     <div class="row">
                         <p id="mapinfo"></p>
@@ -128,11 +146,12 @@
             $('#InfoMessage').html('Can not create monitor user.').removeClass('pam-info').addClass('pam-error');
             return;
         } else {
-            $.get("@Url.Action("SaveMonitor", "SysAdmin")?ln=" + $('#txtLoginName').val() + "&p=" + $('#txtPassword').val() + "&m=" + $('#txtMobile').val(), function (data) {
+            $.get("@Url.Action("SaveMonitor", "SysAdmin")?ln=" + $('#txtLoginName').val() + "&p=" + $('#txtPassword').val() + "&m=" + $('#txtMobile').val() + "&oldid=" + $('#oldid').val(), function (data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
                 } else {
                     $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    $('#oldid').val('');
                     LoadReport();
                 }
             });
@@ -158,13 +177,14 @@
             columns: [
                 { data: "Id", title: "Id", visible: true }, { data: "LoginName", title: "Login Name" },
                 { data: "LoginPassword", title: "Login Password" }, { data: "MobileNumber", title: "Mobile Number" },
+                { data: "StartTime", title: "STime", visible: false }, { data: "EndTime", title: "ETime", visible: false },
                 {
                     data: null,
                     title: "Action",
                     render: function (data,type,row) { 
-                        return "<a title='Map Retailer' onclick=ShowMapRetailer('" + ascii2hex(JSON.stringify(data)) + "')>" + "<span class='lnr lnr-eye linear-datatable-icon text-success btnPrint' title='Map Retailer'></span></a>" + "<a title='Edit User' onclick=EditUser('" + data.Id + "')> " + "<span class='lnr lnr-construction linear-datatable-icon text-success btnPrint' title='EditUser'></span></a>";                     
+                        return "<button type='button' class='btnMap' title='Map Retailer' onclick=ShowMapRetailer('" + ascii2hex(JSON.stringify(data)) + "')>" + "<span class='lnr lnr-eye linear-datatable-icon text-success btnPrint' title='Map Retailer'></span></button> " + "<button class='btnEdit' type='button' title='Edit User'> <span class='lnr lnr-construction linear-datatable-icon text-success' title='EditUser'></span></button>";                     
                     },
-                    "width": "70px"
+                    "width": "100px"
                 }
             ]
         });
@@ -191,6 +211,7 @@
                 { data: "MonitorName", title: "MonitorName" }, { data: "RetailUserId", title: "RetailUser" },
                 { data: "RetailerUSL", title: "USL" }, { data: "RetailerName", title: "RetailerName" }, 
                 { data: "RetailerMobile", title: "RetailerMobile" }, { data: "RetailerCity", title: "City" },
+                { data: "StartTime", title: "STime" }, { data: "EndTime", title: "ETime" },
                 {
                     data: null,
                     title: "Action",
@@ -217,7 +238,7 @@
         if ($('#txtRUsl').val() === '') {
             alert('Retailer USL is required to map.');
         } else {
-            $.get("@Url.Action("UpdateMapping", "SysAdmin")?id=" + $('#musersm').val() + "&usl=" + $('#txtRUsl').val(), function (data) {
+            $.get("@Url.Action("UpdateMapping", "SysAdmin")?id=" + $('#musersm').val() + "&usl=" + $('#txtRUsl').val() + "&st=" + $('#txtStartTimeUser').val()+ "&et=" + $('#txtEndTimeUser').val(), function (data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#mapinfo').html(data).removeClass('text-success').addClass('text-danger');
                 } else {
@@ -233,8 +254,20 @@
         var $row = $(this).closest("tr");
         window.rid = $row;
     });
+    
+    $('#datatable-adminreport').on('click', 'button.btnEdit', function (e) {
+        var $row = $(this).closest("tr");
+        $('#oldid').val($row.find("td:nth-child(1)").text());
+        $('#txtLoginName').val($row.find("td:nth-child(2)").text());
+        $('#txtPassword').val($row.find("td:nth-child(3)").text());
+        $('#txtMobile').val($row.find("td:nth-child(4)").text());
+        $('#txtStartTime').val($row.find("td:nth-child(5)").text());
+        $('#txtEndTime').val($row.find("td:nth-child(6)").text());
+        
+    });
 
     function Delete(id) {
+        $('#oldid').val('');
         $.get("@Url.Action("DeleteMapping", "SysAdmin")?id=" + id, function (data) {
             $("#lblReport").html('<span class="text-success">' + data + '</span>');
             window.rid.remove();
