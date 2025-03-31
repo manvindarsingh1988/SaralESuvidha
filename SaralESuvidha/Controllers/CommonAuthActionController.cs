@@ -325,16 +325,25 @@ namespace SaralESuvidha.Controllers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 //GET Method
 
-                Task.Run(async () => {
-
-                    var response = await client.GetAsync($"/saralkycdoc/downloadfile?fileName={id}");
-                    if (response.IsSuccessStatusCode)
+                Task.Run(async () =>
+                {
+                    try
                     {
-                        var data = await response.Content.ReadAsAsync<FileItem>();
-                        //content = ;
-                        System.IO.File.WriteAllBytes(fileName, data.Content);
+                        var response = await client.GetAsync($"/saralkycdoc/downloadfile?fileName={id}");
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var data = await response.Content.ReadAsAsync<FileItem>();
+                            //content = ;
+                            System.IO.File.WriteAllBytes(fileName, data.Content);
+                        }
+                        return Content("Failed to retrieve file");
+                    }
+                    catch (Exception ex)
+                    {
+                        return Content("Exception Task: " + ex.Message);
                     }
                 }).Wait();
+                
                 content = System.IO.File.ReadAllBytes(fileName);
                 System.IO.File.Delete(fileName);
                 return File(content, "application/zip", id + ".zip");
@@ -342,11 +351,11 @@ namespace SaralESuvidha.Controllers
             }
             catch (FileNotFoundException ex)
             {
-                
+                return Content("Exception Task: " + ex.Message);
             }
             catch (Exception ex)
             {
-                
+                return Content("Exception Task: " + ex.Message);
             }
             return File(content, "application/zip", id + ".zip");
             //return File(content, "application/zip", id + ".zip");
