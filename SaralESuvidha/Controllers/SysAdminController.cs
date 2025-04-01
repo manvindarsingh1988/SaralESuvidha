@@ -623,10 +623,21 @@ namespace SaralESuvidha.Controllers
             return View();
         }
         
+        public IActionResult BusinessReport()
+        {
+            return View();
+        }
+        
         public IActionResult GetMonthlySummaries(DateTime startDate, DateTime endDate, int x=0)
         {
             string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
             var data = StaticData.GetRetailUserMonthlySummaries(startDate, endDate, x, filePath);
+            return Ok(data);
+        }
+        
+        public IActionResult GetDailyBusinessReport(DateTime startDate)
+        {
+            var data = StaticData.GetDailyBusinessReport(startDate);
             return Ok(data);
         }
 

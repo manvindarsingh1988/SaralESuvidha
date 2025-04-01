@@ -3426,6 +3426,19 @@ namespace SaralESuvidha.ViewModel
            }
        }
        
+       public static string GetDailyBusinessReport(DateTime startDate)
+       { 
+           using (var con = new SqlConnection(conString))
+           {
+               var parameters = new DynamicParameters();
+               parameters.Add("@StartDate", startDate);
+               var rows = con.Query("usp_DailyBusinessReport", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+               
+               var aaData = new { data = rows };
+               return JsonConvert.SerializeObject(aaData);
+           }
+       }
+       
        public static DataTable DapperConvertToDataTable(IEnumerable<dynamic> dapperRows)
        {
            DataTable dataTable = new DataTable();
