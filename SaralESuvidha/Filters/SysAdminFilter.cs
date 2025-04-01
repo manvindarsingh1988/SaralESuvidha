@@ -24,7 +24,7 @@ namespace SaralESuvidha.Filters
                     filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary {{ "Controller", "Home" }, { "Action", "Index" } });
                 }
             }
-
+            filterContext.HttpContext.Session.SetString("Controller", "SysAdmin");
             base.OnActionExecuting(filterContext);
         }
     }

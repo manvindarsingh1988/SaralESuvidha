@@ -1,9 +1,14 @@
 ﻿@{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "PnL Report with Commission and Salary";
+    if (Context.Session.TryGetValue("Controller", out byte[] cont))
+    {
+        var st = System.Text.Encoding.UTF8.GetString(cont);
+        ViewData["Controller"] = st;
+    }
 }
 
-<form id="frmPnLReport" name="frmPnLReport" asp-action="" asp-controller="SysAdmin">
+<form id="frmPnLReport" name="frmPnLReport" asp-action="" asp-controller='@ViewData["controller"].ToString()'>
     <div class="card mb-4">
         <h6 class="card-header">UPPCL PnL Report<span id="InfoDetail" name="InfoDetail" class=""></span></h6>
         <div class="card-body">            
@@ -159,7 +164,7 @@
         }
         else{
             var id = $('#hiddenId').attr('alt');
-             $.get('@Url.Action("AddSalaryForUser", "SysAdmin")?&userId=' + id  + '&salAmount=' + salary, function (data) {
+             $.get('@Url.Action("AddSalaryForUser", @ViewData["controller"].ToString())?&userId=' + id  + '&salAmount=' + salary, function (data) {
                 if (data.indexOf('Errors:') > -1) {
                      $("#KYCloaderInfo1").html('Error updating salary for - '+id).removeClass('text-success').addClass('text-danger');
                 } else {
@@ -192,7 +197,7 @@
         $table.dataTable({
             iDisplayLength: 50,
             bAutoWidth: true,
-            sAjaxSource: '@Url.Action("AllPnLReportResultByUserAndDate", "SysAdmin")?x=0&dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&orderNo=' + $('#OrderNo').val(),
+            sAjaxSource: '@Url.Action("AllPnLReportResultByUserAndDate", @ViewData["controller"].ToString())?x=0&dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&orderNo=' + $('#OrderNo').val(),
             cache: false,
             order: [[4, "asc"], [2, "asc"]],
             columns: [
@@ -221,7 +226,7 @@
 
     function ExportExcelByUserAndDate() {
         $('#lblReport').html('Loading report...');
-        $.get('@Url.Action("AllPnLReportResultByUserAndDate", "SysAdmin")?x=1&dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&orderNo=' + $('#OrderNo').val(),
+        $.get('@Url.Action("AllPnLReportResultByUserAndDate", @ViewData["controller"].ToString())?x=1&dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&orderNo=' + $('#OrderNo').val(),
             function (data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');

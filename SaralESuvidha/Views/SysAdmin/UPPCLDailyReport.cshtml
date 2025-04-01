@@ -1,6 +1,11 @@
 @{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "SysAdmin - UPPCL Daily Report";
+    if (Context.Session.TryGetValue("Controller", out byte[] cont))
+    {
+        var st = System.Text.Encoding.UTF8.GetString(cont);
+        ViewData["Controller"] = st;
+    }
 }
 
 <form id="frmReport" method="post" action="">
@@ -60,7 +65,7 @@
             $table.dataTable({
                 iDisplayLength: 50,
                 bAutoWidth: true,
-                sAjaxSource: '@Url.Action("DailyUPPCLReportResult", "SysAdmin")?dateFrom=' +a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0',
+            sAjaxSource: '@Url.Action("DailyUPPCLReportResult", @ViewData["controller"].ToString())?dateFrom=' +a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0',
                 cache: false,
                 order: [[4, "asc"]],
                 columns: [
@@ -77,7 +82,7 @@
         
         function ExportExcel() {
             $('#lblReport').html('Loading report...');
-            $.get('@Url.Action("DailyUPPCLReportResult","SysAdmin")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1',
+        $.get('@Url.Action("DailyUPPCLReportResult", @ViewData["controller"].ToString())?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1',
             function(data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');

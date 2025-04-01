@@ -1,3 +1,10 @@
+@{
+    if (Context.Session.TryGetValue("Controller", out byte[] cont))
+    {
+        var st = System.Text.Encoding.UTF8.GetString(cont);
+        ViewData["Controller"] = st;
+    }
+}
 <form id="frmReport" method="post" action="">
     <div class="card">
         <h6 class="card-header">Retail User List <span id="InfoDetail" name="InfoDetail"></span></h6>
@@ -575,7 +582,7 @@
     }
 
     function Edit(id){
-        window.location.href = '@Url.Action("UpdateUser", "SysAdmin")?id=' + id;
+        window.location.href = '@Url.Action("UpdateUser", @ViewData["controller"].ToString())?id=' + id;
     }
     
 </script>

@@ -2,10 +2,15 @@
 @{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "SysAdmin - User Report";
+    if (Context.Session.TryGetValue("Controller", out byte[] cont))
+    {
+        var st = System.Text.Encoding.UTF8.GetString(cont);
+        ViewData["Controller"] = st;
+    }
 }
 
 
-<form id="frmMain" name="frmMain" asp-action="" asp-controller="SysAdmin">
+<form id="frmMain" name="frmMain" asp-action="" asp-controller='@ViewData["controller"].ToString()'>
     <h5>User Report</h5>
     <div class="card">
         <div class="card-body">

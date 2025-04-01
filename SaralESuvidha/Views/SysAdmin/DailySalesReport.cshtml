@@ -1,6 +1,11 @@
 ﻿@{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "Admin Dashboard - Daily Sales Report";
+    if (Context.Session.TryGetValue("Controller", out byte[] cont))
+    {
+        var st = System.Text.Encoding.UTF8.GetString(cont);
+        ViewData["Controller"] = st;
+    }
 }
 
 <form id="frmReport" method="post" action="#">
@@ -59,7 +64,7 @@
         $table.dataTable({
             iDisplayLength: 100,
             bAutoWidth: true,
-            sAjaxSource: '@Url.Action("SalesReportResult", "SysAdmin")?dateFrom=' + a2hex($('#txtReportFromDate').val()) + '&dateTo=' + a2hex($('#txtReportToDate').val()) + '&x=0',
+            sAjaxSource: '@Url.Action("SalesReportResult", @ViewData["controller"].ToString())?dateFrom=' + a2hex($('#txtReportFromDate').val()) + '&dateTo=' + a2hex($('#txtReportToDate').val()) + '&x=0',
             cache: false,
             order: [[2, "asc"]],
             columns: [
@@ -73,7 +78,7 @@
 
 
     function Export() {
-        $.get("@Url.Action("SalesReportResult", "SysAdmin")?dateFrom=" + a2hex($('#txtReportFromDate').val()) + '&dateTo=' + a2hex($('#txtReportToDate').val()) + '&x=1', function (data) {
+        $.get("@Url.Action("SalesReportResult", @ViewData["controller"].ToString())?dateFrom=" + a2hex($('#txtReportFromDate').val()) + '&dateTo=' + a2hex($('#txtReportToDate').val()) + '&x=1', function (data) {
             $("#lblReport").html('Downline sales summary report between ' + $('#txtReportFromDate').val() + ' and ' + $('#txtReportToDate').val() + ' <span class="text-facebook">' + data + '</span>');
         });
     }

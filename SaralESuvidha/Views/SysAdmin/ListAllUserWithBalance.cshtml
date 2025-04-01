@@ -1,9 +1,14 @@
 @{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "List All User with Balance";
+    if (Context.Session.TryGetValue("Controller", out byte[] cont))
+    {
+        var st = System.Text.Encoding.UTF8.GetString(cont);
+        ViewData["Controller"] = st;
+    }
 }
 
-<form id="frmAllUsers" name="frmAllUsers" asp-action="" asp-controller="SysAdmin">
+<form id="frmAllUsers" name="frmAllUsers" asp-action="" asp-controller='@ViewData["controller"].ToString()'>
     <div class="card mb-4">
         <h6 class="card-header">UPPCL All Users Report<span id="InfoDetail" name="InfoDetail" class=""></span></h6>
         <div class="card-body">
@@ -74,7 +79,7 @@
         $table.dataTable({
             iDisplayLength: 50,
             bAutoWidth: true,
-            sAjaxSource: '@Url.Action("AllUserReportResult", "SysAdmin")?x=0',
+            sAjaxSource: '@Url.Action("AllUserReportResult", @ViewData["controller"].ToString())?x=0',
             cache: false,
             order: [[4, "asc"], [2, "asc"]],
             columns: [
@@ -90,7 +95,7 @@
     
     function ExportExcel() {
         $('#lblReport').html('Loading report...');
-        $.get('@Url.Action("AllUserReportResult","SysAdmin")?x=1',
+        $.get('@Url.Action("AllUserReportResult", @ViewData["controller"].ToString())?x=1',
         function(data) {
             if (data.indexOf('Errors:') > -1) {
                 $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
@@ -112,7 +117,7 @@
         $table.dataTable({
             iDisplayLength: 50,
             bAutoWidth: true,
-            sAjaxSource: '@Url.Action("AllUserReportResultByUserAndDate", "SysAdmin")?x=0&date=' + a2hex($('#txtReportDate').val()) + '&orderNo=' + $('#OrderNo').val(),
+            sAjaxSource: '@Url.Action("AllUserReportResultByUserAndDate", @ViewData["controller"].ToString())?x=0&date=' + a2hex($('#txtReportDate').val()) + '&orderNo=' + $('#OrderNo').val(),
             cache: false,
             order: [[4, "asc"], [2, "asc"]],
             columns: [
@@ -128,7 +133,7 @@
 
     function ExportExcelByUserAndDate() {
         $('#lblReport').html('Loading report...');
-        $.get('@Url.Action("AllUserReportResultByUserAndDate", "SysAdmin")?x=1&date=' + a2hex($('#txtReportDate').val()) + '&orderNo=' + $('#OrderNo').val(),
+        $.get('@Url.Action("AllUserReportResultByUserAndDate", @ViewData["controller"].ToString())?x=1&date=' + a2hex($('#txtReportDate').val()) + '&orderNo=' + $('#OrderNo').val(),
             function (data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');

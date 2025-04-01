@@ -1,6 +1,11 @@
 @{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "Admin Dashboard - Monthly Summary Report";
+    if (Context.Session.TryGetValue("Controller", out byte[] cont))
+    {
+        var st = System.Text.Encoding.UTF8.GetString(cont);
+        ViewData["Controller"] = st;
+    }
 }
 
 <form id="frmReport" method="post" action="#">
@@ -86,7 +91,7 @@
         $table.dataTable({
             iDisplayLength: 15,
             bAutoWidth: false,
-            sAjaxSource: '@Url.Action("GetMonthlySummaries", "SysAdmin")?startDate=' + startDate + '&endDate=' + endDate + "&x=0",
+            sAjaxSource: '@Url.Action("GetMonthlySummaries", @ViewData["controller"].ToString())?startDate=' + startDate + '&endDate=' + endDate + "&x=0",
             cache: false,
             order: [[1, "asc"]],
             columns: columns,
@@ -101,7 +106,7 @@
         $("#lblReport").html('Working...');
         var startDate = $('#txtReportFromDate').val();
         var endDate =  $('#txtReportToDate').val();
-        $.get('@Url.Action("GetMonthlySummaries", "SysAdmin")?startDate=' + startDate + '&endDate=' + endDate + '&x=1', function (data) {
+        $.get('@Url.Action("GetMonthlySummaries", @ViewData["controller"].ToString())?startDate=' + startDate + '&endDate=' + endDate + '&x=1', function (data) {
             $("#lblReport").html('Day wise sales summary report between ' + $('#txtReportFromDate').val() + ' and ' + $('#txtReportToDate').val() + ' <span class="text-facebook">' + data + '</span>');
         });
     }

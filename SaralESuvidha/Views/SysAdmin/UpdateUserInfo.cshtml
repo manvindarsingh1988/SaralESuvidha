@@ -3,6 +3,11 @@
 @{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "Update User - Result";
+    if (Context.Session.TryGetValue("Controller", out byte[] cont))
+    {
+        var st = System.Text.Encoding.UTF8.GetString(cont);
+        ViewData["Controller"] = st;
+    }
 }
 
 
@@ -16,6 +21,6 @@
     </div>
 
     <div class="card-body" style="padding-left: 0px;">
-        <a class="btn btn-primary" asp-controller="SysAdmin" asp-action="Index">Dashboard</a>
-        <a class="btn btn-primary" asp-controller="SysAdmin" asp-action="CreateMasterDistributor">Create New Master Distributor</a>
+    <a class="btn btn-primary" asp-controller='@ViewData["controller"].ToString()' asp-action="Index">Dashboard</a>
+    <a class="btn btn-primary" asp-controller='@ViewData["controller"].ToString()' asp-action="CreateMasterDistributor">Create New Master Distributor</a>
     </div>
