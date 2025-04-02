@@ -2,13 +2,8 @@
 @{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "Create White Label";
-    if (Context.Session.TryGetValue("Controller", out byte[] cont))
-    {
-        var st = System.Text.Encoding.UTF8.GetString(cont);
-        ViewData["Controller"] = st;
-    }
 }
-<form id="frmMain" name="frmMain" asp-action="SaveWhiteLabel" asp-controller='@ViewData["controller"].ToString()'>
+<form id="frmMain" name="frmMain" asp-action="SaveWhiteLabel" asp-controller="SysAdmin">
         <h5>Create White Level</h5>
         <div class="row">
             <div class="col-lg-3">
@@ -169,7 +164,7 @@
     function CreateWL() {
         $.ajax({
             type: "POST",
-            url: "@Url.Action("SaveWhiteLabel", @ViewData["controller"].ToString())",
+            url: "@Url.Action("SaveWhiteLabel", "SysAdmin")",
             data: $("form").serialize(),
             contentType: 'application/json; charset=utf-8',
             dataType: "json",

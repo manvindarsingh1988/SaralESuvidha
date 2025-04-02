@@ -1,11 +1,4 @@
-﻿@{
-    if (Context.Session.TryGetValue("Controller", out byte[] cont))
-    {
-        var st = System.Text.Encoding.UTF8.GetString(cont);
-        ViewData["Controller"] = st;
-    }
-}
-@model int
+﻿@model int
 <div class="modal fade" id="AadharKYCModalPopUp" role="dialog">
     <div class="modal-dialog err-pop" id="sdmodal1">
         <div class="modal-content">
@@ -165,7 +158,7 @@
                     window.location.href = '@Url.Action("LoadUser", "MasterDistributor")?id=' + reference_id;
                 }
                 else {
-                    window.location.href = '@Url.Action("LoadUser", @ViewData["controller"].ToString())?id=' + reference_id;
+                    window.location.href = '@Url.Action("LoadUser", "SysAdmin")?id=' + reference_id;
                 }
                 $('#verifypan').button('reset');
                 $('#loadingbtn').addClass('hide');

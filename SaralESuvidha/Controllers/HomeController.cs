@@ -350,7 +350,7 @@ namespace SaralESuvidha.Controllers
                                     break;
 
                             }
-
+                            HttpContext.Session.SetString("usr", usr);
                             result = "Success: login ok. " + usr;
 
                         }

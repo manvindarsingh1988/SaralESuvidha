@@ -3,14 +3,9 @@
 @{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "System Setting";
-    if (Context.Session.TryGetValue("Controller", out byte[] cont))
-    {
-        var st = System.Text.Encoding.UTF8.GetString(cont);
-        ViewData["Controller"] = st;
-    }
 }
 
-<form id="frmSystemParking" name="frmSystemParking" asp-action="" asp-controller='@ViewData["controller"].ToString()'>
+<form id="frmSystemParking" name="frmSystemParking" asp-action="" asp-controller="SysAdmin">
     <div class="card mb-4">
         <h6 class="card-header">System Setting <span id="InfoDetail" name="InfoDetail"></span></h6>
         <div class="card-body">
@@ -73,7 +68,7 @@
         $table.dataTable({
             iDisplayLength: 10,
             bAutoWidth: true,
-            sAjaxSource: '@Url.Action("SystemSettingList", @ViewData["controller"].ToString())',
+            sAjaxSource: '@Url.Action("SystemSettingList", "SysAdmin")',
             cache: false,
             order: [[1, "asc"], [2, "asc"]],
             "createdRow": function (row, data, dataIndex) {   
@@ -94,7 +89,7 @@
     }
     
     function SaveMaintain() {
-        $.get("@Url.Action("SaveSystemMaintain", @ViewData["controller"].ToString())?m=" + $('#IsDownMessage').val() + "&active=" + $('#IsDown option:selected').val() + "&ots=" + $('#IsOTSDown option:selected').val(), function (data) {
+        $.get("@Url.Action("SaveSystemMaintain", "SysAdmin")?m=" + $('#IsDownMessage').val() + "&active=" + $('#IsDown option:selected').val() + "&ots=" + $('#IsOTSDown option:selected').val(), function (data) {
             if (data.indexOf('Errors:') > -1) {
                 $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
             } else {

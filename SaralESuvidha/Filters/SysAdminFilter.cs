@@ -19,12 +19,12 @@ namespace SaralESuvidha.Filters
             }
             else
             {
-                if (filterContext.HttpContext.Session.GetInt32("UserType") != 8)
+                if (filterContext.HttpContext.Session.GetInt32("UserType") != 8 && filterContext.HttpContext.Session.GetInt32("UserType") != 9)
                 {
                     filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary {{ "Controller", "Home" }, { "Action", "Index" } });
                 }
             }
-            filterContext.HttpContext.Session.SetString("Controller", "SysAdmin");
+
             base.OnActionExecuting(filterContext);
         }
     }

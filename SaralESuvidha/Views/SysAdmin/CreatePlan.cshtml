@@ -2,14 +2,9 @@
 @{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "SysAdmin - Client Fund Report";
-    if (Context.Session.TryGetValue("Controller", out byte[] cont))
-    {
-        var st = System.Text.Encoding.UTF8.GetString(cont);
-        ViewData["Controller"] = st;
-    }
 }
 
-<form id="frmMain" name="frmMain" asp-action="SavePlan" asp-controller='@ViewData["controller"].ToString()'>
+<form id="frmMain" name="frmMain" asp-action="SavePlan" asp-controller="SysAdmin">
     <h5>Create/Update Plan</h5>
     <div class="row">
         <div class="col-lg-3">
@@ -145,7 +140,7 @@
     function CreateMD() {
         $.ajax({
             type: "POST",
-            url: "@Url.Action("SaveMasterDistributor", @ViewData["controller"].ToString())",
+            url: "@Url.Action("SaveMasterDistributor", "SysAdmin")",
             data: $("form").serialize(),
             contentType: 'application/json; charset=utf-8',
             //contentType: 'application/x-www-form-urlencoded; charset=utf-8',

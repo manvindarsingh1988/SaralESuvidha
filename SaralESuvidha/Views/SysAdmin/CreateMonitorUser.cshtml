@@ -2,11 +2,6 @@
 @{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "Monitor User";
-    if (Context.Session.TryGetValue("Controller", out byte[] cont))
-    {
-        var st = System.Text.Encoding.UTF8.GetString(cont);
-        ViewData["Controller"] = st;
-    }
 }
 
 
@@ -151,7 +146,7 @@
             $('#InfoMessage').html('Can not create monitor user.').removeClass('pam-info').addClass('pam-error');
             return;
         } else {
-            $.get("@Url.Action("SaveMonitor", @ViewData["controller"].ToString())?ln=" + $('#txtLoginName').val() + "&p=" + $('#txtPassword').val() + "&m=" + $('#txtMobile').val() + "&oldid=" + $('#oldid').val(), function (data) {
+            $.get("@Url.Action("SaveMonitor", "SysAdmin")?ln=" + $('#txtLoginName').val() + "&p=" + $('#txtPassword').val() + "&m=" + $('#txtMobile').val() + "&oldid=" + $('#oldid').val(), function (data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
                 } else {
@@ -176,7 +171,7 @@
         $table.dataTable({
             iDisplayLength: 100,
             bAutoWidth: false,
-            sAjaxSource: '@Url.Action("ListMonitor", @ViewData["controller"].ToString())',
+            sAjaxSource: '@Url.Action("ListMonitor", "SysAdmin")',
             cache: false,
             order: [[2, "asc"]],
             columns: [
@@ -208,7 +203,7 @@
         $table.dataTable({
             iDisplayLength: 500,
             bAutoWidth: false,
-            sAjaxSource: '@Url.Action("ListMapping", @ViewData["controller"].ToString())',
+            sAjaxSource: '@Url.Action("ListMapping", "SysAdmin")',
             cache: false,
             order: [[2, "asc"],[5, "asc"]],
             columns: [
@@ -243,7 +238,7 @@
         if ($('#txtRUsl').val() === '') {
             alert('Retailer USL is required to map.');
         } else {
-            $.get("@Url.Action("UpdateMapping", @ViewData["controller"].ToString())?id=" + $('#musersm').val() + "&usl=" + $('#txtRUsl').val() + "&st=" + $('#txtStartTimeUser').val()+ "&et=" + $('#txtEndTimeUser').val(), function (data) {
+            $.get("@Url.Action("UpdateMapping", "SysAdmin")?id=" + $('#musersm').val() + "&usl=" + $('#txtRUsl').val() + "&st=" + $('#txtStartTimeUser').val()+ "&et=" + $('#txtEndTimeUser').val(), function (data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#mapinfo').html(data).removeClass('text-success').addClass('text-danger');
                 } else {
@@ -273,7 +268,7 @@
 
     function Delete(id) {
         $('#oldid').val('');
-        $.get("@Url.Action("DeleteMapping", @ViewData["controller"].ToString())?id=" + id, function (data) {
+        $.get("@Url.Action("DeleteMapping", "SysAdmin")?id=" + id, function (data) {
             $("#lblReport").html('<span class="text-success">' + data + '</span>');
             window.rid.remove();
         });

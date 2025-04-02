@@ -1,11 +1,6 @@
 @{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "SysAdmin Dashboard - Account Topup Report";
-    if (Context.Session.TryGetValue("Controller", out byte[] cont))
-    {
-        var st = System.Text.Encoding.UTF8.GetString(cont);
-        ViewData["Controller"] = st;
-    }
 }
 
 <form id="frmReport" method="post" action="">
@@ -66,7 +61,7 @@
         $table.dataTable({
             iDisplayLength: 100,
             bAutoWidth: false,
-            sAjaxSource: '@Url.Action("DailyTopupReportResult", @ViewData["controller"].ToString())?dateFrom=' + a2hex($('#txtReportDate').val()) + "&dateTo=" + a2hex($('#txtReportDateTo').val()) + '&x=0',
+            sAjaxSource: '@Url.Action("DailyTopupReportResult", "SysAdmin")?dateFrom=' + a2hex($('#txtReportDate').val()) + "&dateTo=" + a2hex($('#txtReportDateTo').val()) + '&x=0',
             cache: false,
             order: [[2, "asc"]],
             columns: [
@@ -87,7 +82,7 @@
         $('#datatable-adminreport thead').empty();
 
         $('#lblReport').html('Getting report in excel ' + loaderImg);
-        $.get('@Url.Action("DailyTopupReportResult", @ViewData["controller"].ToString())?dateFrom=' + a2hex($('#txtReportDate').val()) + "&dateTo=" + a2hex($('#txtReportDateTo').val())  + '&x=1', function (data) {
+        $.get('@Url.Action("DailyTopupReportResult", "SysAdmin")?dateFrom=' + a2hex($('#txtReportDate').val()) + "&dateTo=" + a2hex($('#txtReportDateTo').val())  + '&x=1', function (data) {
                 $('#lblReport').html('Topup Report between ' + $('#txtReportDate').val() + " and " + $('#txtReportDateTo').val() + data);
             });
         }

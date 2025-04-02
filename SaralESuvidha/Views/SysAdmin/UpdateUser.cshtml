@@ -2,15 +2,10 @@
 @{
     Layout = "_LayoutSysAdmin";
     ViewData["title"] = "Update User";
-    if (Context.Session.TryGetValue("Controller", out byte[] cont))
-    {
-        var st = System.Text.Encoding.UTF8.GetString(cont);
-        ViewData["Controller"] = st;
-    }
 }
 <div class="container shadow p-3 mb-5 bg-white rounded">
     <h3 class="text-center">Update User</h3>
-    <form class="form-horizontal" id="frmMain" name="frmMain" asp-action="UpdateUserInfo" asp-controller='@ViewData["controller"].ToString()' enctype="multipart/form-data">
+    <form class="form-horizontal" id="frmMain" name="frmMain" asp-action="UpdateUserInfo" asp-controller="SysAdmin" enctype="multipart/form-data">
         <div class="form-row d-none">
             <input asp-for="Id" type="text" class="form-control" id="id">
         </div>
