@@ -87,6 +87,11 @@ namespace SaralESuvidha.Controllers
             return View();
         }
 
+        public IActionResult GrowthReport()
+        {
+            return View();
+        }
+
         //[HttpPost]
         //public IActionResult SaveMasterDistributor(RetailUserViewModel data) //FromBody
         //{

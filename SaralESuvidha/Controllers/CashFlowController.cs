@@ -152,6 +152,7 @@ namespace SaralESuvidha.Controllers
         public string RetailerId { get; set; }
         public string RetailerName { get; set; }
         public string CollectorId { get; set; }
+        public string CollectorName { get; set; }
         public decimal Amount { get; set; }
         public int TransactionType { get; set; }
         public int WorkFlow { get; set; }

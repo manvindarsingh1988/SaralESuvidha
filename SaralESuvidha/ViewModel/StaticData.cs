@@ -33,6 +33,8 @@ using Microsoft.VisualBasic;
 using Org.BouncyCastle.Asn1.Ocsp;
 using UPPCLLibrary.OTS;
 using SaralESuvidha.Controllers;
+using DocumentFormat.OpenXml.Drawing;
+using OfficeOpenXml.Style;
 
 namespace SaralESuvidha.ViewModel
 {
@@ -3724,6 +3726,91 @@ namespace SaralESuvidha.ViewModel
             }
             catch (Exception ex)
             {
+            }
+            return result;
+        }
+
+        internal static string GetGrowthReportData(DateTime reportDate, string filePath, string[] removeColumnsFromExcel)
+        {
+            string result = "";
+            DataSet ds = new DataSet("GrowthReports");
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    SqlCommand sqlComm = new SqlCommand("usp_GetGrowthReportData", con);
+                    sqlComm.Parameters.AddWithValue("@ReportDate", reportDate);
+
+                    sqlComm.CommandType = CommandType.StoredProcedure;
+                    SqlDataAdapter da = new SqlDataAdapter();
+                    da.SelectCommand = sqlComm;
+
+                    da.Fill(ds);
+                    result = DataSetToExcelEP(ds, "GrowthReport", filePath, removeColumnsFromExcel);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        public static string DataSetToExcelEP(DataSet dataSet, string fileName, string filePath, string[] removeColumnsFromExcel)
+        {
+            string result = "";
+            try
+            {
+                string fileNameFull = fileName + "_" + DateTime.Now.ToString("ddMMMyy-HHmmss") + "_" + Guid.NewGuid().ToString() + ".xlsx";
+
+                //filePath = string.IsNullOrEmpty(filePath) ? Path.Combine(_webHostEnvironment.WebRootPath,"FileData/" + fileName) : filePath;
+                FileInfo fi = new FileInfo(filePath + fileNameFull);
+
+                if(removeColumnsFromExcel != null && removeColumnsFromExcel.Any())
+                {
+                    foreach(var column in removeColumnsFromExcel)
+                    {
+                        dataSet.Tables[1].Columns.Remove(column);
+                    }
+                }
+                using (var excelPack = new ExcelPackage(fi))
+                {
+                    var ws = excelPack.Workbook.Worksheets.Add(fileName.Split('-')[0]);
+                    ws.Cells.LoadFromDataTable(dataSet.Tables[1], true, OfficeOpenXml.Table.TableStyles.Light2);
+                    int colNumber = 1;
+
+
+                    foreach (DataColumn col in dataSet.Tables[1].Columns)
+                    {
+                        if (col.DataType == typeof(DateTime))
+                        {
+                            ws.Column(colNumber).Style.Numberformat.Format = "dd-MM-yyyy HH:mm:ss";
+                        }
+                        //ws.Column(colNumber).AutoFit();
+                        colNumber++;
+                    }
+
+                    ws.Cells[ws.Dimension.Address].AutoFitColumns();
+                    
+                    ws.InsertRow(1, 1);
+                    ws.Cells["A1:AA1"].Value = dataSet.Tables[0].Rows[0][0].ToString();
+                    ws.Cells["A1:AA1"].Merge = true;
+                    ws.Cells["A1:AA1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    ws.Cells["A1:AA1"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    ws.Row(1).Style.Font.Bold = true;
+                    ws.Row(1).Style.Font.Color.SetColor( Color.Red);
+                    ws.Row(1).Height = 30;
+                    excelPack.Save();
+                }
+
+                result = "<a href='/FileData/" + fileNameFull + "'" + " title='Download Excel File'>Download excel file.</a>";
+            }
+            catch (Exception ex)
+            {
+                result += "Exception: " + ex.Message;
+            }
+            finally
+            {
+
             }
             return result;
         }

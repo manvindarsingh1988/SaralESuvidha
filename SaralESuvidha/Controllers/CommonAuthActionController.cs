@@ -534,6 +534,30 @@ namespace SaralESuvidha.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult GetGrowthReport(string reportDate)
+        {
+            try
+            {
+                var removeColumns = new List<string>();
+                DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(reportDate));
+                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "FileData/");
+                var user = HttpContext.Session.GetString("usr");
+                if(user == "sadm")
+                {
+                    removeColumns.Add("Commission");
+                    removeColumns.Add("Commission1");
+                    removeColumns.Add("Commission2");
+                }
+                var result = StaticData.GetGrowthReportData(dateF, filePath, removeColumns.ToArray());
+                return Content(result);
+            }
+            catch (Exception ex)
+            {
+                return Content("Exception: " + ex.Message);
+            }
+        }
+
         public IActionResult DistributorList(int id)
         {
             return Content(StaticData.DistributorListJson(id));
