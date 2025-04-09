@@ -3442,6 +3442,30 @@ namespace SaralESuvidha.ViewModel
            }
        }
        
+       public static string GetGrowthReportSummary(DateTime startDate, DateTime endDate, int x, string filePath)
+       { 
+           using (var con = new SqlConnection(conString))
+           {
+               var parameters = new DynamicParameters();
+               parameters.Add("@StartDate", startDate);
+               parameters.Add("@EndDate", endDate);
+               var rows = con.Query("usp_GetRechargeSummaryByRetailUser", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+               
+               DataTable dataTable = DapperConvertToDataTable(rows);
+
+               if (x==1)
+               {
+                   return DataTableToExcelEP(dataTable, "GrowthReportSummary", filePath);
+               }
+               else
+               {
+                   var aaData = new { data = rows };
+                   return JsonConvert.SerializeObject(aaData);
+               }
+               
+           }
+       }
+       
        public static DataTable DapperConvertToDataTable(IEnumerable<dynamic> dapperRows)
        {
            DataTable dataTable = new DataTable();

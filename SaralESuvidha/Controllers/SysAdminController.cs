@@ -645,6 +645,17 @@ namespace SaralESuvidha.Controllers
             var data = StaticData.GetDailyBusinessReport(startDate);
             return Ok(data);
         }
+        public IActionResult GrowthReportSummary()
+        {
+            return View();
+        }
+        
+        public IActionResult GetGrowthReportSummary(DateTime startDate, DateTime endDate, int x=0)
+        {
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
+            var data = StaticData.GetGrowthReportSummary(startDate, endDate, x, filePath);
+            return Ok(data);
+        }
 
     }
 }
