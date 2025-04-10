@@ -3792,10 +3792,10 @@ namespace SaralESuvidha.ViewModel
                     ws.Cells[ws.Dimension.Address].AutoFitColumns();
                     
                     ws.InsertRow(1, 1);
-                    ws.Cells["A1:AA1"].Value = dataSet.Tables[0].Rows[0][0].ToString();
-                    ws.Cells["A1:AA1"].Merge = true;
-                    ws.Cells["A1:AA1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                    ws.Cells["A1:AA1"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    ws.Cells["A1:AJ1"].Value = dataSet.Tables[0].Rows[0][0].ToString();
+                    ws.Cells["A1:AJ1"].Merge = true;
+                    ws.Cells["A1:AJ1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    ws.Cells["A1:AJ1"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                     ws.Row(1).Style.Font.Bold = true;
                     ws.Row(1).Style.Font.Color.SetColor( Color.Red);
                     ws.Row(1).Height = 30;

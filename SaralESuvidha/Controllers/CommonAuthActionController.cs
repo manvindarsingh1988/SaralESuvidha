@@ -548,6 +548,9 @@ namespace SaralESuvidha.Controllers
                     removeColumns.Add("Commission");
                     removeColumns.Add("Commission1");
                     removeColumns.Add("Commission2");
+                    removeColumns.Add("UPPCLCommissionGrowthMonth1");
+                    removeColumns.Add("UPPCLCommissionGrowthMonth2");
+                    removeColumns.Add("UPPCLCommissionGrowthMonth3");
                 }
                 var result = StaticData.GetGrowthReportData(dateF, filePath, removeColumns.ToArray());
                 return Content(result);
