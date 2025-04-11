@@ -2302,7 +2302,7 @@ namespace SaralESuvidha.ViewModel
                                         billTran.UPPCL_BillDate = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillDate;
                                         billTran.UPPCL_Discom = operatorName;
                                         //billTran.UPPCL_Discom = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.Discom;
-
+                                        billTran.UPPCL_ConsumerAddress = eSuvidhaBillFetchResponse.AddressLine;
                                         result = billTran.PayBillUPPCL(eSuvidhaBillFetchResponse, inputSource, clientReferenceId);
                                         
                                     }
