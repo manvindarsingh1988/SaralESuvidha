@@ -12,9 +12,18 @@ public class GrowthSummary
     public decimal? OneMonthBackTotal { get; set; }
     public int? TwoMonthBackCount { get; set; }
     public decimal? TwoMonthBackTotal { get; set; }
-    public decimal? FirstDiff { get; set; }
-    public decimal? SecondDiff { get; set; }
-    public decimal? PAvgDiff { get; set; }
-    public decimal? FSDiff { get; set; }
+    public int? ThreeMonthBackCount { get; set; }
+    public decimal? ThreeMonthBackTotal { get; set; }
+    public int? FirstDiffTotal { get; set; }
+    public int? FirstDiffCount { get; set; }
+    public int? SecondDiffTotal { get; set; }
+    public int? SecondDiffCount { get; set; }
+    public int? ThirdDiffTotal { get; set; }
+    public int? ThirdDiffCount { get; set; }
+    public int? COSTAvgTotalP { get; set; }
+    public int? COSTAvgCountP { get; set; }
+    public int? FSDiffTotal { get; set; }
+    public int? FSDiffCount { get; set; }
+    public int? STDiffTotal { get; set; }
     
 }
