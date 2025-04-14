@@ -953,6 +953,41 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
+        public static string SalesReportWithCountAllByDate(DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
+        {
+            var aaIData = new RTranReport();
+            string result = JsonConvert.SerializeObject(aaIData);
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@StartDate", reportDateFrom.ToString("MM-dd-yyyy"));
+                    parameters.Add("@EndDate", reportDateTo.ToString("MM-dd-yyyy"));
+                    var allDailyRecharge = con.Query("usp_GetRechargeMetricsByRetailUserWithAverages", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    if (excelExport == 1)
+                    {
+                        DataTable dataTable = DapperConvertToDataTable(allDailyRecharge);
+                        result = DataTableToExcelEP(dataTable, "DailySalesWithCount", filePath);
+                    }
+                    else
+                    {
+                        var aaData = new { data = allDailyRecharge };
+                        result = JsonConvert.SerializeObject(aaData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                aaIData.Remarks = ex.Message;
+                result = JsonConvert.SerializeObject(aaIData);
+            }
+            finally
+            {
+                aaIData = null;
+            }
+            return result;
+        }
 
         public static string DownlineSalesReportRetailClientByDate(string retailClientId, DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
         {

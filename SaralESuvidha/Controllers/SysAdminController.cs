@@ -319,6 +319,24 @@ namespace SaralESuvidha.Controllers
             }
             return Content(result);
         }
+        public IActionResult SalesReportWithCountResult(string dateFrom, string dateTo, int x)
+        {
+            string result = string.Empty;
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
+
+            try
+            {
+                DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(dateFrom));
+                DateTime dateT = Convert.ToDateTime(StaticData.ConvertHexToString(dateTo));
+                if (HttpContext.Session != null)
+                    result = StaticData.SalesReportWithCountAllByDate(dateF, dateT, x, filePath);
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: " + ex.Message;
+            }
+            return Content(result);
+        }
         
         public IActionResult SystemSettingList()
         {
