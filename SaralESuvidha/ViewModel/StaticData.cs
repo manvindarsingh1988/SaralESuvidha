@@ -2338,6 +2338,9 @@ namespace SaralESuvidha.ViewModel
                                         billTran.UPPCL_Discom = operatorName;
                                         //billTran.UPPCL_Discom = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.Discom;
                                         billTran.UPPCL_ConsumerAddress = eSuvidhaBillFetchResponse.AddressLine;
+                                        billTran.UPPCL_ConsumerAddress = billTran.UPPCL_ConsumerAddress.Length > 450
+                                            ? billTran.UPPCL_ConsumerAddress.Substring(0, 430)
+                                            : billTran.UPPCL_ConsumerAddress;
                                         result = billTran.PayBillUPPCL(eSuvidhaBillFetchResponse, inputSource, clientReferenceId);
                                         
                                     }
