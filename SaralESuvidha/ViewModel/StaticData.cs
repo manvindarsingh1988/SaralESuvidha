@@ -964,11 +964,11 @@ namespace SaralESuvidha.ViewModel
                     var parameters = new DynamicParameters();
                     parameters.Add("@StartDate", reportDateFrom.ToString("MM-dd-yyyy"));
                     parameters.Add("@EndDate", reportDateTo.ToString("MM-dd-yyyy"));
-                    var allDailyRecharge = con.Query("usp_GetRechargeMetricsByRetailUserWithAverages", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    List<DailySalesWithCount> allDailyRecharge = con.Query<DailySalesWithCount>("usp_GetRechargeMetricsByRetailUserWithAverages", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
                     if (excelExport == 1)
                     {
-                        DataTable dataTable = DapperConvertToDataTable(allDailyRecharge);
-                        result = DataTableToExcelEP(dataTable, "DailySalesWithCount", filePath);
+                        
+                        result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "DailySalesWithCount", filePath);
                     }
                     else
                     {
@@ -3487,13 +3487,11 @@ namespace SaralESuvidha.ViewModel
                var parameters = new DynamicParameters();
                parameters.Add("@StartDate", startDate);
                parameters.Add("@EndDate", endDate);
-               var rows = con.Query("usp_GetRechargeSummaryByRetailUser", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+               List<GrowthSummary> rows = con.Query<GrowthSummary>("usp_GetRechargeSummaryByRetailUser", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
                
-               DataTable dataTable = DapperConvertToDataTable(rows);
-
                if (x==1)
                {
-                   return DataTableToExcelEP(dataTable, "GrowthReportSummary", filePath);
+                   return DataTableToExcelEP(rows.ToDataTable(), "GrowthReportSummary", filePath);
                }
                else
                {

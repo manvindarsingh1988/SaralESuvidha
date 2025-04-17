@@ -64,12 +64,8 @@
             order: [[2, "asc"]],
             columns: [
                 { data: "RetailerDetail", title: "RetailerDetail" }, { data: "TransactionDate", title: "TransactionDate", render: function (data) { return moment(data).format('DD-MM-YYYY'); } }, {data: "CounterLocation", title: "Counter Location" },
-                { data: "UPTo2KCount", title: "UPTo2KCount" }, { data: "AllUsersAvgUPTo2KCount", title: "AllUsersAvgUPTo2KCount" },
-                { data: "UPTo2KTotal", title: "UPTo2KTotal" }, { data: "AllUsersAvgUPTo2KTotal", title: "AllUsersAvgUPTo2KTotal" },
-                { data: "UPTo2K4KCount", title: "UPTo2K4KCount" }, { data: "AllUsersAvg2K4KCount", title: "AllUsersAvg2K4KCount" },
-                { data: "UPTo2K4KTotal", title: "UPTo2K4KTotal" }, { data: "AllUsersAvg2K4KTotal", title: "AllUsersAvg2K4KTotal" },
-                { data: "ABOVE4KCount", title: "ABOVE4KCount" }, { data: "AllUsersAvgAbove4KCount", title: "AllUsersAvgAbove4KCount" },
-                { data: "ABOVE4KTotal", title: "ABOVE4KTotal" }, { data: "AllUsersAvgAbove4KTotal", title: "AllUsersAvgAbove4KTotal" },
+                { data: "UPTo4KCount", title: "UPTo4KCount" },
+                { data: "UPTo4KTotal", title: "UPTo4KTotal" },
                 { data: "TotalCount", title: "TotalCount" }, { data: "TotalAmount", title: "TotalAmount" }
             ]
         });
