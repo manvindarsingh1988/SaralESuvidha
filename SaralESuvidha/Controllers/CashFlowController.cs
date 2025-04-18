@@ -15,7 +15,6 @@ namespace SaralESuvidha.Controllers
         public RetailUserViewModel SaveUser(RetailUserViewModel retailUserViewModel)
         {
             retailUserViewModel.MasterId = null;
-            retailUserViewModel.UserType = retailUserViewModel.UserType;
             retailUserViewModel.Password = StaticData.GeneratePassword(8);
             retailUserViewModel.Save();
             return retailUserViewModel;
@@ -33,6 +32,13 @@ namespace SaralESuvidha.Controllers
         public List<UserInfo> GetCollectorUsers()
         {
             return StaticData.GetUsersByUserType(12);
+        }
+
+        [HttpGet]
+        [Route("GetCollectorUsers")]
+        public List<UserInfo> GetCashierUsers()
+        {
+            return StaticData.GetUsersByUserType(13);
         }
 
         [HttpGet]
