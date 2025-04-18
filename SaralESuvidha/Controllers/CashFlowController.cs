@@ -35,7 +35,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
-        [Route("GetCollectorUsers")]
+        [Route("GetCashierUsers")]
         public List<UserInfo> GetCashierUsers()
         {
             return StaticData.GetUsersByUserType(13);
