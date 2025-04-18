@@ -3533,16 +3533,16 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static List<UserInfo> GetMappedUsersByCollectorId(string userId)
+        public static List<MappedUserInfo> GetMappedUsersByCollectorId(string userId)
         {
-            List<UserInfo> result = new();
+            List<MappedUserInfo> result = new();
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@userId", userId);
                 using (var con = new SqlConnection(conString))
                 {
-                    result = con.Query<UserInfo>("usp_GetMappedUsersByCollectorId", parameters, commandType: CommandType.StoredProcedure).ToList();
+                    result = con.Query<MappedUserInfo>("usp_GetMappedUsersByCollectorId", parameters, commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)
@@ -3600,7 +3600,25 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@RetailerId", retailerId);
                 using (var con = new SqlConnection(conString))
                 {
-                    result = con.QuerySingleOrDefault<string>("Usp_AlignCollectorWithRetailerUser", parameters, commandType: CommandType.StoredProcedure);
+                    result = con.QuerySingleOrDefault<OperationResponse>("Usp_AlignCollectorWithRetailerUser", parameters, commandType: CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        public static string DeleteLadgerInfo(int id)
+        {
+            string result = string.Empty;
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Id", id);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<OperationResponse>("usp_DeleteLadgerInfo", parameters, commandType: CommandType.StoredProcedure).OperationMessage;
                 }
             }
             catch (Exception ex)
@@ -3628,16 +3646,16 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static List<UserInfo> GetMappedCollectorsByRetailerId(string userId)
+        public static List<MappedUserInfo> GetMappedCollectorsByRetailerId(string userId)
         {
-            List<UserInfo> result = new();
+            List<MappedUserInfo> result = new();
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@userId", userId);
                 using (var con = new SqlConnection(conString))
                 {
-                    result = con.Query<UserInfo>("usp_GetMappedCollectorsByRetailerId", parameters, commandType: CommandType.StoredProcedure).ToList();
+                    result = con.Query<MappedUserInfo>("usp_GetMappedCollectorsByRetailerId", parameters, commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)
@@ -3726,6 +3744,25 @@ namespace SaralESuvidha.ViewModel
                 using (var con = new SqlConnection(conString))
                 {
                     result = con.Query<Ladger>("Usp_GetLadgerInfoByRetailerid", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<Ladger> GetLadgerInfoByCashierId(DateTime date, string cashierId)
+        {
+            List<Ladger> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Date", date);
+                parameters.Add("@RetailerId", cashierId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<Ladger>("Usp_GetLadgerInfoByCashierId", parameters, commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)

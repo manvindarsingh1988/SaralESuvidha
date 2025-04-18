@@ -44,7 +44,7 @@ namespace SaralESuvidha.Controllers
 
         [HttpGet]
         [Route("GetMappedUsersByCollectorId")]
-        public List<UserInfo> GetMappedUsersByCollectorId(string userId)
+        public List<MappedUserInfo> GetMappedUsersByCollectorId(string userId)
         {
             return StaticData.GetMappedUsersByCollectorId(userId);
         }
@@ -79,7 +79,7 @@ namespace SaralESuvidha.Controllers
 
         [HttpGet]
         [Route("GetMappedCollectorsByRetailerId")]
-        public List<UserInfo> GetMappedCollectorsByRetailerId(string userId)
+        public List<MappedUserInfo> GetMappedCollectorsByRetailerId(string userId)
         {
             return StaticData.GetMappedCollectorsByRetailerId(userId);
         }
@@ -113,10 +113,24 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Route("GetLadgerInfoByCashierId")]
+        public List<Ladger> GetLadgerInfoByCashierId(DateTime date, string cashierId)
+        {
+            return StaticData.GetLadgerInfoByCashierId(date, cashierId);
+        }
+
+        [HttpGet]
         [Route("GetLadgerInfoByRetaileridAndCollectorId")]
         public List<Ladger> GetLadgerInfoByRetaileridAndCollectorId(DateTime date, string retailerId, string collectorId)
         {
             return StaticData.GetLadgerInfoByRetaileridAndCollectorId(date, retailerId, collectorId);
+        }
+
+        [HttpDelete]
+        [Route("DeleteLadgerInfo")]
+        public string DeleteLadgerInfo(int id)
+        {
+            return StaticData.DeleteLadgerInfo(id);
         }
     }
 
