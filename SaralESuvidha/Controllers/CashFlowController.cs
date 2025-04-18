@@ -126,6 +126,13 @@ namespace SaralESuvidha.Controllers
             return StaticData.GetLadgerInfoByRetaileridAndCollectorId(date, retailerId, collectorId);
         }
 
+        [HttpGet]
+        [Route("GetLadgerInfosCreatedByCollectors")]
+        public List<Ladger> GetLadgerInfosCreatedByCollectors(DateTime date)
+        {
+            return StaticData.GetLadgerInfosCreatedByCollectors(date);
+        }
+
         [HttpDelete]
         [Route("DeleteLadgerInfo")]
         public string DeleteLadgerInfo(int id)
@@ -176,5 +183,7 @@ namespace SaralESuvidha.Controllers
         public DateTime Date { get; set; }
         public DateTime GivenOn { get; set; }
         public string Comment { get; set; }
+        public string CashierId { get; set; }
+        public string CashierName { get; set; }
     }
 }
