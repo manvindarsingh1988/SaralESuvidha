@@ -170,6 +170,7 @@ namespace SaralESuvidha.Models
         public string UPPCL_Discom { get; set; }
         public string UPPCL_BillDate { get; set; }
         public string UPPCL_PaymentType { get; set; }
+        public string UPPCL_ConsumerAddress { get; set; }
         public decimal? UPPCL_BalanceAfterPayment { get; set; }
         public decimal? UPPCL_DDR { get; set; }
 
@@ -751,6 +752,7 @@ namespace SaralESuvidha.Models
                         queryParameters.Add("@IsOTS", IsOTS);
                         queryParameters.Add("@IsFull", IsFull);
                         queryParameters.Add("@UPPCL_LifelineAct", UPPCL_LifelineAct);
+                        queryParameters.Add("@UPPCL_ConsumerAddress", UPPCL_ConsumerAddress);
 
                         RechargeStatus = "PROCESS";
 

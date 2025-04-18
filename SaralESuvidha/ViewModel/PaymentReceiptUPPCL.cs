@@ -55,6 +55,7 @@ namespace SaralESuvidha.ViewModel
         public bool? UPPCl_IsForcefullyFailed { get; set; }
         public DateTime? UPPCL_OurForcefullyFailedTime { get; set; }
         public string UPPCL_Discom { get; set; }
+        public string UPPCL_ConsumerAddress { get; set; }
         public string QrCode { get; set; }
 
         public string AgencyName = "Saral ECommerce Pvt Ltd";

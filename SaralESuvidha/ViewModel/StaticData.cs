@@ -953,6 +953,41 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
+        public static string SalesReportWithCountAllByDate(DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
+        {
+            var aaIData = new RTranReport();
+            string result = JsonConvert.SerializeObject(aaIData);
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@StartDate", reportDateFrom.ToString("MM-dd-yyyy"));
+                    parameters.Add("@EndDate", reportDateTo.ToString("MM-dd-yyyy"));
+                    List<DailySalesWithCount> allDailyRecharge = con.Query<DailySalesWithCount>("usp_GetRechargeMetricsByRetailUserWithAverages", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    if (excelExport == 1)
+                    {
+                        
+                        result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "DailySalesWithCount", filePath);
+                    }
+                    else
+                    {
+                        var aaData = new { data = allDailyRecharge };
+                        result = JsonConvert.SerializeObject(aaData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                aaIData.Remarks = ex.Message;
+                result = JsonConvert.SerializeObject(aaIData);
+            }
+            finally
+            {
+                aaIData = null;
+            }
+            return result;
+        }
 
         public static string DownlineSalesReportRetailClientByDate(string retailClientId, DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
         {
@@ -2302,7 +2337,10 @@ namespace SaralESuvidha.ViewModel
                                         billTran.UPPCL_BillDate = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillDate;
                                         billTran.UPPCL_Discom = operatorName;
                                         //billTran.UPPCL_Discom = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.Discom;
-
+                                        billTran.UPPCL_ConsumerAddress = eSuvidhaBillFetchResponse.AddressLine;
+                                        billTran.UPPCL_ConsumerAddress = billTran.UPPCL_ConsumerAddress.Length > 450
+                                            ? billTran.UPPCL_ConsumerAddress.Substring(0, 430)
+                                            : billTran.UPPCL_ConsumerAddress;
                                         result = billTran.PayBillUPPCL(eSuvidhaBillFetchResponse, inputSource, clientReferenceId);
                                         
                                     }
@@ -3449,13 +3487,11 @@ namespace SaralESuvidha.ViewModel
                var parameters = new DynamicParameters();
                parameters.Add("@StartDate", startDate);
                parameters.Add("@EndDate", endDate);
-               var rows = con.Query("usp_GetRechargeSummaryByRetailUser", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+               List<GrowthSummary> rows = con.Query<GrowthSummary>("usp_GetRechargeSummaryByRetailUser", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
                
-               DataTable dataTable = DapperConvertToDataTable(rows);
-
                if (x==1)
                {
-                   return DataTableToExcelEP(dataTable, "GrowthReportSummary", filePath);
+                   return DataTableToExcelEP(rows.ToDataTable(), "GrowthReportSummary", filePath);
                }
                else
                {

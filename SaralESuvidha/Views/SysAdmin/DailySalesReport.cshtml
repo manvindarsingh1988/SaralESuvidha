@@ -59,22 +59,25 @@
         $table.dataTable({
             iDisplayLength: 100,
             bAutoWidth: true,
-            sAjaxSource: '@Url.Action("SalesReportResult", "SysAdmin")?dateFrom=' + a2hex($('#txtReportFromDate').val()) + '&dateTo=' + a2hex($('#txtReportToDate').val()) + '&x=0',
+            sAjaxSource: '@Url.Action("SalesReportWithCountResult", "SysAdmin")?dateFrom=' + a2hex($('#txtReportFromDate').val()) + '&dateTo=' + a2hex($('#txtReportToDate').val()) + '&x=0',
             cache: false,
             order: [[2, "asc"]],
             columns: [
-                { data: "RetailUserId", title: "Id", visible: false }, { data: "RetailerName", title: "RetailerName" }, {data: "CounterLocation", title: "Counter Location" },
-                { data: "Debit", title: "Amount" }, { data: "CreateDate", title: "Date", render: function (data) { return moment(data).format('DD-MMM-YYYY'); } }
+                { data: "RetailerDetail", title: "RetailerDetail" }, { data: "TransactionDate", title: "TransactionDate", render: function (data) { return moment(data).format('DD-MM-YYYY'); } }, {data: "CounterLocation", title: "Counter Location" },
+                { data: "UPTo4KCount", title: "UPTo4KCount" },
+                { data: "UPTo4KTotal", title: "UPTo4KTotal" },
+                { data: "TotalCount", title: "TotalCount" }, { data: "TotalAmount", title: "TotalAmount" }
             ]
         });
 
-        $('#lblReport').html('Downline sales summary report between ' + $('#txtReportFromDate').val() + ' and ' + $('#txtReportToDate').val());
+        $('#lblReport').html('Downline sales summary with count report between ' + $('#txtReportFromDate').val() + ' and ' + $('#txtReportToDate').val());
     }
 
 
     function Export() {
-        $.get("@Url.Action("SalesReportResult", "SysAdmin")?dateFrom=" + a2hex($('#txtReportFromDate').val()) + '&dateTo=' + a2hex($('#txtReportToDate').val()) + '&x=1', function (data) {
-            $("#lblReport").html('Downline sales summary report between ' + $('#txtReportFromDate').val() + ' and ' + $('#txtReportToDate').val() + ' <span class="text-facebook">' + data + '</span>');
+        $("#lblReport").html('Exporting excel...');
+        $.get("@Url.Action("SalesReportWithCountResult", "SysAdmin")?dateFrom=" + a2hex($('#txtReportFromDate').val()) + '&dateTo=' + a2hex($('#txtReportToDate').val()) + '&x=1', function (data) {
+            $("#lblReport").html('Daily sales summary with count report between ' + $('#txtReportFromDate').val() + ' and ' + $('#txtReportToDate').val() + ' <span class="text-facebook">' + data + '</span>');
         });
     }
 
