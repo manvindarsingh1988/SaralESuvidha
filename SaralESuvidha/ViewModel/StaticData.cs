@@ -3788,17 +3788,17 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        internal static List<Ladger> GetLadgerInfoByCashierId(DateTime date, string cashierId)
+        internal static List<Ladger> GetLadgerInfoByCollectorId(DateTime date, string collectorId)
         {
             List<Ladger> result = new();
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@Date", date);
-                parameters.Add("@RetailerId", cashierId);
+                parameters.Add("@CollectorId", collectorId);
                 using (var con = new SqlConnection(conString))
                 {
-                    result = con.Query<Ladger>("Usp_GetLadgerInfoByCashierId", parameters, commandType: CommandType.StoredProcedure).ToList();
+                    result = con.Query<Ladger>("Usp_GetLadgerInfoByCollectorId", parameters, commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)

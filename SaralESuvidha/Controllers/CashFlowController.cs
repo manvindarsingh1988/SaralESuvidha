@@ -113,10 +113,10 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
-        [Route("GetLadgerInfoByCashierId")]
-        public List<Ladger> GetLadgerInfoByCashierId(DateTime date, string cashierId)
+        [Route("GetLadgerInfoByCollectorId")]
+        public List<Ladger> GetLadgerInfoByCollectorId(DateTime date, string collectorId)
         {
-            return StaticData.GetLadgerInfoByCashierId(date, cashierId);
+            return StaticData.GetLadgerInfoByCollectorId(date, collectorId);
         }
 
         [HttpGet]
