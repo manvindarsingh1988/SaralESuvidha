@@ -15,7 +15,7 @@ namespace SaralESuvidha.Controllers
         public RetailUserViewModel SaveUser(RetailUserViewModel retailUserViewModel)
         {
             retailUserViewModel.MasterId = null;
-            retailUserViewModel.UserType = 12;
+            retailUserViewModel.UserType = retailUserViewModel.UserType;
             retailUserViewModel.Password = StaticData.GeneratePassword(8);
             retailUserViewModel.Save();
             return retailUserViewModel;
@@ -142,8 +142,11 @@ namespace SaralESuvidha.Controllers
 
     public class LiabilityInfo
     {
+        public string RetailUserId { get; set; }
         public decimal Amt { get; set; }
         public decimal HandoverAmt { get; set; }
+        public string RetailUserName { get; set; }
+        public string Status { get; set; }
     }
 
     public class LadgerInfo

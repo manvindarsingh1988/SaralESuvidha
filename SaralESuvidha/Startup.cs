@@ -47,6 +47,19 @@ namespace SaralESuvidha
                 options.Cookie.IsEssential = true;
             });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder
+                            .AllowAnyOrigin() // or .WithOrigins("https://example.com") for specific domains
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    });
+            });
+
+
             services.AddControllersWithViews()
             .AddJsonOptions(options =>
             {
@@ -75,6 +88,7 @@ namespace SaralESuvidha
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseCors("AllowAll");
 
             app.UseStaticFiles();
 
