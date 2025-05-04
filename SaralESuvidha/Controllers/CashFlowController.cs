@@ -71,9 +71,9 @@ namespace SaralESuvidha.Controllers
 
         [HttpPost]
         [Route("AlignCollectorWithRetailerUser")]
-        public string AlignCollectorWithRetailerUser(CollectorRetailerMapping mapping)
+        public StringResult AlignCollectorWithRetailerUser(CollectorRetailerMapping mapping)
         {
-            return StaticData.AlignCollectorWithRetailerUser(mapping.CollectorId, mapping.RetailerId);
+            return new StringResult { Response = StaticData.AlignCollectorWithRetailerUser(mapping.CollectorId, mapping.RetailerId) };
         }
 
         [HttpGet]
@@ -99,16 +99,16 @@ namespace SaralESuvidha.Controllers
 
         [HttpPost]
         [Route("AddLadgerInfo")]
-        public bool AddLadgerInfo(LadgerInfo ladger)
+        public BoolResult AddLadgerInfo(LadgerInfo ladger)
         {
-            return StaticData.AddLadgerInfo(ladger);
+            return new BoolResult { Response = StaticData.AddLadgerInfo(ladger) };
         }
 
         [HttpPost]
         [Route("UpdateLadgerInfo")]
-        public bool UpdateLadgerInfo(LadgerInfo ladger)
+        public BoolResult UpdateLadgerInfo(LadgerInfo ladger)
         {
-            return StaticData.UpdateLadgerInfo(ladger);
+            return new BoolResult { Response = StaticData.UpdateLadgerInfo(ladger) };
         }
 
         [HttpGet]
@@ -158,6 +158,7 @@ namespace SaralESuvidha.Controllers
         public string RetailUserId { get; set; }
         public decimal Amt { get; set; }
         public decimal HandoverAmt { get; set; }
+        public decimal PreviousClosingAmt { get; set; }
         public string RetailUserName { get; set; }
         public string Status { get; set; }
     }
@@ -191,5 +192,15 @@ namespace SaralESuvidha.Controllers
         public string Comment { get; set; }
         public string CashierId { get; set; }
         public string CashierName { get; set; }
+    }
+
+    public class StringResult
+    {
+        public string Response { get; set; }
+    }
+
+    public class BoolResult
+    {
+        public bool Response { get; set; }
     }
 }
