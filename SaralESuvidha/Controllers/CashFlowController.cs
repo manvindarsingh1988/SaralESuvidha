@@ -141,9 +141,9 @@ namespace SaralESuvidha.Controllers
 
         [HttpDelete]
         [Route("DeleteLadgerInfo")]
-        public string DeleteLadgerInfo(int id)
+        public StringResult DeleteLadgerInfo(int id)
         {
-            return StaticData.DeleteLadgerInfo(id);
+            return new StringResult { Response = StaticData.DeleteLadgerInfo(id) };
         }
     }
 
