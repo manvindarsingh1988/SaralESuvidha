@@ -152,6 +152,27 @@ namespace SaralESuvidha.Controllers
         {
             return new StringResult { Response = StaticData.DeleteLadgerInfo(id) };
         }
+
+        [HttpGet]
+        [Route("GetCollectorLiabilities")]
+        public List<CollectorLiabilityInfo> GetCollectorLiabilities(DateTime date)
+        {
+            return StaticData.GetCollectorLiabilities(date);
+        }
+
+        [HttpGet]
+        [Route("GetCollectorLiabilityDetails")]
+        public List<Ladger> GetCollectorLiabilityDetails(DateTime date, string collectorId)
+        {
+            return StaticData.GetCollectorLiabilityDetails(date, collectorId);
+        }
+
+        [HttpGet]
+        [Route("GetPendingApprovalLedgers")]
+        public List<Ladger> GetPendingApprovalLedgers()
+        {
+            return StaticData.GetPendingApprovalLedgers();
+        }
     }
 
     public class CollectorRetailerMapping
@@ -165,9 +186,17 @@ namespace SaralESuvidha.Controllers
         public string RetailUserId { get; set; }
         public decimal Amt { get; set; }
         public decimal HandoverAmt { get; set; }
+        public decimal ClearedAmt { get; set; }
         public decimal PreviousClosingAmt { get; set; }
         public string RetailUserName { get; set; }
         public string Status { get; set; }
+    }
+
+    public class CollectorLiabilityInfo
+    {
+        public string CollectorId { get; set; }
+        public string CollectorUserName { get; set; }
+        public decimal Amount { get; set; }
     }
 
     public class LadgerInfo

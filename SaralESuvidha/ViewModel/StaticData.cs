@@ -3949,5 +3949,58 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
+
+        internal static List<CollectorLiabilityInfo> GetCollectorLiabilities(DateTime date)
+        {
+            List<CollectorLiabilityInfo> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Date", date);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<CollectorLiabilityInfo>("usp_GetCollectorLiabilities", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<Ladger> GetCollectorLiabilityDetails(DateTime date, string collectorId)
+        {
+            List<Ladger> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Date", date);
+                parameters.Add("@CollectorId", collectorId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<Ladger>("usp_GetCollectorLiabilityDetails", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<Ladger> GetPendingApprovalLedgers()
+        {
+            List<Ladger> result = new();
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<Ladger>("usp_GetPendingApprovalLedgers", commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
     }
 }
