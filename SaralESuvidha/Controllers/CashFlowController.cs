@@ -206,6 +206,7 @@ namespace SaralESuvidha.Controllers
         public string CollectorUserName { get; set; }
         public decimal Amount { get; set; }
         public decimal HandoverAmt { get; set; }
+        public decimal ClearedAmt { get; set; }
     }
 
     public class LadgerInfo
