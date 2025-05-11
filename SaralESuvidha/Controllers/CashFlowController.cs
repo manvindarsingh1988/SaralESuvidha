@@ -108,6 +108,7 @@ namespace SaralESuvidha.Controllers
         [Route("AddLadgerInfo")]
         public BoolResult AddLadgerInfo(LadgerInfo ladger)
         {
+            ladger.GivenOn = DateTime.Now;
             return new BoolResult { Response = StaticData.AddLadgerInfo(ladger) };
         }
 
@@ -168,6 +169,13 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Route("GetCollectorLedgerDetails")]
+        public List<Ladger> GetCollectorLedgerDetails(DateTime date, string collectorId)
+        {
+            return StaticData.GetCollectorLedgerDetails(date, collectorId);
+        }
+
+        [HttpGet]
         [Route("GetPendingApprovalLedgers")]
         public List<Ladger> GetPendingApprovalLedgers()
         {
@@ -197,6 +205,7 @@ namespace SaralESuvidha.Controllers
         public string CollectorId { get; set; }
         public string CollectorUserName { get; set; }
         public decimal Amount { get; set; }
+        public decimal HandoverAmt { get; set; }
     }
 
     public class LadgerInfo

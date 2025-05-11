@@ -3987,6 +3987,25 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
+        internal static List<Ladger> GetCollectorLedgerDetails(DateTime date, string collectorId)
+        {
+            List<Ladger> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Date", date);
+                parameters.Add("@CollectorId", collectorId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<Ladger>("usp_GetCollectorLedgerDetails", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
         internal static List<Ladger> GetPendingApprovalLedgers()
         {
             List<Ladger> result = new();
