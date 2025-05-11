@@ -3682,6 +3682,25 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
+        public static LiabilityInfo GetLiabilityAmountByCollectorId(string userId, DateTime date)
+        {
+            LiabilityInfo result = new LiabilityInfo();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Date", date);
+                parameters.Add("@UserId", userId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<LiabilityInfo>("Usp_GetLiabilityAmountByCollectorId", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
         public static List<MappedUserInfo> GetMappedCollectorsByRetailerId(string userId)
         {
             List<MappedUserInfo> result = new();
@@ -3731,6 +3750,7 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@Date", ladger.Date);
                 parameters.Add("@GivenOn", ladger.GivenOn);
                 parameters.Add("@Comment", ladger.Comment);
+                parameters.Add("@CashierId", ladger.CashierId);
                 using (var con = new SqlConnection(conString))
                 {
                     con.Execute("Usp_AddLadgerInfo", parameters, commandType: CommandType.StoredProcedure);

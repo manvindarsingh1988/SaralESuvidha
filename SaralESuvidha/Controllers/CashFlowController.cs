@@ -84,6 +84,13 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Route("GetLiabilityAmountByCollectorId")]
+        public LiabilityInfo GetLiabilityAmountByCollectorId(string userId, DateTime date)
+        {
+            return StaticData.GetLiabilityAmountByCollectorId(userId, date);
+        }
+
+        [HttpGet]
         [Route("GetMappedCollectorsByRetailerId")]
         public List<MappedUserInfo> GetMappedCollectorsByRetailerId(string userId)
         {
@@ -174,6 +181,7 @@ namespace SaralESuvidha.Controllers
         public DateTime Date { get; set; }
         public DateTime GivenOn { get; set; }
         public string Comment { get; set; }
+        public string CashierId { get; set; }
     }
 
 
