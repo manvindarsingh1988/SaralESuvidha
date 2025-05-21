@@ -181,6 +181,77 @@ namespace SaralESuvidha.Controllers
         {
             return StaticData.GetPendingApprovalLedgers();
         }
+
+        [HttpGet]
+        [Route("GetUserExtendedInfo")]
+        public List<UserEx> GetUserExtendedInfo()
+        {
+            return StaticData.GetUserExtendedInfo();
+        }
+
+        [HttpGet]
+        [Route("GetLinkedCollectors")]
+        public List<CollectorInfo> GetLinkedCollectors(string userId)
+        {
+            return StaticData.GetLinkedCollectors(userId);
+        }
+
+        [HttpPost]
+        [Route("UpdateIsSelfSubmitterFlag")]
+        public BoolResult UpdateIsSelfSubmitterFlag(SubmitterFlagData data)
+        {
+            return new BoolResult { Response = StaticData.UpdateIsSelfSubmitterFlag(data) };
+        }
+
+        [HttpPost]
+        [Route("UpdateIsThirdPartyFlag")]
+        public BoolResult UpdateIsThirdPartyFlag(ThirdpartyFlagData data)
+        {
+            return new BoolResult { Response = StaticData.UpdateIsThirdPartyFlag(data) };
+        }
+
+        [HttpPost]
+        [Route("UpdateOpeningBalanceData")]
+        public BoolResult UpdateOpeningBalanceData(OpeningBalanceData data)
+        {
+            return new BoolResult { Response = StaticData.UpdateOpeningBalanceData(data) };
+        }
+    }
+
+    public class OpeningBalanceData
+    {
+        public string UserId { get; set; }
+        public decimal OpeningBalance { get; set; }
+    }
+
+    public class ThirdpartyFlagData
+    {
+        public string UserId { get; set; }
+        public bool IsThirdParty { get; set; }
+    }
+
+    public class SubmitterFlagData
+    {
+        public string UserId { get; set; }
+        public bool IsSelfSubmitter { get; set; }
+    }
+
+    public class CollectorInfo
+    {
+        public string CollectorUserId { get; set; }
+        public string CollectorUser { get; set; }
+    }
+
+    public class UserEx
+    {
+        public string Id { get; set; }
+        public bool Active { get; set; }
+        public bool IsThirdParty { get; set; }
+        public bool IsSelfSubmitter { get; set; }
+        public decimal OpeningBalance { get; set; }
+        public DateTime OpeningBalanceDate { get; set; }
+        public int UserType { get; set; }
+        public int UserName { get; set; }
     }
 
     public class CollectorRetailerMapping

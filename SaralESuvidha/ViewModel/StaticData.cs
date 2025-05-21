@@ -4021,5 +4021,96 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
+
+        internal static List<UserEx> GetUserExtendedInfo()
+        {
+            List<UserEx> result = new();
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<UserEx>("usp_GetUserExtendedData", commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<CollectorInfo> GetLinkedCollectors(string userId)
+        {
+            List<CollectorInfo> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", userId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<CollectorInfo>("usp_GetLinkedCollectors", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static bool UpdateIsSelfSubmitterFlag(SubmitterFlagData data)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", data.UserId);
+                parameters.Add("@IsSelfSubmitter", data.IsSelfSubmitter);
+                using (var con = new SqlConnection(conString))
+                {
+                    con.Execute("usp_InsertOrUpdateIsSelfSubmitter", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        internal static bool UpdateIsThirdPartyFlag(ThirdpartyFlagData data)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", data.UserId);
+                parameters.Add("@IsThirdParty", data.IsThirdParty);
+                using (var con = new SqlConnection(conString))
+                {
+                    con.Execute("usp_InsertOrUpdateIsThirdParty", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        internal static bool UpdateOpeningBalanceData(OpeningBalanceData data)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", data.UserId);
+                parameters.Add("@OpeningBalance", data.OpeningBalance);
+                using (var con = new SqlConnection(conString))
+                {
+                    con.Execute("usp_InsertOrUpdateOpeningBalance", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }
