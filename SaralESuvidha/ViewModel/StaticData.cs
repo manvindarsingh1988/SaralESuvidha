@@ -3663,13 +3663,12 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static LiabilityInfo GetLiabilityAmountByRetailerId(string userId, DateTime date)
+        public static LiabilityInfo GetLiabilityAmountByRetailerId(string userId)
         {
             LiabilityInfo result = new LiabilityInfo();
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
                 parameters.Add("@UserId", userId);
                 using (var con = new SqlConnection(conString))
                 {
@@ -3682,13 +3681,12 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static LiabilityInfo GetLiabilityAmountByCollectorId(string userId, DateTime date)
+        public static LiabilityInfo GetLiabilityAmountByCollectorId(string userId)
         {
             LiabilityInfo result = new LiabilityInfo();
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
                 parameters.Add("@UserId", userId);
                 using (var con = new SqlConnection(conString))
                 {

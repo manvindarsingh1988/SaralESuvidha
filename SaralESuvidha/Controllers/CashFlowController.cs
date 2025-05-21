@@ -42,13 +42,6 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
-        [Route("GetMappedUsers")]
-        public List<UserInfo> GetMappedUsers()
-        {
-            return StaticData.GetMappedUsers();
-        }
-
-        [HttpGet]
         [Route("GetMappedUsersByCollectorId")]
         public List<MappedUserInfo> GetMappedUsersByCollectorId(string userId)
         {
@@ -78,16 +71,16 @@ namespace SaralESuvidha.Controllers
 
         [HttpGet]
         [Route("GetLiabilityAmountByRetailerId")]
-        public LiabilityInfo GetLiabilityAmountByRetailerId(string userId, DateTime date)
+        public LiabilityInfo GetLiabilityAmountByRetailerId(string userId)
         {
-            return StaticData.GetLiabilityAmountByRetailerId(userId, date);
+            return StaticData.GetLiabilityAmountByRetailerId(userId);
         }
 
         [HttpGet]
         [Route("GetLiabilityAmountByCollectorId")]
-        public LiabilityInfo GetLiabilityAmountByCollectorId(string userId, DateTime date)
+        public LiabilityInfo GetLiabilityAmountByCollectorId(string userId)
         {
-            return StaticData.GetLiabilityAmountByCollectorId(userId, date);
+            return StaticData.GetLiabilityAmountByCollectorId(userId);
         }
 
         [HttpGet]
@@ -263,12 +256,10 @@ namespace SaralESuvidha.Controllers
     public class LiabilityInfo
     {
         public string RetailUserId { get; set; }
-        public decimal Amt { get; set; }
-        public decimal HandoverAmt { get; set; }
-        public decimal ClearedAmt { get; set; }
-        public decimal PreviousClosingAmt { get; set; }
-        public string RetailUserName { get; set; }
-        public string Status { get; set; }
+        public decimal LaibilityAmount { get; set; }
+        public decimal ProjectionAmount { get; set; }
+        public decimal RejectedAmount { get; set; }
+        public decimal PendingApprovalAmount { get; set; }
     }
 
     public class CollectorLiabilityInfo
