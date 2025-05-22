@@ -3717,16 +3717,14 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static List<LiabilityInfo> GetLiabilityAmountOfAllRetailers(DateTime date)
+        public static List<LiabilityInfo> GetLiabilityAmountOfAllRetailers()
         {
             List<LiabilityInfo> result = new();
             try
             {
-                var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
                 using (var con = new SqlConnection(conString))
                 {
-                    result = con.Query<LiabilityInfo>("Usp_GetLiabilityAmountOfAllRetailers", parameters, commandType: CommandType.StoredProcedure).ToList();
+                    result = con.Query<LiabilityInfo>("Usp_GetLiabilityAmountOfAllRetailers", commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)
@@ -3787,13 +3785,13 @@ namespace SaralESuvidha.ViewModel
             return true;
         }
 
-        internal static List<Ladger> GetLadgerInfoByRetailerid(DateTime date, string retailerId)
+        internal static List<Ladger> GetLadgerInfoByRetailerid(bool all, string retailerId)
         {
             List<Ladger> result = new();
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
+                parameters.Add("@All", all);
                 parameters.Add("@RetailerId", retailerId);
                 using (var con = new SqlConnection(conString))
                 {
@@ -3806,13 +3804,13 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        internal static List<Ladger> GetLadgerInfoByCollectorId(DateTime date, string collectorId)
+        internal static List<Ladger> GetLadgerInfoByCollectorId(bool all, string collectorId)
         {
             List<Ladger> result = new();
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
+                parameters.Add("@All", all);
                 parameters.Add("@CollectorId", collectorId);
                 using (var con = new SqlConnection(conString))
                 {
@@ -3825,13 +3823,13 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        internal static List<Ladger> GetLadgerInfoByRetaileridAndCollectorId(DateTime date, string retailerId, string collectorId)
+        internal static List<Ladger> GetLadgerInfoByRetaileridAndCollectorId(bool all, string retailerId, string collectorId)
         {
             List<Ladger> result = new();
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
+                parameters.Add("@All", all);
                 parameters.Add("@RetailerId", retailerId);
                 parameters.Add("@CollectorId", collectorId);
                 using (var con = new SqlConnection(conString))
@@ -3948,16 +3946,14 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        internal static List<CollectorLiabilityInfo> GetCollectorLiabilities(DateTime date)
+        internal static List<LiabilityInfo> GetCollectorLiabilities()
         {
-            List<CollectorLiabilityInfo> result = new();
+            List<LiabilityInfo> result = new();
             try
             {
-                var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
                 using (var con = new SqlConnection(conString))
                 {
-                    result = con.Query<CollectorLiabilityInfo>("usp_GetCollectorLiabilities", parameters, commandType: CommandType.StoredProcedure).ToList();
+                    result = con.Query<LiabilityInfo>("usp_GetCollectorLiabilities", commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)
@@ -3966,13 +3962,12 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        internal static List<Ladger> GetCollectorLiabilityDetails(DateTime date, string collectorId)
+        internal static List<Ladger> GetCollectorLiabilityDetails(string collectorId)
         {
             List<Ladger> result = new();
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
                 parameters.Add("@CollectorId", collectorId);
                 using (var con = new SqlConnection(conString))
                 {
@@ -3985,13 +3980,12 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        internal static List<Ladger> GetCollectorLedgerDetails(DateTime date, string collectorId)
+        internal static List<Ladger> GetCollectorLedgerDetails(string collectorId)
         {
             List<Ladger> result = new();
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
                 parameters.Add("@CollectorId", collectorId);
                 using (var con = new SqlConnection(conString))
                 {

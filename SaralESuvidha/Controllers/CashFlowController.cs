@@ -92,9 +92,9 @@ namespace SaralESuvidha.Controllers
 
         [HttpGet]
         [Route("GetLiabilityAmountOfAllRetailers")]
-        public List<LiabilityInfo> GetLiabilityAmountOfAllRetailers(DateTime date)
+        public List<LiabilityInfo> GetLiabilityAmountOfAllRetailers()
         {
-            return StaticData.GetLiabilityAmountOfAllRetailers(date);
+            return StaticData.GetLiabilityAmountOfAllRetailers();
         }
 
         [HttpPost]
@@ -114,23 +114,23 @@ namespace SaralESuvidha.Controllers
 
         [HttpGet]
         [Route("GetLadgerInfoByRetailerid")]
-        public List<Ladger> GetLadgerInfoByRetailerid(DateTime date, string retailerId)
+        public List<Ladger> GetLadgerInfoByRetailerid(bool all, string retailerId)
         {
-            return StaticData.GetLadgerInfoByRetailerid(date, retailerId);
+            return StaticData.GetLadgerInfoByRetailerid(all, retailerId);
         }
 
         [HttpGet]
         [Route("GetLadgerInfoByCollectorId")]
-        public List<Ladger> GetLadgerInfoByCollectorId(DateTime date, string collectorId)
+        public List<Ladger> GetLadgerInfoByCollectorId(bool all, string collectorId)
         {
-            return StaticData.GetLadgerInfoByCollectorId(date, collectorId);
+            return StaticData.GetLadgerInfoByCollectorId(all, collectorId);
         }
 
         [HttpGet]
         [Route("GetLadgerInfoByRetaileridAndCollectorId")]
-        public List<Ladger> GetLadgerInfoByRetaileridAndCollectorId(DateTime date, string retailerId, string collectorId)
+        public List<Ladger> GetLadgerInfoByRetaileridAndCollectorId(bool all, string retailerId, string collectorId)
         {
-            return StaticData.GetLadgerInfoByRetaileridAndCollectorId(date, retailerId, collectorId);
+            return StaticData.GetLadgerInfoByRetaileridAndCollectorId(all, retailerId, collectorId);
         }
 
         [HttpGet]
@@ -149,23 +149,23 @@ namespace SaralESuvidha.Controllers
 
         [HttpGet]
         [Route("GetCollectorLiabilities")]
-        public List<CollectorLiabilityInfo> GetCollectorLiabilities(DateTime date)
+        public List<LiabilityInfo> GetCollectorLiabilities()
         {
-            return StaticData.GetCollectorLiabilities(date);
+            return StaticData.GetCollectorLiabilities();
         }
 
         [HttpGet]
         [Route("GetCollectorLiabilityDetails")]
-        public List<Ladger> GetCollectorLiabilityDetails(DateTime date, string collectorId)
+        public List<Ladger> GetCollectorLiabilityDetails(string collectorId)
         {
-            return StaticData.GetCollectorLiabilityDetails(date, collectorId);
+            return StaticData.GetCollectorLiabilityDetails(collectorId);
         }
 
         [HttpGet]
         [Route("GetCollectorLedgerDetails")]
-        public List<Ladger> GetCollectorLedgerDetails(DateTime date, string collectorId)
+        public List<Ladger> GetCollectorLedgerDetails(string collectorId)
         {
-            return StaticData.GetCollectorLedgerDetails(date, collectorId);
+            return StaticData.GetCollectorLedgerDetails(collectorId);
         }
 
         [HttpGet]
@@ -256,20 +256,12 @@ namespace SaralESuvidha.Controllers
 
     public class LiabilityInfo
     {
-        public string RetailUserId { get; set; }
+        public string UserId { get; set; }
         public decimal LaibilityAmount { get; set; }
         public decimal ProjectionAmount { get; set; }
         public decimal RejectedAmount { get; set; }
         public decimal PendingApprovalAmount { get; set; }
-    }
-
-    public class CollectorLiabilityInfo
-    {
-        public string CollectorId { get; set; }
-        public string CollectorUserName { get; set; }
-        public decimal Amount { get; set; }
-        public decimal HandoverAmt { get; set; }
-        public decimal ClearedAmt { get; set; }
+        public string UserName { get; set; }
     }
 
     public class LadgerInfo
