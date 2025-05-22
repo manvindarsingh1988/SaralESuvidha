@@ -215,6 +215,7 @@ namespace SaralESuvidha.Controllers
     {
         public string UserId { get; set; }
         public decimal OpeningBalance { get; set; }
+        public DateTime OpeningBalanceDate { get; set; }
     }
 
     public class ThirdpartyFlagData
@@ -244,7 +245,7 @@ namespace SaralESuvidha.Controllers
         public decimal OpeningBalance { get; set; }
         public DateTime OpeningBalanceDate { get; set; }
         public int UserType { get; set; }
-        public int UserName { get; set; }
+        public string UserName { get; set; }
     }
 
     public class CollectorRetailerMapping

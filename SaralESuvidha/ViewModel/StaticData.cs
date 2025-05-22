@@ -4099,6 +4099,7 @@ namespace SaralESuvidha.ViewModel
                 var parameters = new DynamicParameters();
                 parameters.Add("@UserId", data.UserId);
                 parameters.Add("@OpeningBalance", data.OpeningBalance);
+                parameters.Add("@OpeningBalanceDate", data.OpeningBalanceDate);
                 using (var con = new SqlConnection(conString))
                 {
                     con.Execute("usp_InsertOrUpdateOpeningBalance", parameters, commandType: CommandType.StoredProcedure);
