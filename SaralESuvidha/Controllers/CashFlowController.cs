@@ -17,6 +17,7 @@ namespace SaralESuvidha.Controllers
             retailUserViewModel.MasterId = null;
             retailUserViewModel.Password = StaticData.GeneratePassword(8);
             retailUserViewModel.Save();
+            StaticData.UpdateKYCState(retailUserViewModel.Id, 1, 1, 0, string.Empty);
             return retailUserViewModel;
         }
 
@@ -261,6 +262,7 @@ namespace SaralESuvidha.Controllers
         public decimal ProjectionAmount { get; set; }
         public decimal RejectedAmount { get; set; }
         public decimal PendingApprovalAmount { get; set; }
+        public decimal RetailerInitiatedAmount { get; set; }
         public string UserName { get; set; }
     }
 
