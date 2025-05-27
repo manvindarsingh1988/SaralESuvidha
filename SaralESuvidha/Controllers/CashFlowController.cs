@@ -210,6 +210,47 @@ namespace SaralESuvidha.Controllers
         {
             return new BoolResult { Response = StaticData.UpdateOpeningBalanceData(data) };
         }
+
+        [HttpPost]
+        [Route("LinkAllRetailersToNewCollector")]
+        public BoolResult LinkAllRetailersToNewCollector(LinkingInfo data)
+        {
+            return new BoolResult { Response = StaticData.LinkAllRetailesToNewCollector(data) };
+        }
+
+        [HttpGet]
+        [Route("GetLiabilityAmountOfAllRetailers")]
+        public List<LiabilityInfo> GetLiabilityAmountOfAllRetailersByCollectorId(string collectorId)
+        {
+            return StaticData.GetLiabilityAmountOfAllRetailersByCollectorId(collectorId);
+        }
+        
+        [HttpGet]
+        [Route("GetPendingApprovalLedgersByCollectorId")]
+        public List<Ladger> GetPendingApprovalLedgersByCollectorId(string collectorId)
+        {
+            return StaticData.GetPendingApprovalLedgersByCollectorId(collectorId);
+        }
+
+        [HttpGet]
+        [Route("GetPassword")]
+        public StringResult GetPassword(string userId)
+        {
+            return new StringResult { Response = StaticData.GetPassword(userId) };
+        }
+
+        [HttpPost]
+        [Route("DeleteLinking")]
+        public StringResult DeleteLinking(CollectorRetailerMapping data)
+        {
+            return new StringResult { Response = StaticData.DeleteLinking(data) };
+        }
+    }
+
+    public class LinkingInfo
+    {
+        public string FromCollectorId { get; set; }
+        public string ToCollectorId { get; set; }
     }
 
     public class OpeningBalanceData
@@ -263,6 +304,8 @@ namespace SaralESuvidha.Controllers
         public decimal RejectedAmount { get; set; }
         public decimal PendingApprovalAmount { get; set; }
         public decimal RetailerInitiatedAmount { get; set; }
+        public decimal ClosingAmount { get; set; }
+        public decimal CurrentAmount { get; set; }
         public string UserName { get; set; }
     }
 

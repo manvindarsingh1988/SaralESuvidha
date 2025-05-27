@@ -4105,5 +4105,97 @@ namespace SaralESuvidha.ViewModel
             }
             return true;
         }
+
+        internal static bool LinkAllRetailesToNewCollector(LinkingInfo data)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@FromCollectorId", data.FromCollectorId);
+                parameters.Add("@ToCollectorId", data.ToCollectorId);
+                using (var con = new SqlConnection(conString))
+                {
+                    con.Execute("usp_LinkAllRetailesToNewCollector", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        internal static List<LiabilityInfo> GetLiabilityAmountOfAllRetailersByCollectorId(string collectorId)
+        {
+            List<LiabilityInfo> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CollectorId", collectorId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<LiabilityInfo>("Usp_GetLiabilityAmountOfAllRetailersByCollectorId", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<Ladger> GetPendingApprovalLedgersByCollectorId(string collectorId)
+        {
+            List<Ladger> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CollectorId", collectorId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<Ladger>("usp_GetPendingApprovalLedgersByCollectorId", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static string GetPassword(string userId)
+        {
+            string result = string.Empty;
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", userId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<OperationResponse>("usp_GetPassword", parameters, commandType: CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static string DeleteLinking(CollectorRetailerMapping data)
+        {
+            string result = string.Empty;
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CollectorId", data.CollectorId);
+                parameters.Add("@RetailerId", data.RetailerId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<OperationResponse>("Usp_DeleteLinking", parameters, commandType: CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
     }
 }
