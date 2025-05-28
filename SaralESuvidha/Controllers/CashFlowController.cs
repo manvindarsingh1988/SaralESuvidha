@@ -219,7 +219,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
-        [Route("GetLiabilityAmountOfAllRetailers")]
+        [Route("GetLiabilityAmountOfAllRetailersByCollectorId")]
         public List<LiabilityInfo> GetLiabilityAmountOfAllRetailersByCollectorId(string collectorId)
         {
             return StaticData.GetLiabilityAmountOfAllRetailersByCollectorId(collectorId);
