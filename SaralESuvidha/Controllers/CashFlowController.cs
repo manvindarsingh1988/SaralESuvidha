@@ -227,9 +227,9 @@ namespace SaralESuvidha.Controllers
         
         [HttpGet]
         [Route("GetPendingApprovalLedgersByCollectorId")]
-        public List<Ladger> GetPendingApprovalLedgersByCollectorId(string collectorId)
+        public List<Ladger> GetPendingApprovalLedgersByCollectorId(string collectorId, bool showAll)
         {
-            return StaticData.GetPendingApprovalLedgersByCollectorId(collectorId);
+            return StaticData.GetPendingApprovalLedgersByCollectorId(collectorId, showAll);
         }
 
         [HttpGet]

@@ -4143,13 +4143,14 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        internal static List<Ladger> GetPendingApprovalLedgersByCollectorId(string collectorId)
+        internal static List<Ladger> GetPendingApprovalLedgersByCollectorId(string collectorId, bool showAll)
         {
             List<Ladger> result = new();
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@CollectorId", collectorId);
+                parameters.Add("@ShowAll", showAll);
                 using (var con = new SqlConnection(conString))
                 {
                     result = con.Query<Ladger>("usp_GetPendingApprovalLedgersByCollectorId", parameters, commandType: CommandType.StoredProcedure).ToList();
