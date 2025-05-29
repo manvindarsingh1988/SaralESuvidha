@@ -3998,14 +3998,16 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        internal static List<Ladger> GetPendingApprovalLedgers()
+        internal static List<Ladger> GetPendingApprovalLedgers(bool showAll)
         {
             List<Ladger> result = new();
             try
             {
                 using (var con = new SqlConnection(conString))
                 {
-                    result = con.Query<Ladger>("usp_GetPendingApprovalLedgers", commandType: CommandType.StoredProcedure).ToList();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ShowAll", showAll);
+                    result = con.Query<Ladger>("usp_GetPendingApprovalLedgers", parameters, commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)
