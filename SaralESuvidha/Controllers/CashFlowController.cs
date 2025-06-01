@@ -85,6 +85,13 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Route("GetLiabilityAmountByCashierId")]
+        public LiabilityInfo GetLiabilityAmountByCashierId(string userId)
+        {
+            return StaticData.GetLiabilityAmountByCashierId(userId);
+        }
+
+        [HttpGet]
         [Route("GetMappedCollectorsByRetailerId")]
         public List<MappedUserInfo> GetMappedCollectorsByRetailerId(string userId)
         {
@@ -126,6 +133,13 @@ namespace SaralESuvidha.Controllers
         {
             return StaticData.GetLadgerInfoByCollectorId(all, collectorId);
         }
+        
+        [HttpGet]
+        [Route("GetLadgerInfoCreatedByCashierId")]
+        public List<Ladger> GetLadgerInfoCreatedByCashierId(bool all, string cashierId)
+        {
+            return StaticData.GetLadgerInfoCreatedByCashierId(all, cashierId);
+        }
 
         [HttpGet]
         [Route("GetLadgerInfoByRetaileridAndCollectorId")]
@@ -156,6 +170,13 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Route("GetCashierLiabilities")]
+        public List<LiabilityInfo> GetCashierLiabilities()
+        {
+            return StaticData.GetCashierLiabilities();
+        }
+
+        [HttpGet]
         [Route("GetCollectorLiabilityDetails")]
         public List<Ladger> GetCollectorLiabilityDetails(string collectorId)
         {
@@ -163,10 +184,24 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Route("GetCashierLiabilityDetails")]
+        public List<Ladger> GetCashierLiabilityDetails(string cashierId)
+        {
+            return StaticData.GetCashierLiabilityDetails(cashierId);
+        }
+
+        [HttpGet]
         [Route("GetCollectorLedgerDetails")]
         public List<Ladger> GetCollectorLedgerDetails(string collectorId)
         {
             return StaticData.GetCollectorLedgerDetails(collectorId);
+        }
+        
+        [HttpGet]
+        [Route("GetCashierLedgerDetails")]
+        public List<Ladger> GetCashierLedgerDetails(string cashierId)
+        {
+            return StaticData.GetCashierLedgerDetails(cashierId);
         }
 
         [HttpGet]
@@ -321,6 +356,7 @@ namespace SaralESuvidha.Controllers
         public DateTime GivenOn { get; set; }
         public string Comment { get; set; }
         public string CashierId { get; set; }
+        public string DocId { get; set; }
     }
 
 
@@ -339,6 +375,7 @@ namespace SaralESuvidha.Controllers
         public string Comment { get; set; }
         public string CashierId { get; set; }
         public string CashierName { get; set; }
+        public string DocId { get; set; }
     }
 
     public class StringResult
