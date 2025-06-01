@@ -163,7 +163,7 @@ namespace SaralESuvidha.Controllers
                                     fundTransferRTran.RequestMachine = HttpContext.Request.Headers["User-Agent"].ToString();
                                     fundTransferRTran.RetailUserOrderNo = (int)HttpContext.Session.GetInt32("RetailUserOrderNo"); //
 
-                                    if (r_method == "upi" || r_method == "netbanking")
+                                    if (r_method == "upi")// || r_method == "netbanking"
                                     {
                                         fundTransferRTran.Amount = Convert.ToDecimal((decimal)rAmount / 100);
                                     }
