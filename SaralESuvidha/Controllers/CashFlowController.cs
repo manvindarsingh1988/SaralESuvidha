@@ -206,9 +206,9 @@ namespace SaralESuvidha.Controllers
 
         [HttpGet]
         [Route("GetPendingApprovalLedgers")]
-        public List<Ladger> GetPendingApprovalLedgers(bool showAll)
+        public List<Ladger> GetPendingApprovalLedgers(bool showAll, int userType)
         {
-            return StaticData.GetPendingApprovalLedgers(showAll);
+            return StaticData.GetPendingApprovalLedgers(showAll, userType);
         }
 
         [HttpGet]

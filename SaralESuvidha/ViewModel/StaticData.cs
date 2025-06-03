@@ -4071,7 +4071,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        internal static List<Ladger> GetPendingApprovalLedgers(bool showAll)
+        internal static List<Ladger> GetPendingApprovalLedgers(bool showAll, int userType)
         {
             List<Ladger> result = new();
             try
@@ -4080,6 +4080,7 @@ namespace SaralESuvidha.ViewModel
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@ShowAll", showAll);
+                    parameters.Add("@UserType", userType);
                     result = con.Query<Ladger>("usp_GetPendingApprovalLedgers", parameters, commandType: CommandType.StoredProcedure).ToList();
                 }
             }
