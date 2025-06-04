@@ -339,6 +339,7 @@ namespace SaralESuvidha.Controllers
         public decimal RejectedAmount { get; set; }
         public decimal PendingApprovalAmount { get; set; }
         public decimal RetailerInitiatedAmount { get; set; }
+        public decimal CollectorInitiatedAmount { get; set; }
         public decimal ClosingAmount { get; set; }
         public decimal CurrentAmount { get; set; }
         public string UserName { get; set; }

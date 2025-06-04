@@ -3765,6 +3765,7 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@GivenOn", ladger.GivenOn);
                 parameters.Add("@Comment", ladger.Comment);
                 parameters.Add("@CashierId", ladger.CashierId);
+                parameters.Add("@DocId", ladger.DocId);
                 using (var con = new SqlConnection(conString))
                 {
                     con.Execute("Usp_AddLadgerInfo", parameters, commandType: CommandType.StoredProcedure);
@@ -3791,6 +3792,7 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@Date", ladger.Date);
                 parameters.Add("@GivenOn", ladger.GivenOn);
                 parameters.Add("@Comment", ladger.Comment);
+                parameters.Add("@DocId", ladger.DocId);
                 using (var con = new SqlConnection(conString))
                 {
                     con.Execute("Usp_UpdateLadgerInfo", parameters, commandType: CommandType.StoredProcedure);
