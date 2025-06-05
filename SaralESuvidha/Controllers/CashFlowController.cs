@@ -1,8 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using SaralESuvidha.Models;
 using SaralESuvidha.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace SaralESuvidha.Controllers
 {
@@ -10,7 +16,14 @@ namespace SaralESuvidha.Controllers
     [ApiController]
     public class CashFlowController : ControllerBase
     {
+        private IConfiguration _config;
+        public CashFlowController(IConfiguration config)
+        {
+            _config = config;
+        }
+
         [HttpPost]
+        [Authorize]
         [Route("SaveUser")]
         public RetailUserViewModel SaveUser(RetailUserViewModel retailUserViewModel)
         {
@@ -22,6 +35,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetRetailerUsers")]
         public List<UserInfo> GetRetailerUsers()
         {
@@ -29,6 +43,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetCollectorUsers")]
         public List<UserInfo> GetCollectorUsers()
         {
@@ -36,6 +51,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetCashierUsers")]
         public List<UserInfo> GetCashierUsers()
         {
@@ -43,6 +59,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetMappedUsersByCollectorId")]
         public List<MappedUserInfo> GetMappedUsersByCollectorId(string userId)
         {
@@ -50,13 +67,44 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("Login")]
         public UserInfo Login(string userId, string password)
         {
-            return StaticData.CashFlowLogin(userId, password);
+            var user = StaticData.CashFlowLogin(userId, password);
+            if(user != null && user.Message == "Success: Logedin successfully")
+            {
+                var tokenDetails = GenerateJSONWebToken(user);
+                user.Token = tokenDetails.Item1;
+                user.Expiry = tokenDetails.Item2;
+            }
+            return user;
         }
 
+        private (string, DateTime) GenerateJSONWebToken(UserInfo userInfo)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[] {
+                new Claim(JwtRegisteredClaimNames.Name, userInfo.UserName),
+                new Claim(JwtRegisteredClaimNames.Sid, userInfo.Id),
+                new Claim(JwtRegisteredClaimNames.Typ, userInfo.UserType),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+            var exp = DateTime.Now.AddMinutes(120);
+            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+                _config["Jwt:Issuer"],
+                claims,
+                expires: exp,
+                signingCredentials: credentials);
+            
+            return (new JwtSecurityTokenHandler().WriteToken(token), exp);
+        }
+
+
         [HttpGet]
+        [Authorize]
         [Route("GetMasterData")]
         public MasterData GetMasterData()
         {
@@ -64,6 +112,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("AlignCollectorWithRetailerUser")]
         public StringResult AlignCollectorWithRetailerUser(CollectorRetailerMapping mapping)
         {
@@ -71,6 +120,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetLiabilityAmountByRetailerId")]
         public LiabilityInfo GetLiabilityAmountByRetailerId(string userId)
         {
@@ -78,6 +128,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetLiabilityAmountByCollectorId")]
         public LiabilityInfo GetLiabilityAmountByCollectorId(string userId)
         {
@@ -85,6 +136,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetLiabilityAmountByCashierId")]
         public LiabilityInfo GetLiabilityAmountByCashierId(string userId)
         {
@@ -92,6 +144,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetMappedCollectorsByRetailerId")]
         public List<MappedUserInfo> GetMappedCollectorsByRetailerId(string userId)
         {
@@ -99,6 +152,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetLiabilityAmountOfAllRetailers")]
         public List<LiabilityInfo> GetLiabilityAmountOfAllRetailers()
         {
@@ -106,6 +160,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("AddLadgerInfo")]
         public BoolResult AddLadgerInfo(LadgerInfo ladger)
         {
@@ -114,6 +169,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("UpdateLadgerInfo")]
         public BoolResult UpdateLadgerInfo(LadgerInfo ladger)
         {
@@ -121,6 +177,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetLadgerInfoByRetailerid")]
         public List<Ladger> GetLadgerInfoByRetailerid(bool all, string retailerId)
         {
@@ -128,6 +185,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetLadgerInfoByCollectorId")]
         public List<Ladger> GetLadgerInfoByCollectorId(bool all, string collectorId)
         {
@@ -135,6 +193,7 @@ namespace SaralESuvidha.Controllers
         }
         
         [HttpGet]
+        [Authorize]
         [Route("GetLadgerInfoCreatedByCashierId")]
         public List<Ladger> GetLadgerInfoCreatedByCashierId(bool all, string cashierId)
         {
@@ -142,6 +201,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetLadgerInfoByRetaileridAndCollectorId")]
         public List<Ladger> GetLadgerInfoByRetaileridAndCollectorId(bool all, string retailerId, string collectorId)
         {
@@ -149,6 +209,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetLadgerInfosCreatedByCollectors")]
         public List<Ladger> GetLadgerInfosCreatedByCollectors(DateTime date)
         {
@@ -156,6 +217,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("DeleteLadgerInfo")]
         public StringResult DeleteLadgerInfo(int id)
         {
@@ -163,6 +225,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetCollectorLiabilities")]
         public List<LiabilityInfo> GetCollectorLiabilities()
         {
@@ -170,6 +233,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetCashierLiabilities")]
         public List<LiabilityInfo> GetCashierLiabilities()
         {
@@ -177,6 +241,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetCollectorLiabilityDetails")]
         public List<Ladger> GetCollectorLiabilityDetails(string collectorId)
         {
@@ -184,6 +249,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetCashierLiabilityDetails")]
         public List<Ladger> GetCashierLiabilityDetails(string cashierId)
         {
@@ -191,6 +257,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetCollectorLedgerDetails")]
         public List<Ladger> GetCollectorLedgerDetails(string collectorId)
         {
@@ -198,6 +265,7 @@ namespace SaralESuvidha.Controllers
         }
         
         [HttpGet]
+        [Authorize]
         [Route("GetCashierLedgerDetails")]
         public List<Ladger> GetCashierLedgerDetails(string cashierId)
         {
@@ -205,6 +273,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetPendingApprovalLedgers")]
         public List<Ladger> GetPendingApprovalLedgers(bool showAll, int userType)
         {
@@ -212,6 +281,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetUserExtendedInfo")]
         public List<UserEx> GetUserExtendedInfo()
         {
@@ -219,6 +289,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetLinkedCollectors")]
         public List<CollectorInfo> GetLinkedCollectors(string userId)
         {
@@ -226,6 +297,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("UpdateIsSelfSubmitterFlag")]
         public BoolResult UpdateIsSelfSubmitterFlag(SubmitterFlagData data)
         {
@@ -233,6 +305,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("UpdateIsThirdPartyFlag")]
         public BoolResult UpdateIsThirdPartyFlag(ThirdpartyFlagData data)
         {
@@ -240,6 +313,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("UpdateOpeningBalanceData")]
         public BoolResult UpdateOpeningBalanceData(OpeningBalanceData data)
         {
@@ -247,6 +321,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("LinkAllRetailersToNewCollector")]
         public BoolResult LinkAllRetailersToNewCollector(LinkingInfo data)
         {
@@ -254,6 +329,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetLiabilityAmountOfAllRetailersByCollectorId")]
         public List<LiabilityInfo> GetLiabilityAmountOfAllRetailersByCollectorId(string collectorId)
         {
@@ -261,6 +337,7 @@ namespace SaralESuvidha.Controllers
         }
         
         [HttpGet]
+        [Authorize]
         [Route("GetPendingApprovalLedgersByCollectorId")]
         public List<Ladger> GetPendingApprovalLedgersByCollectorId(string collectorId, bool showAll)
         {
@@ -268,6 +345,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetPassword")]
         public StringResult GetPassword(string userId)
         {
@@ -275,6 +353,7 @@ namespace SaralESuvidha.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("DeleteLinking")]
         public StringResult DeleteLinking(CollectorRetailerMapping data)
         {
