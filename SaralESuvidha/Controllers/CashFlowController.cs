@@ -7,6 +7,7 @@ using SaralESuvidha.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
@@ -79,6 +80,55 @@ namespace SaralESuvidha.Controllers
                 user.Expiry = tokenDetails.Item2;
             }
             return user;
+        }
+
+        [HttpGet]
+        [JwtAuthentication]
+        public UserInfo RefreshToken(string accessToken)
+        {
+            // Validate and read claims from the expired token
+            var handler = new JwtSecurityTokenHandler();
+            SecurityToken validatedToken;
+
+            try
+            {
+                var tokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidIssuer = _config["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"])),
+                    ValidateLifetime = true, // Ignore expiry
+                    ValidateIssuerSigningKey = true
+                };
+
+                var principal = handler.ValidateToken(accessToken, tokenValidationParameters, out validatedToken);
+                var jwtToken = (JwtSecurityToken)validatedToken;
+
+                // Extract user claims
+                var userId = principal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sid)?.Value;
+                var userName = principal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+                var userType = principal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Typ)?.Value;
+
+                var user = new UserInfo
+                {
+                    // Rebuild user info
+                    UserName = userName,
+                    UserType = userType
+                };
+
+                // Generate new access token
+                var tokenDetails = GenerateJSONWebToken(user);
+                user.Token = tokenDetails.Item1;
+                user.Expiry = tokenDetails.Item2;
+
+                return user;
+            }
+            catch
+            {
+                // Invalid token
+                return null;
+            }
         }
 
         private (string, DateTime) GenerateJSONWebToken(UserInfo userInfo)

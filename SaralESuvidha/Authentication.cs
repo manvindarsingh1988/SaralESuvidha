@@ -59,7 +59,7 @@ namespace SaralESuvidha
         {
             var config = filterContext.HttpContext.RequestServices.GetService<IConfiguration>();
             var request = filterContext.HttpContext.Request;
-            var token = request.Headers["Authorization"].ToString();
+            var token = request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
             if (token != null)
             {
