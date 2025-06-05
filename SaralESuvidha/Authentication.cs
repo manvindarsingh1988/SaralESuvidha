@@ -41,8 +41,8 @@ namespace SaralESuvidha
 
                 // Corrected access to the validatedToken
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                var jku = jwtToken.Claims.First(claim => claim.Type == "jku").Value;
-                var userName = jwtToken.Claims.First(claim => claim.Type == "kid").Value;
+                var jku = jwtToken.Claims.First(claim => claim.Type == "jti").Value;
+                var userName = jwtToken.Claims.First(claim => claim.Type == "name").Value;
 
                 return userName;
             }
