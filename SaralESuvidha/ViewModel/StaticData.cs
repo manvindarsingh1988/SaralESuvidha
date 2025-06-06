@@ -3793,6 +3793,7 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@GivenOn", ladger.GivenOn);
                 parameters.Add("@Comment", ladger.Comment);
                 parameters.Add("@DocId", ladger.DocId);
+                parameters.Add("@CashierId", ladger.CashierId);
                 using (var con = new SqlConnection(conString))
                 {
                     con.Execute("Usp_UpdateLadgerInfo", parameters, commandType: CommandType.StoredProcedure);
