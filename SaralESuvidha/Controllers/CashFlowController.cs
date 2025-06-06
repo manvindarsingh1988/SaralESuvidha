@@ -73,7 +73,7 @@ namespace SaralESuvidha.Controllers
         public UserInfo Login(string userId, string password)
         {
             var user = StaticData.CashFlowLogin(userId, password);
-            if(user != null && user.Message == "Success: Logedin successfully")
+            if (user != null && user.Message == "Success: Logedin successfully")
             {
                 var tokenDetails = GenerateJSONWebToken(user);
                 user.Token = tokenDetails.Item1;
@@ -84,11 +84,16 @@ namespace SaralESuvidha.Controllers
 
         [HttpGet]
         [JwtAuthentication]
-        public UserInfo RefreshToken(string accessToken)
+        [Route("RefreshToken")]
+        public UserInfo RefreshToken()
         {
+
+            var authHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var accessToken = authHeader?.StartsWith("Bearer ") == true ? authHeader.Substring("Bearer ".Length) : null;
+
+
             // Validate and read claims from the expired token
             var handler = new JwtSecurityTokenHandler();
-            SecurityToken validatedToken;
 
             try
             {
@@ -102,7 +107,7 @@ namespace SaralESuvidha.Controllers
                     ValidateIssuerSigningKey = true
                 };
 
-                var principal = handler.ValidateToken(accessToken, tokenValidationParameters, out validatedToken);
+                var principal = handler.ValidateToken(accessToken, tokenValidationParameters, out var validatedToken);
                 var jwtToken = (JwtSecurityToken)validatedToken;
 
                 // Extract user claims
@@ -112,7 +117,7 @@ namespace SaralESuvidha.Controllers
 
                 var user = new UserInfo
                 {
-                    // Rebuild user info
+                    Id = userId,
                     UserName = userName,
                     UserType = userType
                 };
@@ -148,7 +153,7 @@ namespace SaralESuvidha.Controllers
                 claims,
                 expires: exp,
                 signingCredentials: credentials);
-            
+
             return (new JwtSecurityTokenHandler().WriteToken(token), exp);
         }
 
@@ -241,7 +246,7 @@ namespace SaralESuvidha.Controllers
         {
             return StaticData.GetLadgerInfoByCollectorId(all, collectorId);
         }
-        
+
         [HttpGet]
         [JwtAuthentication]
         [Route("GetLadgerInfoCreatedByCashierId")]
@@ -313,7 +318,7 @@ namespace SaralESuvidha.Controllers
         {
             return StaticData.GetCollectorLedgerDetails(collectorId);
         }
-        
+
         [HttpGet]
         [JwtAuthentication]
         [Route("GetCashierLedgerDetails")]
@@ -385,7 +390,7 @@ namespace SaralESuvidha.Controllers
         {
             return StaticData.GetLiabilityAmountOfAllRetailersByCollectorId(collectorId);
         }
-        
+
         [HttpGet]
         [JwtAuthentication]
         [Route("GetPendingApprovalLedgersByCollectorId")]
