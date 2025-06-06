@@ -61,12 +61,14 @@ namespace SaralESuvidha.Controllers
                     {
                         //Order saved
                         RazorpayClient client = new RazorpayClient(StaticData.rzp_ApiKey, StaticData.rzp_ApiSecret);
-
-                        Dictionary<string, object> options = new Dictionary<string,object>();
-                        options.Add("amount", amountWithPaisa); // amount in the smallest currency unit
-                        options.Add("receipt", orderResponse.Id);
-                        options.Add("currency", "INR");
-                        Order order = client.Order.Create(options);
+                        
+                        
+                        Dictionary<string, object> orderData = new Dictionary<string,object>();
+                        orderData.Add("amount", amountWithPaisa); // amount in the smallest currency unit
+                        orderData.Add("receipt", orderResponse.Id);
+                        orderData.Add("currency", "INR");
+                        
+                        Order order = client.Order.Create(orderData);
                         
                         result =  JsonConvert.SerializeObject(order);
                         StaticData.RazorpayLogSave(retailerId, orderResponse.Id, mobile, order.Attributes.id.ToString(),
