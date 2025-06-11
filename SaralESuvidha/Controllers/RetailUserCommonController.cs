@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using System.Text;
 using Newtonsoft.Json;
 using Razorpay.Api;
 
@@ -565,14 +566,14 @@ namespace SaralESuvidha.Controllers
 
             return Content(result);
         }
-
+        
         public IActionResult UpdatePin(string op)
         {
             string result = "";
             try
             {
                 string np = StaticData.EncodePIN(StaticData.Random6DigitPINString());
-                op = Regex.Replace(op, @"[^0-9a-zA-Z]+", "");
+                //op = Regex.Replace(op, @"[^0-9a-zA-Z]+", "");
                 
                 result = StaticData.ResetPin(op, np, HttpContext.Session.GetString("RetailerId"));
             }
