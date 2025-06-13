@@ -6,6 +6,11 @@ using System.Collections.Generic;
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
 
 
 namespace SaralESuvidha.Controllers;
@@ -95,7 +100,86 @@ public class FidoController : ControllerBase
         return BadRequest(new { success = false });
     }
 
+    [HttpPost("authenticate/verify")]
+    public async Task<ActionResult> AuthenticateVerify([FromBody] VerifyRequest model)
+    {
+        if (!_authOptionsCache.TryGetValue(model.UserName, out var origChallenge))
+            return BadRequest(new { success = false, error = "No login options found" });
+
+        if (!_credentials.TryGetValue(model.UserName, out var storedCred))
+            return BadRequest(new { success = false, error = "Credential not found" });
+
+        var result = await _fido2.MakeAssertionAsync(
+            model.Credential,
+            origChallenge,
+            storedCred.PublicKey,
+            0, // counter (use stored counter if available)
+            (args, ct) =>
+            {
+                // Validate user handle belongs to credential ID
+                return Task.FromResult(
+                    model.Credential.Response.UserHandle == null ||
+                    Convert.ToBase64String(args.CredentialId) == storedCred.CredentialId
+                );
+            },
+            storedCred.UserHandle // optional user handle
+        );
+
+        if (result.Status == "ok")
+        {
+            // TODO: replace with actual token generation logic (JWT)
+            var token = GenerateDummyJwt(model.UserName); // Replace with your real JWT generation
+
+            return Ok(new
+            {
+                success = true,
+                token,
+                userName = model.UserName
+            });
+        }
+
+        return BadRequest(new { success = false });
+    }
+
+    private string GenerateDummyJwt(string userName)
+    {
+        // ⚠️ Replace this with real JWT logic (using JWT package or identity framework)
+        return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"token-for-{userName}"));
+    }
 }
+
+public class JwtHelper
+{
+    private readonly IConfiguration _config;
+
+    public JwtHelper(IConfiguration config)
+    {
+        _config = config;
+    }
+
+    public string GenerateToken(string userName)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, userName),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_config["Jwt:ExpiryMinutes"])),
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+}
+
 
 public class RegisterVerifyRequest
 {
