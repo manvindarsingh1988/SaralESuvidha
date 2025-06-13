@@ -75,7 +75,7 @@ namespace SaralESuvidha.Controllers
             var user = StaticData.CashFlowLogin(userId, password);
             if (user != null && user.Message == "Success: Logedin successfully")
             {
-                var tokenDetails = GenerateJSONWebToken(user);
+                var tokenDetails = JWTHelper.GenerateJSONWebToken(user, _config);
                 user.Token = tokenDetails.Item1;
                 user.Expiry = tokenDetails.Item2;
             }
@@ -123,7 +123,7 @@ namespace SaralESuvidha.Controllers
                 };
 
                 // Generate new access token
-                var tokenDetails = GenerateJSONWebToken(user);
+                var tokenDetails = JWTHelper.GenerateJSONWebToken(user, _config);
                 user.Token = tokenDetails.Item1;
                 user.Expiry = tokenDetails.Item2;
 
@@ -135,28 +135,6 @@ namespace SaralESuvidha.Controllers
                 return null;
             }
         }
-
-        private (string, DateTime) GenerateJSONWebToken(UserInfo userInfo)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[] {
-                new Claim(JwtRegisteredClaimNames.Name, userInfo.UserName),
-                new Claim(JwtRegisteredClaimNames.Sid, userInfo.Id),
-                new Claim(JwtRegisteredClaimNames.Typ, userInfo.UserType),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-            var exp = DateTime.Now.AddMinutes(120);
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-                _config["Jwt:Issuer"],
-                claims,
-                expires: exp,
-                signingCredentials: credentials);
-
-            return (new JwtSecurityTokenHandler().WriteToken(token), exp);
-        }
-
 
         [HttpGet]
         [JwtAuthentication]

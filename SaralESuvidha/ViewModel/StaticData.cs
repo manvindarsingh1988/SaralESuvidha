@@ -3587,6 +3587,24 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
+        public static UserInfo CashFlowLogin(string userId)
+        {
+            UserInfo result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@userId", userId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<UserInfo>("usp_GetCashFlowUserDetails", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
         public static UserInfo CashFlowLogin(string userId, string password)
         {
             UserInfo result = new();

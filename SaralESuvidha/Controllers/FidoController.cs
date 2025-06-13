@@ -11,6 +11,9 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using SaralESuvidha.ViewModel;
+using DocumentFormat.OpenXml.Spreadsheet;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 
 namespace SaralESuvidha.Controllers;
@@ -24,9 +27,11 @@ public class FidoController : ControllerBase
     private static readonly Dictionary<string, FidoStoredCredential> _credentials = new();
 
     private readonly IFido2 _fido2;
+    private readonly IConfiguration _config;
 
     public FidoController(IConfiguration config)
     {
+        _config = config;
         _fido2 = new Fido2(new Fido2Configuration
         {
             ServerDomain = config["Fido2:ServerDomain"],
@@ -127,59 +132,20 @@ public class FidoController : ControllerBase
 
         if (result.Status == "ok")
         {
-            // TODO: replace with actual token generation logic (JWT)
-            var token = GenerateDummyJwt(model.UserName); // Replace with your real JWT generation
+            var user = StaticData.CashFlowLogin(model.UserName);
 
-            return Ok(new
+            if (user != null && user.Message == "Success: Logedin successfully")
             {
-                success = true,
-                token,
-                userName = model.UserName
-            });
+                var tokenDetails = JWTHelper.GenerateJSONWebToken(user, _config);
+                user.Token = tokenDetails.Item1;
+                user.Expiry = tokenDetails.Item2;
+            }
+            return Ok(user);
         }
 
         return BadRequest(new { success = false });
     }
-
-    private string GenerateDummyJwt(string userName)
-    {
-        // ⚠️ Replace this with real JWT logic (using JWT package or identity framework)
-        return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"token-for-{userName}"));
-    }
 }
-
-public class JwtHelper
-{
-    private readonly IConfiguration _config;
-
-    public JwtHelper(IConfiguration config)
-    {
-        _config = config;
-    }
-
-    public string GenerateToken(string userName)
-    {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, userName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        };
-
-        var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_config["Jwt:ExpiryMinutes"])),
-            signingCredentials: creds
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-}
-
 
 public class RegisterVerifyRequest
 {
