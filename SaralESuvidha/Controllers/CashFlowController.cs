@@ -8,8 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SaralESuvidha.Controllers
 {
@@ -391,6 +391,24 @@ namespace SaralESuvidha.Controllers
         public StringResult DeleteLinking(CollectorRetailerMapping data)
         {
             return new StringResult { Response = StaticData.DeleteLinking(data) };
+        }
+
+        [HttpGet]
+        [JwtAuthentication]
+        [Route("IsmPinExists")]
+        public async Task<BoolResult> IsmPinExists(string loginId)
+        {
+            FidoCredential fidoCredential = null;
+
+            try
+            {
+                fidoCredential = await StaticData.GetFidoCredentialByUserNameAsync(loginId);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return new BoolResult { Response = fidoCredential is not null };
         }
     }
 

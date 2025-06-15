@@ -54,7 +54,7 @@ namespace SaralESuvidha.ViewModel
 
         public static RetailUser retailUser = new RetailUser();
         public static SystemSetting systemSetting = new SystemSetting();
-        
+
         public static string IndexToColumn(int index)
         {
             if (index <= 0)
@@ -200,7 +200,7 @@ namespace SaralESuvidha.ViewModel
             randomDouble = randomDouble.ToString().Length > 15
                 ? randomDouble.ToString().Substring(0, 14)
                 : randomDouble;
-            return randomDouble.Replace("-","").Replace(".","");
+            return randomDouble.Replace("-", "").Replace(".", "");
         }
 
         public static string Random6DigitPINString()
@@ -364,7 +364,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        
+
 
         public static string GeneratePassword(int length)
         {
@@ -395,12 +395,12 @@ namespace SaralESuvidha.ViewModel
                 for (int i = 0; i < length; i++)
                 {
                     ulong value = BitConverter.ToUInt64(bytes, i * 8);
-                    result[i] = characterArray[value % (uint) characterArray.Length];
+                    result[i] = characterArray[value % (uint)characterArray.Length];
                 }
 
                 return new string(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return "Exception: " + ex.Message;
             }
@@ -499,7 +499,7 @@ namespace SaralESuvidha.ViewModel
             Decimal dummy;
             return Decimal.TryParse(input, out dummy);
         }
-        
+
         public static string EncodeBase64(this System.Text.Encoding encoding, string text)
         {
             if (text == null)
@@ -569,32 +569,38 @@ namespace SaralESuvidha.ViewModel
             if (operatorName == "UPPCLU_PUVVNL")
             {
                 result = "PUVVNL";
-            }else if (operatorName == "UPPCLU_PVVNL")
+            }
+            else if (operatorName == "UPPCLU_PVVNL")
             {
                 result = "PVVNL";
-            }else if (operatorName == "UPPCLU_MVVNL")
+            }
+            else if (operatorName == "UPPCLU_MVVNL")
             {
                 result = "MVVNL";
-            }else if (operatorName == "UPPCLU_DVVNL")
+            }
+            else if (operatorName == "UPPCLU_DVVNL")
             {
                 result = "DVVNL";
             }
             return result;
         }
-        
+
         public static string ADNOperatorName(string operatorName)
         {
             string result = operatorName;
             if (operatorName == "PUVVNL")
             {
                 result = "UPPCLU_PUVNL";
-            }else if (operatorName == "PVVNL")
+            }
+            else if (operatorName == "PVVNL")
             {
                 result = "UPPCLU_PVVNL";
-            }else if (operatorName == "MVVNL")
+            }
+            else if (operatorName == "MVVNL")
             {
                 result = "UPPCLU_MVVNL";
-            }else if (operatorName == "DVVNL")
+            }
+            else if (operatorName == "DVVNL")
             {
                 result = "UPPCLU_DVVNL";
             }
@@ -609,7 +615,7 @@ namespace SaralESuvidha.ViewModel
             try
             {
                 ESuvidhaBillFetchResponse eSuvidhaBillFetchResponse = new ESuvidhaBillFetchResponse();
-                
+
                 //System Down Message in case of maintenance or uppcl issue
                 LoadSystemSetting();
                 if (systemSetting.IsDown == true)
@@ -624,7 +630,7 @@ namespace SaralESuvidha.ViewModel
                 {
                     eSuvidhaBillFetchResponse.BillFetchResponse = UPPCLManager.BillFetch(operatorName, accountNumber);
                     eSuvidhaBillFetchResponse.ValidateBill();
-                    
+
                     if (eSuvidhaBillFetchResponse.Reason == "Invalid Credentials")
                     {
                         UPPCLManager.BillFetchToken();
@@ -640,7 +646,7 @@ namespace SaralESuvidha.ViewModel
                         eSuvidhaBillFetchResponse.MaximumPayAmount = 0;
                         eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillAmount = "0";
                     }
-                
+
                     if (string.IsNullOrEmpty(eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillID))
                     {
                         eSuvidhaBillFetchResponse.Reason = "Errors: Invalid bill id, missing, can not accept bill, please try after some time.";
@@ -659,7 +665,7 @@ namespace SaralESuvidha.ViewModel
                         eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillAmount = "0";
                     }
                     */
-                    
+
                     if (eSuvidhaBillFetchResponse.BillFetchResponse.FAULTCODE == "211")
                     {
                         eSuvidhaBillFetchResponse.Reason = "Errors: " + eSuvidhaBillFetchResponse.BillFetchResponse.FAULTSTRING;
@@ -684,7 +690,7 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-        
+
         public static string ElectricityBillInfo(string operatorName, string accountNumber)
         {
             string result = string.Empty;
@@ -758,7 +764,7 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-        
+
         public static string UserListByType(string userType, string fileName, string filePath, bool export = false)
         {
             string result = string.Empty;
@@ -840,7 +846,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static (RetailUserGrid, int?) ValidateRetailUserLogin(string mobileNumber, string password, string f="", string d="")
+        public static (RetailUserGrid, int?) ValidateRetailUserLogin(string mobileNumber, string password, string f = "", string d = "")
         {
             RetailUserGrid retailUser = new RetailUserGrid();
             int? inactive;
@@ -891,7 +897,7 @@ namespace SaralESuvidha.ViewModel
             }
             return officeUser;
         }
-        
+
         public static string RTranApiLoadByDate(DateTime reportDateFrom, DateTime reportDateTo, string filePath)
         {
             var aaIData = new RTranApiLoad();
@@ -967,7 +973,7 @@ namespace SaralESuvidha.ViewModel
                     List<DailySalesWithCount> allDailyRecharge = con.Query<DailySalesWithCount>("usp_GetRechargeMetricsByRetailUserWithAverages", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
                     if (excelExport == 1)
                     {
-                        
+
                         result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "DailySalesWithCount", filePath);
                     }
                     else
@@ -1062,7 +1068,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string TopupReportRetailClientByDate(int retailClientOrderNo, DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
         {
             var aaIData = new RTranReport();
@@ -1133,7 +1139,7 @@ namespace SaralESuvidha.ViewModel
                         parameters.Add("@TranDateTo", reportDateTo.ToString("MM-dd-yyyy"));
                         parameters.Add("@OrderNo", retailClientOrderNo);
                         List<RTranReport> allDailyRecharge = con.Query<RTranReport>("usp_RechargeReportRetailClientByDate", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
-                        if (excelExport==1)
+                        if (excelExport == 1)
                         {
                             result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "DailyRecharge", filePath);
                         }
@@ -1156,7 +1162,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string RechargeReportUPPCLByDate(DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
         {
             var aaIData = new UPPCLReport();
@@ -1169,7 +1175,7 @@ namespace SaralESuvidha.ViewModel
                     parameters.Add("@TranDateFrom", reportDateFrom.ToString("MM-dd-yyyy"));
                     parameters.Add("@TranDateTo", reportDateTo.ToString("MM-dd-yyyy"));
                     List<UPPCLReport> allDailyRecharge = con.Query<UPPCLReport>("usp_RechargeReportUPPCLByDate", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
-                    if (excelExport==1)
+                    if (excelExport == 1)
                     {
                         result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "UPPCLDailyRecharge", filePath);
                     }
@@ -1190,7 +1196,7 @@ namespace SaralESuvidha.ViewModel
                 aaIData = null;
             }
             return result;
-        }       
+        }
 
         public static string AllUserReportResult(int excelExport, string filePath = "")
         {
@@ -1202,7 +1208,7 @@ namespace SaralESuvidha.ViewModel
                 {
                     var parameters = new DynamicParameters();
                     List<AllUserWithBalance> allDailyRecharge = con.Query<AllUserWithBalance>("usp_RetailUserListWithBalance", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
-                    if (excelExport==1)
+                    if (excelExport == 1)
                     {
                         result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "AllUsersReport", filePath);
                     }
@@ -1235,10 +1241,10 @@ namespace SaralESuvidha.ViewModel
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@date", date);
-                    if(id > 0)
+                    if (id > 0)
                     {
                         parameters.Add("@Id", id);
-                    }  
+                    }
                     else
                     {
                         parameters.Add("@Id", null);
@@ -1286,12 +1292,12 @@ namespace SaralESuvidha.ViewModel
                     {
                         parameters.Add("@Id", null);
                     }
-                    if(userId != "")
+                    if (userId != "")
                     {
                         parameters.Add("@userId", userId);
                     }
                     List<AllUserWithBalance> allDailyRecharge = new List<AllUserWithBalance>();
-                    if(userId != "")
+                    if (userId != "")
                     {
                         allDailyRecharge = con.Query<AllUserWithBalance>("usp_RetailUserListWithUPPCLCommissionByUserId", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
                     }
@@ -1299,7 +1305,7 @@ namespace SaralESuvidha.ViewModel
                     {
                         allDailyRecharge = con.Query<AllUserWithBalance>("usp_RetailUserListWithUPPCLCommission", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
                     }
-                    
+
                     if (excelExport == 1)
                     {
                         result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "AllUsersReportByUserAndDate", filePath);
@@ -1330,7 +1336,7 @@ namespace SaralESuvidha.ViewModel
             if (string.IsNullOrEmpty(retailerId)) { throw new Exception(); }
 
             try
-            { 
+            {
                 var parameters = new DynamicParameters();
                 parameters.Add("@RetailUserId", retailerId);
                 parameters.Add("@SalaryAmount", salAmount);
@@ -1348,7 +1354,7 @@ namespace SaralESuvidha.ViewModel
 
             }
 
-            return result;        
+            return result;
         }
 
 
@@ -1367,7 +1373,7 @@ namespace SaralESuvidha.ViewModel
                         parameters.Add("@TranDateTo", reportDateTo.ToString("MM-dd-yyyy"));
                         parameters.Add("@OrderNo", retailClientOrderNo);
                         List<RTranReport> allDailyRecharge = con.Query<RTranReport>("usp_RechargeReportDistributorByDate", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
-                        if (excelExport==1)
+                        if (excelExport == 1)
                         {
                             result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "DailyRechargeDist", filePath);
                         }
@@ -1429,7 +1435,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string RechargeReportAllRetailClientByDate(DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
         {
             var aaIData = new RTranReport();
@@ -1442,10 +1448,10 @@ namespace SaralESuvidha.ViewModel
                     parameters.Add("@TranDateFrom", reportDateFrom.ToString("MM-dd-yyyy"));
                     parameters.Add("@TranDateTo", reportDateTo.ToString("MM-dd-yyyy"));
                     List<RTranAdminReport> allDailyRecharge = con.Query<RTranAdminReport>("usp_RechargeReportAllRetailClientAdminByDate", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
-                    if (excelExport==1)
+                    if (excelExport == 1)
                     {
                         result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "DailyAllRecharge", filePath);
-                        
+
                     }
                     else
                     {
@@ -1465,7 +1471,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string StatementReportDistributorRetailClientByDate(DateTime reportDateFrom, DateTime reportDateTo, int distributorOrderNo, int excelExport, string filePath = "")
         {
             var aaIData = new RTranReport();
@@ -1479,10 +1485,10 @@ namespace SaralESuvidha.ViewModel
                     parameters.Add("@TranDateTo", reportDateTo.ToString("MM-dd-yyyy"));
                     parameters.Add("@OrderNo", distributorOrderNo);
                     List<RTranAdminReport> allDailyRecharge = con.Query<RTranAdminReport>("usp_RetailerStatementReportDistributorByDate", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
-                    if (excelExport==1)
+                    if (excelExport == 1)
                     {
                         result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "DailyAllStatement", filePath);
-                        
+
                     }
                     else
                     {
@@ -1502,7 +1508,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static List<RTranReport> RechargeReportListRetailClientByDate(int retailClientOrderNo, DateTime reportDateFrom, DateTime reportDateTo)
         {
             List<RTranReport> allDailyRecharge = new List<RTranReport>();
@@ -1522,7 +1528,7 @@ namespace SaralESuvidha.ViewModel
             }
             catch (Exception)
             {
-                
+
             }
             return allDailyRecharge;
         }
@@ -1571,7 +1577,7 @@ namespace SaralESuvidha.ViewModel
                     parameters.Add("@RechargeNumber", numberRecharge);
                     parameters.Add("@TranDateFrom", reportDateFrom.ToString("MM-dd-yyyy"));
                     parameters.Add("@TranDateTo", reportDateTo.ToString("MM-dd-yyyy"));
-                    
+
                     List<RTranReport> allDailyRecharge = con.Query<RTranReport>("usp_SearchNumberByDate", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
                     var aaData = new { data = allDailyRecharge };
                     result = JsonConvert.SerializeObject(aaData);
@@ -1642,7 +1648,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string MarginSheetDownlineByRetailerWhiteLabel(string retailClientId)
         {
             var aaIData = new MarginSheet();
@@ -1696,7 +1702,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string SystemSettingList()
         {
             var aaIData = new SystemSetting();
@@ -1723,7 +1729,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string MarginSheetByRetailerOrderNo(int retailClientOrderNo)
         {
             var aaIData = new MarginSheet();
@@ -1750,7 +1756,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string MarginSheetByRetailerOrderNoParentValidation(int retailClientOrderNo, string parentId)
         {
             var aaIData = new MarginSheet();
@@ -1778,8 +1784,8 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
-        public static string MarginReportByRetailer(string retailClientId, DateTime dateFrom, DateTime dateTo, bool IsMaster=false)
+
+        public static string MarginReportByRetailer(string retailClientId, DateTime dateFrom, DateTime dateTo, bool IsMaster = false)
         {
             var aaIData = new MarginReport();
             string result = JsonConvert.SerializeObject(aaIData);
@@ -1803,7 +1809,7 @@ namespace SaralESuvidha.ViewModel
                         var aaData = new { data = marginReport };
                         result = JsonConvert.SerializeObject(aaData);
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -1846,7 +1852,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string RefundBetweenPeriod(DateTime reportDateFrom, DateTime reportDateTo, string retailClientId)
         {
             var aaIData = new RetailClientFundReport();
@@ -1876,7 +1882,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string FundTransferBetweenPeriodOffice(DateTime reportDateFrom, DateTime reportDateTo, int retailOrderNo, string bySource="All", string export = "0", string fileName="", string filePath="")
+        public static string FundTransferBetweenPeriodOffice(DateTime reportDateFrom, DateTime reportDateTo, int retailOrderNo, string bySource = "All", string export = "0", string fileName = "", string filePath = "")
         {
             var aaIData = new RetailClientFundReport();
             string result = JsonConvert.SerializeObject(aaIData);
@@ -1895,7 +1901,7 @@ namespace SaralESuvidha.ViewModel
                         var aaData = new { data = allDailyRecharge };
                         result = JsonConvert.SerializeObject(aaData);
                     }
-                    else if(export == "1")
+                    else if (export == "1")
                     {
                         if (allDailyRecharge.Count > 0)
                         {
@@ -1911,7 +1917,7 @@ namespace SaralESuvidha.ViewModel
                             result = "Errors: No data found for specified search criteria.";
                         }
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -1925,8 +1931,8 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
-        public static string CommissionBetweenPeriodOffice(DateTime reportDateFrom, DateTime reportDateTo, int userType, string export = "0", string fileName="", string filePath="")
+
+        public static string CommissionBetweenPeriodOffice(DateTime reportDateFrom, DateTime reportDateTo, int userType, string export = "0", string fileName = "", string filePath = "")
         {
             var aaIData = new RetailClientFundReport();
             string result = JsonConvert.SerializeObject(aaIData);
@@ -1944,7 +1950,7 @@ namespace SaralESuvidha.ViewModel
                         var aaData = new { data = allDailyRecharge };
                         result = JsonConvert.SerializeObject(aaData);
                     }
-                    else if(export == "1")
+                    else if (export == "1")
                     {
                         if (allDailyRecharge.Count > 0)
                         {
@@ -1958,7 +1964,7 @@ namespace SaralESuvidha.ViewModel
                             result = "Errors: No data found for specified search criteria.";
                         }
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -1972,8 +1978,8 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
-        public static string CommissionBetweenPeriodWhiteLabel(DateTime reportDateFrom, DateTime reportDateTo, string whiteLabelId, string export = "0", string fileName="", string filePath="")
+
+        public static string CommissionBetweenPeriodWhiteLabel(DateTime reportDateFrom, DateTime reportDateTo, string whiteLabelId, string export = "0", string fileName = "", string filePath = "")
         {
             var aaIData = new RetailClientFundReport();
             string result = JsonConvert.SerializeObject(aaIData);
@@ -1991,7 +1997,7 @@ namespace SaralESuvidha.ViewModel
                         var aaData = new { data = allDailyRecharge };
                         result = JsonConvert.SerializeObject(aaData);
                     }
-                    else if(export == "1")
+                    else if (export == "1")
                     {
                         if (allDailyRecharge.Count > 0)
                         {
@@ -2005,7 +2011,7 @@ namespace SaralESuvidha.ViewModel
                             result = "Errors: No data found for specified search criteria.";
                         }
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -2044,7 +2050,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static RetailUser RetailUserOrderNoNameMobile(string retailerId)
         {
             RetailUser result = new RetailUser();
@@ -2077,7 +2083,7 @@ namespace SaralESuvidha.ViewModel
                     parameters.Add("@ApiType", apiType);
                     parameters.Add("@Transid", transId);
                     result = con.QuerySingleOrDefault<string>("usp_GetApiResponseByApiTypeAndConsumerId", parameters, commandType: System.Data.CommandType.StoredProcedure);
-                    
+
                 }
             }
             catch (Exception ex)
@@ -2205,7 +2211,7 @@ namespace SaralESuvidha.ViewModel
         }
 
 
-        public static string PayBillUPPCL(string operatorName, string accountNumber, decimal billAmount, string retailerId, string eBillInfo, string retailUserOrderNo, string retailUserName, string userAgent, string requestIp, string additionalInfo1 = "", string customerName = null, string dueDate = null, string dueAmount = null, string p1 = "", string p2 = "", string inputSource = "web", string pi="", string clientReferenceId = "")
+        public static string PayBillUPPCL(string operatorName, string accountNumber, decimal billAmount, string retailerId, string eBillInfo, string retailUserOrderNo, string retailUserName, string userAgent, string requestIp, string additionalInfo1 = "", string customerName = null, string dueDate = null, string dueAmount = null, string p1 = "", string p2 = "", string inputSource = "web", string pi = "", string clientReferenceId = "")
         {
             var billTran = new RTran();
             string result = string.Empty;
@@ -2217,10 +2223,10 @@ namespace SaralESuvidha.ViewModel
             else
             {
                 pi = pin;
-                
+
             }
 
-            if(pi != pin)
+            if (pi != pin)
             {
                 result = "Errors: Invalid pin.";
             }
@@ -2237,7 +2243,7 @@ namespace SaralESuvidha.ViewModel
                         UPPCLManager.Initialize();
                         decimal walletBalance = Convert.ToDecimal(UPPCLManager.WalletDetails().balance);
 
-                        if (1!=1) //billAmount > walletBalance
+                        if (1 != 1) //billAmount > walletBalance
                         {
                             result = "Errors: Insufficient wallet balance. Can not accept request.";
                         }
@@ -2271,7 +2277,7 @@ namespace SaralESuvidha.ViewModel
 
                                         //string mobileNumber = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.MobileNumber;
                                         string mobileNumber = additionalInfo1;
-                                        
+
                                         try
                                         {
                                             if (!string.IsNullOrEmpty(mobileNumber))
@@ -2342,7 +2348,7 @@ namespace SaralESuvidha.ViewModel
                                             ? billTran.UPPCL_ConsumerAddress.Substring(0, 430)
                                             : billTran.UPPCL_ConsumerAddress;
                                         result = billTran.PayBillUPPCL(eSuvidhaBillFetchResponse, inputSource, clientReferenceId);
-                                        
+
                                     }
 
                                 }
@@ -2366,7 +2372,7 @@ namespace SaralESuvidha.ViewModel
                 catch (Exception ex)
                 {
                     string extra = "pi - " + pi + ", pin - " + pin + "opname-" + operatorName;
-                    extra += " ai-" + additionalInfo1 + " p1-" + p1; 
+                    extra += " ai-" + additionalInfo1 + " p1-" + p1;
                     result += "Errors: Exception: BPU: " + ex.Message;
                 }
                 finally
@@ -2388,7 +2394,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result; //"Bill paid for " + operatorName + " - " + accountNumber
         }
-        
+
         public static string GetAllDistributorByWhiteLabel(string whiteLabelId)
         {
             try
@@ -2501,7 +2507,7 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@RechargeMobileNumber", rechargeMobileNumber);
                 using (var con = new SqlConnection(conString))
                 {
-                    recordCount = con.QuerySingleOrDefault<OperationResponse>("usp_RecordCountForTheDay", parameters,commandType: System.Data.CommandType.StoredProcedure).RecordCount;
+                    recordCount = con.QuerySingleOrDefault<OperationResponse>("usp_RecordCountForTheDay", parameters, commandType: System.Data.CommandType.StoredProcedure).RecordCount;
                 }
 
             }
@@ -2651,7 +2657,7 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-        
+
         public static string UpdateDefaultPrinter(string defaultPrinter, string retailerId)
         {
             string result = string.Empty;
@@ -2725,7 +2731,7 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-        
+
         public static string SmsPass(string retailerMobile)
         {
             string result = string.Empty;
@@ -2749,7 +2755,7 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-        
+
         public static string ResetPassword(int retailerId)
         {
             string result = string.Empty;
@@ -2792,7 +2798,7 @@ namespace SaralESuvidha.ViewModel
             }
             return retailuserPin;
         }
-        
+
 
         public static string UpdateRetailUserPin(string retailUserId, string pin)
         {
@@ -2833,7 +2839,7 @@ namespace SaralESuvidha.ViewModel
             }
             return retailuserPin;
         }
-        
+
         public static string TranListJson()
         {
             string result = "[]";
@@ -2852,7 +2858,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string RMonitorListJson(string a, int dt)
         {
             string result = "[]";
@@ -2861,12 +2867,12 @@ namespace SaralESuvidha.ViewModel
                 using (var con = new SqlConnection(conString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@MonitorUserId",null);
-                    parameters.Add("@MonitorUserMobile",a);
+                    parameters.Add("@MonitorUserId", null);
+                    parameters.Add("@MonitorUserMobile", a);
                     List<MonitorUserRetailUserWatch> transactionLogs = con.Query<MonitorUserRetailUserWatch>("usp_MonitorUserRetailUserWatch", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
                     if (dt == 1)
                     {
-                        var aaData = new {data = transactionLogs};
+                        var aaData = new { data = transactionLogs };
                         result = JsonConvert.SerializeObject(aaData);
                     }
                     else
@@ -2881,7 +2887,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string WalletBalanceJson()
         {
             string result = "";
@@ -2900,7 +2906,7 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
-        
+
         public static string UPPCLReportByDate(DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
         {
             var aaIData = new UPPCLReport();
@@ -2913,10 +2919,10 @@ namespace SaralESuvidha.ViewModel
                     parameters.Add("@TranDateFrom", reportDateFrom.ToString("MM-dd-yyyy"));
                     parameters.Add("@TranDateTo", reportDateTo.ToString("MM-dd-yyyy"));
                     List<UPPCLReport> allDailyRecharge = con.Query<UPPCLReport>("usp_UPPCLReportByDate", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
-                    if (excelExport==1)
+                    if (excelExport == 1)
                     {
                         result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "UPPCLDailyTransaction", filePath);
-                        
+
                     }
                     else
                     {
@@ -2927,7 +2933,7 @@ namespace SaralESuvidha.ViewModel
             }
             catch (Exception ex)
             {
-                
+
                 result = JsonConvert.SerializeObject(aaIData);
             }
             finally
@@ -2937,13 +2943,13 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        
+
         public static RecordSaveResponse RazorpayOrderSave(string name, decimal amount, string razorpayAmount, string email, string mobile, string retailerId)
         {
             RecordSaveResponse result = new RecordSaveResponse();
             try
             {
-                
+
                 using (var con = new SqlConnection(conString))
                 {
                     var parameters = new DynamicParameters();
@@ -2965,13 +2971,13 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-        
+
         public static RecordSaveResponse RazorpayOrderUpdateOrderId(string id, string orderId)
         {
             RecordSaveResponse result = new RecordSaveResponse();
             try
             {
-                
+
                 using (var con = new SqlConnection(conString))
                 {
                     var parameters = new DynamicParameters();
@@ -2987,13 +2993,13 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-        
+
         public static RecordSaveResponse RazorpayOrderUpdateFees(string orderId, string rfees, string rgst, string ofees, string pstatus = "")
         {
             RecordSaveResponse result = new RecordSaveResponse();
             try
             {
-                
+
                 using (var con = new SqlConnection(conString))
                 {
                     var parameters = new DynamicParameters();
@@ -3012,13 +3018,13 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-        
+
         public static RecordSaveResponse RazorpayOrderUpdateOPS(string o, string p, string s)
         {
             RecordSaveResponse result = new RecordSaveResponse();
             try
             {
-                
+
                 using (var con = new SqlConnection(conString))
                 {
                     var parameters = new DynamicParameters();
@@ -3035,13 +3041,13 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-        
+
         public static RazorpayOrder RazorpayOrderLoad(string id)
         {
             RazorpayOrder result = new RazorpayOrder();
             try
             {
-                
+
                 using (var con = new SqlConnection(conString))
                 {
                     var parameters = new DynamicParameters();
@@ -3056,13 +3062,13 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-        
+
         public static RazorpayOrder RazorpayOrderLoadByRazorpayId(string id)
         {
             RazorpayOrder result = new RazorpayOrder();
             try
             {
-                
+
                 using (var con = new SqlConnection(conString))
                 {
                     var parameters = new DynamicParameters();
@@ -3077,9 +3083,9 @@ namespace SaralESuvidha.ViewModel
 
             return result;
         }
-        
-        
-        
+
+
+
         public static string RazorpayLogSave(string retailerId, string OrderId, string CustomerMobile, string RazorpayOrderId, string logType, string logData, DateTime CreateDate)
         {
             string result = string.Empty;
@@ -3117,13 +3123,13 @@ namespace SaralESuvidha.ViewModel
                 return null;
             }
         }
-        
+
         public static string MapPath(string path)
         {
             return (string)AppDomain.CurrentDomain.GetData("WebRootPath");
             //return Path.Combine((string)AppDomain.CurrentDomain.GetData("ContentRootPath"), path);
         }
-        
+
         public static string DataTableToExcelEP(DataTable dataTableExcel, string fileName, string filePath)
         {
             string result = "";
@@ -3132,24 +3138,24 @@ namespace SaralESuvidha.ViewModel
                 string fileNameFull = fileName + "_" + DateTime.Now.ToString("ddMMMyy-HHmmss") + "_" + Guid.NewGuid().ToString() + ".xlsx";
 
                 //filePath = string.IsNullOrEmpty(filePath) ? Path.Combine(_webHostEnvironment.WebRootPath,"FileData/" + fileName) : filePath;
-                FileInfo fi = new FileInfo(filePath+fileNameFull);
-                using (var excelPack = new ExcelPackage(fi)) 
+                FileInfo fi = new FileInfo(filePath + fileNameFull);
+                using (var excelPack = new ExcelPackage(fi))
                 {
                     var ws = excelPack.Workbook.Worksheets.Add(fileName.Split('-')[0]);
                     ws.Cells.LoadFromDataTable(dataTableExcel, true, OfficeOpenXml.Table.TableStyles.Light2);
                     int colNumber = 1;
-                    
-                    
-                    foreach (DataColumn col in dataTableExcel.Columns) 
-                    {        
+
+
+                    foreach (DataColumn col in dataTableExcel.Columns)
+                    {
                         if (col.DataType == typeof(DateTime))
-                        { 
+                        {
                             ws.Column(colNumber).Style.Numberformat.Format = "dd-MM-yyyy HH:mm:ss";
                         }
                         //ws.Column(colNumber).AutoFit();
-                        colNumber++;      
+                        colNumber++;
                     }
-                    
+
                     ws.Cells[ws.Dimension.Address].AutoFitColumns();
                     excelPack.Save();
                 }
@@ -3162,12 +3168,12 @@ namespace SaralESuvidha.ViewModel
             }
             finally
             {
-                
+
             }
             return result;
         }
-        
-        
+
+
         public static string FirstString(string inputString)
         {
             if (inputString.IndexOf(" ") > 0)
@@ -3176,7 +3182,7 @@ namespace SaralESuvidha.ViewModel
             }
             return inputString.ToUpper();
         }
-        
+
         public static async Task<string> WriteAppLog(string logToWrite, string logFilePath)
         {
             try
@@ -3222,7 +3228,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static string UpdateActiveState(string retailerId, int updateChild)       
+        public static string UpdateActiveState(string retailerId, int updateChild)
         {
             string result = string.Empty;
             try
@@ -3305,7 +3311,7 @@ namespace SaralESuvidha.ViewModel
             RecordSaveResponse result = new RecordSaveResponse();
             try
             {
-                
+
                 using (var con = new SqlConnection(conString))
                 {
                     var parameters = new DynamicParameters();
@@ -3324,12 +3330,12 @@ namespace SaralESuvidha.ViewModel
                 result.OperationMessage = "Errors: ExCodeNet " + ex.Message;
             }
 
-            return result.OperationMessage; 
+            return result.OperationMessage;
         }
-        
-       public static string ListMonitor()
-       {
-           string result;
+
+        public static string ListMonitor()
+        {
+            string result;
             try
             {
                 using (var con = new SqlConnection(conString))
@@ -3345,11 +3351,11 @@ namespace SaralESuvidha.ViewModel
                 result = "Errors: ExCodeNet " + ex.Message;
             }
             return result;
-       }
-       
-       public static string ListMapping()
-       {
-           string result;
+        }
+
+        public static string ListMapping()
+        {
+            string result;
             try
             {
                 using (var con = new SqlConnection(conString))
@@ -3366,14 +3372,14 @@ namespace SaralESuvidha.ViewModel
             }
 
             return result;
-       }
-       
-       public static string UpdateMonitor(string id, string loginPassword, string mobileNumber, int active)
-       {
-           string result;
+        }
+
+        public static string UpdateMonitor(string id, string loginPassword, string mobileNumber, int active)
+        {
+            string result;
             try
             {
-                
+
                 using (var con = new SqlConnection(conString))
                 {
                     var parameters = new DynamicParameters();
@@ -3390,14 +3396,14 @@ namespace SaralESuvidha.ViewModel
             }
 
             return result;
-       }
-       
-       public static string UpdateMapping(string id, int? usl, string startTime, string endTime)
-       {
-           string result;
+        }
+
+        public static string UpdateMapping(string id, int? usl, string startTime, string endTime)
+        {
+            string result;
             try
             {
-                
+
                 using (var con = new SqlConnection(conString))
                 {
                     var parameters = new DynamicParameters();
@@ -3414,14 +3420,14 @@ namespace SaralESuvidha.ViewModel
             }
 
             return result;
-       }
-       
-       public static string DeleteMapping(string id)
-       {
-           string result;
+        }
+
+        public static string DeleteMapping(string id)
+        {
+            string result;
             try
             {
-                
+
                 using (var con = new SqlConnection(conString))
                 {
                     var parameters = new DynamicParameters();
@@ -3435,105 +3441,105 @@ namespace SaralESuvidha.ViewModel
             }
 
             return result;
-       }
-       
-       public static string GetRetailUserMonthlySummaries(DateTime startDate, DateTime endDate, int excelExport, string filePath = "")
-       {
-           var days = Enumerable.Range(0, (endDate - startDate).Days + 1)
-               .Select(d => startDate.AddDays(d))
-               .ToList();
+        }
 
-           string dayColumns = string.Join(", ", days.Select(d => $"[{d:yyyy-MM-dd}]"));
-           string dayValues = string.Join(", ", days.Select(d => $"[{d:yyyy-MM-dd}]"));
+        public static string GetRetailUserMonthlySummaries(DateTime startDate, DateTime endDate, int excelExport, string filePath = "")
+        {
+            var days = Enumerable.Range(0, (endDate - startDate).Days + 1)
+                .Select(d => startDate.AddDays(d))
+                .ToList();
 
-           using (var con = new SqlConnection(StaticData.conString))
-           {
-               var parameters = new DynamicParameters();
-               parameters.Add("@StartDate", startDate);
-               parameters.Add("@EndDate", endDate);
-               var rows = con.Query("usp_DailySalesWithMaster", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
-               DataTable dataTable = DapperConvertToDataTable(rows);
+            string dayColumns = string.Join(", ", days.Select(d => $"[{d:yyyy-MM-dd}]"));
+            string dayValues = string.Join(", ", days.Select(d => $"[{d:yyyy-MM-dd}]"));
 
-               if (excelExport==1)
-               {
-                   return DataTableToExcelEP(dataTable, "DailySalesByRetailUser", filePath);
-               }
-               else
-               {
-                   var aaData = new { data = rows };
-                   return JsonConvert.SerializeObject(aaData);
-               }
-                
-           }
-       }
-       
-       public static string GetDailyBusinessReport(DateTime startDate)
-       { 
-           using (var con = new SqlConnection(conString))
-           {
-               var parameters = new DynamicParameters();
-               parameters.Add("@StartDate", startDate);
-               var rows = con.Query("usp_DailyBusinessReport", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
-               
-               var aaData = new { data = rows };
-               return JsonConvert.SerializeObject(aaData);
-           }
-       }
-       
-       public static string GetGrowthReportSummary(DateTime startDate, DateTime endDate, int x, string filePath)
-       { 
-           using (var con = new SqlConnection(conString))
-           {
-               var parameters = new DynamicParameters();
-               parameters.Add("@StartDate", startDate);
-               parameters.Add("@EndDate", endDate);
-               List<GrowthSummary> rows = con.Query<GrowthSummary>("usp_GetRechargeSummaryByRetailUser", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
-               
-               if (x==1)
-               {
-                   return DataTableToExcelEP(rows.ToDataTable(), "GrowthReportSummary", filePath);
-               }
-               else
-               {
-                   var aaData = new { data = rows };
-                   return JsonConvert.SerializeObject(aaData);
-               }
-               
-           }
-       }
-       
-       public static DataTable DapperConvertToDataTable(IEnumerable<dynamic> dapperRows)
-       {
-           DataTable dataTable = new DataTable();
-           
-           if (dapperRows == null)
-           {
-               throw new ArgumentNullException(nameof(dapperRows), "DapperRow list cannot be null");
-           }
+            using (var con = new SqlConnection(StaticData.conString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@StartDate", startDate);
+                parameters.Add("@EndDate", endDate);
+                var rows = con.Query("usp_DailySalesWithMaster", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                DataTable dataTable = DapperConvertToDataTable(rows);
 
-           bool columnsAdded = false;
+                if (excelExport == 1)
+                {
+                    return DataTableToExcelEP(dataTable, "DailySalesByRetailUser", filePath);
+                }
+                else
+                {
+                    var aaData = new { data = rows };
+                    return JsonConvert.SerializeObject(aaData);
+                }
 
-           foreach (var row in dapperRows)
-           {
-               if (!columnsAdded)
-               {
-                   foreach (var column in (IDictionary<string, object>)row)
-                   {
-                       dataTable.Columns.Add(column.Key, column.Value?.GetType() ?? typeof(object));
-                   }
-                   columnsAdded = true;
-               }
-               
-               var newRow = dataTable.NewRow();
-               foreach (var column in (IDictionary<string, object>)row)
-               {
-                   newRow[column.Key] = column.Value ?? DBNull.Value;
-               }
-               dataTable.Rows.Add(newRow);
-           }
+            }
+        }
 
-           return dataTable;
-       }
+        public static string GetDailyBusinessReport(DateTime startDate)
+        {
+            using (var con = new SqlConnection(conString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@StartDate", startDate);
+                var rows = con.Query("usp_DailyBusinessReport", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+
+                var aaData = new { data = rows };
+                return JsonConvert.SerializeObject(aaData);
+            }
+        }
+
+        public static string GetGrowthReportSummary(DateTime startDate, DateTime endDate, int x, string filePath)
+        {
+            using (var con = new SqlConnection(conString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@StartDate", startDate);
+                parameters.Add("@EndDate", endDate);
+                List<GrowthSummary> rows = con.Query<GrowthSummary>("usp_GetRechargeSummaryByRetailUser", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+
+                if (x == 1)
+                {
+                    return DataTableToExcelEP(rows.ToDataTable(), "GrowthReportSummary", filePath);
+                }
+                else
+                {
+                    var aaData = new { data = rows };
+                    return JsonConvert.SerializeObject(aaData);
+                }
+
+            }
+        }
+
+        public static DataTable DapperConvertToDataTable(IEnumerable<dynamic> dapperRows)
+        {
+            DataTable dataTable = new DataTable();
+
+            if (dapperRows == null)
+            {
+                throw new ArgumentNullException(nameof(dapperRows), "DapperRow list cannot be null");
+            }
+
+            bool columnsAdded = false;
+
+            foreach (var row in dapperRows)
+            {
+                if (!columnsAdded)
+                {
+                    foreach (var column in (IDictionary<string, object>)row)
+                    {
+                        dataTable.Columns.Add(column.Key, column.Value?.GetType() ?? typeof(object));
+                    }
+                    columnsAdded = true;
+                }
+
+                var newRow = dataTable.NewRow();
+                foreach (var column in (IDictionary<string, object>)row)
+                {
+                    newRow[column.Key] = column.Value ?? DBNull.Value;
+                }
+                dataTable.Rows.Add(newRow);
+            }
+
+            return dataTable;
+        }
 
         public static List<UserInfo> GetUsersByUserType(int userType)
         {
@@ -3936,9 +3942,9 @@ namespace SaralESuvidha.ViewModel
                 //filePath = string.IsNullOrEmpty(filePath) ? Path.Combine(_webHostEnvironment.WebRootPath,"FileData/" + fileName) : filePath;
                 FileInfo fi = new FileInfo(filePath + fileNameFull);
 
-                if(removeColumnsFromExcel != null && removeColumnsFromExcel.Any())
+                if (removeColumnsFromExcel != null && removeColumnsFromExcel.Any())
                 {
-                    foreach(var column in removeColumnsFromExcel)
+                    foreach (var column in removeColumnsFromExcel)
                     {
                         dataSet.Tables[1].Columns.Remove(column);
                     }
@@ -3961,14 +3967,14 @@ namespace SaralESuvidha.ViewModel
                     }
 
                     ws.Cells[ws.Dimension.Address].AutoFitColumns();
-                    
+
                     ws.InsertRow(1, 1);
                     ws.Cells["A1:AJ1"].Value = dataSet.Tables[0].Rows[0][0].ToString();
                     ws.Cells["A1:AJ1"].Merge = true;
                     ws.Cells["A1:AJ1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     ws.Cells["A1:AJ1"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                     ws.Row(1).Style.Font.Bold = true;
-                    ws.Row(1).Style.Font.Color.SetColor( Color.Red);
+                    ws.Row(1).Style.Font.Color.SetColor(Color.Red);
                     ws.Row(1).Height = 30;
                     excelPack.Save();
                 }
@@ -4310,6 +4316,56 @@ namespace SaralESuvidha.ViewModel
             {
             }
             return result;
+        }
+
+        public static async Task<bool> SaveFidoCredentialAsync(FidoCredential cred)
+        {
+            try
+            {
+                using var conn = new SqlConnection(conString);
+                using var cmd = new SqlCommand("sp_AddFidoCredential", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@UserName", cred.UserName);
+                cmd.Parameters.AddWithValue("@CredentialId", cred.CredentialId);
+                cmd.Parameters.AddWithValue("@PublicKey", cred.PublicKey);
+                cmd.Parameters.AddWithValue("@UserHandle", cred.UserHandle);
+
+                await conn.OpenAsync();
+                return (await cmd.ExecuteNonQueryAsync()) > 0;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return false;
+
+        }
+
+        public static async Task<FidoCredential> GetFidoCredentialByUserNameAsync(string userName)
+        {
+            using var conn = new SqlConnection(conString);
+            using var cmd = new SqlCommand("sp_GetFidoCredentialByUserName", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@UserName", userName);
+
+            await conn.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return new FidoCredential
+                {
+                    UserName = reader["UserName"].ToString(),
+                    CredentialId = reader["CredentialId"].ToString(),
+                    PublicKey = (byte[])reader["PublicKey"],
+                    UserHandle = (byte[])reader["UserHandle"]
+                };
+            }
+
+            return null;
         }
     }
 }
