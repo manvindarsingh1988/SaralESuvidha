@@ -89,38 +89,10 @@ namespace SaralESuvidha.Controllers
         {
 
             var authHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
-            var accessToken = authHeader?.StartsWith("Bearer ") == true ? authHeader.Substring("Bearer ".Length) : null;
-
-
-            // Validate and read claims from the expired token
-            var handler = new JwtSecurityTokenHandler();
-
+            
             try
             {
-                var tokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = false,
-                    ValidIssuer = _config["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"])),
-                    ValidateLifetime = true, // Ignore expiry
-                    ValidateIssuerSigningKey = true
-                };
-
-                var principal = handler.ValidateToken(accessToken, tokenValidationParameters, out var validatedToken);
-                var jwtToken = (JwtSecurityToken)validatedToken;
-
-                // Extract user claims
-                var userId = principal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sid)?.Value;
-                var userName = principal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
-                var userType = principal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Typ)?.Value;
-
-                var user = new UserInfo
-                {
-                    Id = userId,
-                    UserName = userName,
-                    UserType = userType
-                };
+               var user = JWTHelper.GetCurrentUserDetails(authHeader, _config);
 
                 // Generate new access token
                 var tokenDetails = JWTHelper.GenerateJSONWebToken(user, _config);

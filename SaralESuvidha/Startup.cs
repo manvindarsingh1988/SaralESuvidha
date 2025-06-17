@@ -14,6 +14,7 @@ using UPPCLLibrary;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using SaralESuvidha.Controllers;
 
 namespace SaralESuvidha
 {
@@ -40,6 +41,7 @@ namespace SaralESuvidha
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddSingleton(Configuration);
+            services.AddTransient<PushNotificationService>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
