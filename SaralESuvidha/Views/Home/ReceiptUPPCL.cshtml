@@ -46,12 +46,19 @@
             }
         </style>
     </head>
-    @{
+@{
     var tranId = Model.LiveId;
     int balanceAmount = Convert.ToInt32(Model.Amount);
     try
     {
-        balanceAmount = Convert.ToInt32(Model.Extra2) - Convert.ToInt32(Model.Amount);
+        if (Model.UPPCL_BillAmount == 0)
+        {
+            balanceAmount = Convert.ToInt32(Model.Amount);
+        }
+        else
+        {
+            balanceAmount = Convert.ToInt32(Model.Extra2) - Convert.ToInt32(Model.Amount);
+        }
     }
     catch (Exception)
     {
@@ -138,7 +145,7 @@
                 
                 <tr>
                     <td class="head">Balance Amount:</td>
-                    <td colspan="3" class="headvalue">&#x20B9; <strong>@balanceAmount.ToString()</strong></td>
+                <td colspan="3" class="headvalue">@Html.Raw(Model.UPPCL_BillAmount == 0 ? "Current Meter Balance + " : "" )&#x20B9; <strong>@balanceAmount.ToString()</strong></td>
                 </tr>
                 
                 <tr>

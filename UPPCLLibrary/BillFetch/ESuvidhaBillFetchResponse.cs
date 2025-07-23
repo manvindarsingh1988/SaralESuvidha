@@ -145,6 +145,16 @@ namespace UPPCLLibrary.BillFetch
 
                         }
                     }
+
+                    if (BillFetchResponse.Body.PaymentDetailsResponse.ConnectionType.ToLower().Contains("prepaid"))
+                    {
+                        //BillFetchResponse.Body.PaymentDetailsResponse.BillAmount = "0";
+                        Reason = "";
+                        CanNotPay = false;
+                        PayAmount = 0;
+                        MinimumPayAmount = 0;
+                        MaximumPayAmount = 199999;
+                    }
                 }
 
                 

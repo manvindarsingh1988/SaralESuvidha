@@ -381,6 +381,8 @@ namespace UPPCLLibrary
                 electricityBillInfo.PayableAmount = billFetchResponse.Body.PaymentDetailsResponse.AccountInfo;
                 electricityBillInfo.OperatorBiller = billFetchResponse.Body.PaymentDetailsResponse.Discom;
 
+                
+
                 try
                 {
                     if(billFetchResponse.Body.PaymentDetailsResponse.Param1.ToString() != "null")

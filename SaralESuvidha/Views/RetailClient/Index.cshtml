@@ -267,6 +267,7 @@
     var discom = '';
     var maxAmount = 0;
     var minAmount = 0;
+    var prepaidConnection = false;
     
     function LoadElectricityBill() {
         $('.part1, .part2').removeClass("show").addClass("hide");
@@ -319,11 +320,14 @@
                                 $("#EbillAmount").val(data.PayAmount);
                             }
                     }
-                                                            
-                    ShowFetchBill();
-                    
+
                     minAmount = Number(data.MinimumPayAmount);
                     maxAmount = Number(data.MaximumPayAmount);
+                    prepaidConnection = /prepaid/i.test(data.BillFetchResponse.Body.PaymentDetailsResponse.ConnectionType);
+                    //console.log(prepaidConnection);
+                                                            
+                    ShowFetchBill();
+                                       
                 });
             
         }
@@ -333,6 +337,11 @@
         $('#EBillLoading').html('');
         $('#EBillLoader').html('');
         $('#btnEbillCheck').addClass('show').removeClass('hide');
+        
+        if(prepaidConnection){
+            $('#EbillAmount').prop('readonly', '');
+        }
+        
     }
 
     function ValidInputEBillCheck() {
@@ -377,24 +386,24 @@
         if ($('#EbillAmount').val() != '') {
             var billAmount = $('#EbillBillAmount').html();
             var amountPaying = $('#EbillAmount').val();
-            if(Number(amountPaying) != Number(billAmount)){
+            if(Number(amountPaying) != Number(billAmount) && !prepaidConnection){
                 if(Number(amountPaying)<minAmount){
                     $('#EBillActionMessage').html('<span class="text-danger">Part payment minimum amount ' + minAmount + ' required.</span>');
                     return false;
                 }
             }
             
-            if(Number(amountPaying)>200000){
+            if(Number(amountPaying)>=200000){
                 $('#EBillActionMessage').html('<span class="text-danger">Maximum bill amount upto Rs. 200000 can be paid.</span>');
                 return false;
             }
             
-            if(billAmount === ''){
+            if(billAmount === '' && !prepaidConnection){//
                 $('#EBillActionMessage').html('<span class="text-danger">Please check the bill then pay.</span>');
                 return false;
             }
             
-            if(Number(amountPaying) > Number(billAmount)){
+            if(Number(amountPaying) > Number(billAmount) && !prepaidConnection){
                 $('#EBillActionMessage').html('<span class="text-danger">Can not pay greater than bill amount. Bill amount is ' + billAmount + '.</span>');
                 return false;
             }

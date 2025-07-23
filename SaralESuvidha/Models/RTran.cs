@@ -700,14 +700,23 @@ namespace SaralESuvidha.Models
                         paymentTypeFullPartial = "PARTIAL";
                     }
 
-                    UPPCL_PaymentType = paymentTypeFullPartial;
-                    
+
                     /*
                     if (Parameter1?.Length > 9)
                     {
                         EndCustomerMobileNumber = Parameter1;
                     }
                     */
+
+                    if (eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.ConnectionType.ToLower().Contains("prepaid"))
+                    {
+                        paymentTypeFullPartial = "FULL";
+                        accountInfoInt = 0;
+                        UPPCL_BillAmount = 0;
+                    }
+
+                    UPPCL_PaymentType = paymentTypeFullPartial;
+
 
                     using (var con = new SqlConnection(StaticData.conString))
                     {

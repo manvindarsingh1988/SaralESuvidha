@@ -1,40 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
+using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.Office2013.Word;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using SaralESuvidha.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using Org.BouncyCastle.Asn1.Ocsp;
+using SaralESuvidha.Controllers;
+using SaralESuvidha.Models;
 using SpreadsheetLight;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using UPPCLLibrary;
 using UPPCLLibrary.BillFetch;
-using RTran = SaralESuvidha.Models.RTran;
-using DocumentFormat.OpenXml.Bibliography;
-using System.Drawing;
-using System.Reflection;
-using System.Threading;
-using Microsoft.VisualBasic;
-using Org.BouncyCastle.Asn1.Ocsp;
 using UPPCLLibrary.OTS;
-using SaralESuvidha.Controllers;
-using DocumentFormat.OpenXml.Drawing;
-using OfficeOpenXml.Style;
+using RTran = SaralESuvidha.Models.RTran;
 
 namespace SaralESuvidha.ViewModel
 {
@@ -668,7 +669,18 @@ namespace SaralESuvidha.ViewModel
                         eSuvidhaBillFetchResponse.MaximumPayAmount = 0;
                         eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillAmount = "0";
                     }
+
+                    if (eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.ConnectionType.ToLower().Contains("prepaid"))
+                    {
+                        eSuvidhaBillFetchResponse.Reason = "";
+                        eSuvidhaBillFetchResponse.CanNotPay = false;
+                        eSuvidhaBillFetchResponse.PayAmount = 0;
+                        eSuvidhaBillFetchResponse.MinimumPayAmount = 0;
+                        eSuvidhaBillFetchResponse.MaximumPayAmount = 199999;
+                        eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillAmount = "0";
+                    }
                 }
+
 
                 result = JsonConvert.SerializeObject(eSuvidhaBillFetchResponse);
 
@@ -2247,15 +2259,7 @@ namespace SaralESuvidha.ViewModel
                             {
                                 if (billAmount > 0)
                                 {
-                                    if (billAmount < eSuvidhaBillFetchResponse.MinimumPayAmount)
-                                    {
-                                        result = "Errors: Invalid amount. Minimum payable bill amount is - " + eSuvidhaBillFetchResponse.MinimumPayAmount + ".";
-                                    }
-                                    else if (billAmount > eSuvidhaBillFetchResponse.MaximumPayAmount || billAmount >= 200000)
-                                    {
-                                        result = "Errors: Invalid amount. Maximum payable bill amount is - " + eSuvidhaBillFetchResponse.MaximumPayAmount + ".";
-                                    }
-                                    else
+                                    if(eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.ConnectionType.ToUpper().Contains("PREPAID"))//Prepaid
                                     {
                                         string retailerName = "" + (dueAmount != null ? dueAmount.ToString() : "0");
                                         try
@@ -2266,12 +2270,12 @@ namespace SaralESuvidha.ViewModel
                                         }
                                         catch (Exception exName)
                                         {
-                                            return "Errors: Invalid consumer name in bill fetch." + exName.Message;
+                                            //return "Errors: Invalid consumer name in bill fetch." + exName.Message;
                                         }
 
                                         //string mobileNumber = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.MobileNumber;
                                         string mobileNumber = additionalInfo1;
-                                        
+
                                         try
                                         {
                                             if (!string.IsNullOrEmpty(mobileNumber))
@@ -2281,7 +2285,7 @@ namespace SaralESuvidha.ViewModel
                                         }
                                         catch (Exception exMo)
                                         {
-                                            return "Errors: Invalid mobile number in bill fetch." + exMo.Message;
+                                            //return "Errors: Invalid mobile number in bill fetch." + exMo.Message;
                                         }
 
                                         //HttpContext.Session.SetInt32("RetailUserOrderNo", 12);
@@ -2316,7 +2320,7 @@ namespace SaralESuvidha.ViewModel
                                         billTran.UPPCL_SDOCode = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.SDOCode;
                                         try
                                         {
-                                            billTran.UPPCL_BillAmount = Convert.ToDecimal(eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillAmount);
+                                            billTran.UPPCL_BillAmount = billAmount;
                                         }
                                         catch (Exception exBillAmount)
                                         {
@@ -2337,14 +2341,113 @@ namespace SaralESuvidha.ViewModel
                                         billTran.UPPCL_BillDate = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillDate;
                                         billTran.UPPCL_Discom = operatorName;
                                         //billTran.UPPCL_Discom = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.Discom;
-                                        billTran.UPPCL_ConsumerAddress = eSuvidhaBillFetchResponse.AddressLine;
+                                        billTran.UPPCL_ConsumerAddress = eSuvidhaBillFetchResponse.AddressLine == null ? "" : eSuvidhaBillFetchResponse.AddressLine;
                                         billTran.UPPCL_ConsumerAddress = billTran.UPPCL_ConsumerAddress.Length > 450
                                             ? billTran.UPPCL_ConsumerAddress.Substring(0, 430)
                                             : billTran.UPPCL_ConsumerAddress;
                                         result = billTran.PayBillUPPCL(eSuvidhaBillFetchResponse, inputSource, clientReferenceId);
-                                        
-                                    }
 
+                                    }
+                                    else //Postpaid
+                                    {
+                                        if (billAmount < eSuvidhaBillFetchResponse.MinimumPayAmount)
+                                        {
+                                            result = "Errors: Invalid amount. Minimum payable bill amount is - " + eSuvidhaBillFetchResponse.MinimumPayAmount + ".";
+                                        }
+                                        else if (billAmount > eSuvidhaBillFetchResponse.MaximumPayAmount || billAmount >= 200000)
+                                        {
+                                            result = "Errors: Invalid amount. Maximum payable bill amount is - " + eSuvidhaBillFetchResponse.MaximumPayAmount + ".";
+                                        }
+                                        else
+                                        {
+                                            string retailerName = "" + (dueAmount != null ? dueAmount.ToString() : "0");
+                                            try
+                                            {
+                                                retailerName += " >> " + retailUserOrderNo;
+                                                retailerName += "-" + retailerName;
+                                                retailerName = retailerName.Length > 48 ? retailerName.Substring(0, 46) : retailerName;
+                                            }
+                                            catch (Exception exName)
+                                            {
+                                                return "Errors: Invalid consumer name in bill fetch." + exName.Message;
+                                            }
+
+                                            //string mobileNumber = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.MobileNumber;
+                                            string mobileNumber = additionalInfo1;
+
+                                            try
+                                            {
+                                                if (!string.IsNullOrEmpty(mobileNumber))
+                                                {
+                                                    mobileNumber = mobileNumber.Length > 18 ? mobileNumber.Substring(0, 17) : mobileNumber;
+                                                }
+                                            }
+                                            catch (Exception exMo)
+                                            {
+                                                return "Errors: Invalid mobile number in bill fetch." + exMo.Message;
+                                            }
+
+                                            //HttpContext.Session.SetInt32("RetailUserOrderNo", 12);
+                                            billTran.RetailUserOrderNo = Convert.ToInt32(retailUserOrderNo);
+                                            billTran.RetailUserId = retailerId;
+                                            billTran.TelecomOperatorName = operatorName;
+                                            billTran.RechargeMobileNumber = accountNumber;
+                                            billTran.Amount = billAmount;
+                                            billTran.Parameter1 = p1;
+                                            billTran.Parameter2 = p2;
+                                            billTran.Parameter3 = additionalInfo1;
+                                            billTran.Parameter4 = retailerName;
+                                            billTran.RequestIp = requestIp;
+                                            billTran.RequestMachine = inputSource + ">" + userAgent;
+                                            billTran.EndCustomerName = customerName;
+                                            billTran.EndCustomerMobileNumber = mobileNumber;
+                                            billTran.Extra1 = dueDate;
+                                            billTran.Extra2 = dueAmount;
+                                            billTran.UPPCL_LifelineAct = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.LifelineAct;
+                                            billTran.UPPCL_ProjectArea = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.ProjectArea;
+                                            try
+                                            {
+                                                billTran.UPPCL_AccountInfo = Convert.ToDecimal(eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.AccountInfo);
+                                            }
+                                            catch (Exception exAccInfo)
+                                            {
+                                                return "Errors: Invalid Account Info." + exAccInfo.Message;
+                                            }
+                                            billTran.UPPCL_TDConsumer = eSuvidhaBillFetchResponse.TemporaryDisconnection;
+                                            billTran.UPPCL_ConnectionType = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.ConnectionType;
+                                            billTran.UPPCL_DivCode = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.DivCode;
+                                            billTran.UPPCL_SDOCode = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.SDOCode;
+                                            try
+                                            {
+                                                billTran.UPPCL_BillAmount = Convert.ToDecimal(eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillAmount);
+                                            }
+                                            catch (Exception exBillAmount)
+                                            {
+                                                return "Errors: Invalid Bill Amount." + exBillAmount.Message;
+                                            }
+                                            billTran.UPPCL_Division = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.Division;
+                                            billTran.UPPCL_SubDivision = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.SubDivision;
+                                            billTran.UPPCL_PurposeOfSupply = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.PurposeOfSupply;
+                                            try
+                                            {
+                                                billTran.UPPCL_SanctionedLoadInKW = Convert.ToDecimal(eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.SanctionedLoadInKW);
+                                            }
+                                            catch (Exception exSanLoad)
+                                            {
+                                                return "Errors: Invalid Sanctioned Load." + exSanLoad.Message;
+                                            }
+                                            billTran.UPPCL_BillId = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillID;
+                                            billTran.UPPCL_BillDate = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.BillDate;
+                                            billTran.UPPCL_Discom = operatorName;
+                                            //billTran.UPPCL_Discom = eSuvidhaBillFetchResponse.BillFetchResponse.Body.PaymentDetailsResponse.Discom;
+                                            billTran.UPPCL_ConsumerAddress = eSuvidhaBillFetchResponse.AddressLine;
+                                            billTran.UPPCL_ConsumerAddress = billTran.UPPCL_ConsumerAddress.Length > 450
+                                                ? billTran.UPPCL_ConsumerAddress.Substring(0, 430)
+                                                : billTran.UPPCL_ConsumerAddress;
+                                            result = billTran.PayBillUPPCL(eSuvidhaBillFetchResponse, inputSource, clientReferenceId);
+
+                                        }
+                                    }                                   
                                 }
                                 else
                                 {
@@ -3950,7 +4053,7 @@ namespace SaralESuvidha.ViewModel
                     ws.Cells["A1:AJ1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     ws.Cells["A1:AJ1"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                     ws.Row(1).Style.Font.Bold = true;
-                    ws.Row(1).Style.Font.Color.SetColor( Color.Red);
+                    ws.Row(1).Style.Font.Color.SetColor( System.Drawing.Color.Red);
                     ws.Row(1).Height = 30;
                     excelPack.Save();
                 }
