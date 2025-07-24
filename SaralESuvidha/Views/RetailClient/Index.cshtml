@@ -302,6 +302,8 @@
             $.getJSON("@Url.Action("EBillInfo", "RetailClient")?operatorName=" + $('#selectEOperator').val() + "&accountNumber=" + $('#EbillAccountNumber').val() + '&_t=' + $.now(),
                 function (data) {
                    
+                    prepaidConnection = /prepaid/i.test(data.BillFetchResponse.Body.PaymentDetailsResponse.ConnectionType);
+
                     if(data.Reason.length>0){
                        ShowFetchBill();
                        $('#EBillActionMessage').html('<span class="text-danger">' + data.Reason + '. <br /></span>');
@@ -319,11 +321,17 @@
                             if (data.BillFetchResponse.Body.PaymentDetailsResponse.AccountInfo != null) {
                                 $("#EbillAmount").val(data.PayAmount);
                             }
+
+                            if(prepaidConnection){
+                                $("#EbillDueDate").html('');
+                                $("#EbillBillDate").html('');
+                                $("#EbillAmount").val('');
+                                $("#EbillAmount").focus();
+                            }
                     }
 
                     minAmount = Number(data.MinimumPayAmount);
                     maxAmount = Number(data.MaximumPayAmount);
-                    prepaidConnection = /prepaid/i.test(data.BillFetchResponse.Body.PaymentDetailsResponse.ConnectionType);
                     //console.log(prepaidConnection);
                                                             
                     ShowFetchBill();
