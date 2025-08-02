@@ -186,14 +186,14 @@
                 <td class="quantity">Paid Amount:</td>
                 <td class="description" colspan="3">&#x20B9; <strong>@Model.Amount</strong> (&#x20B9; @Model.AmountInWords)</td>
             </tr>
-            <!--
+            
             <tr>
                 <td class="quantity">Balance Amt:</td>
-                <td class="description">&#x20B9; <strong>@balanceAmount.ToString()</strong></td>
+                    <td class="description">@Html.Raw(Model.UPPCL_BillAmount == 0 ? "Present Balance + " : "")&#x20B9; <strong>@balanceAmount.ToString()</strong></td>
                 <td class="quantity">Agent Id:</td>
                 <td class="description">@Model.RetailUserId</td>
             </tr>
-            -->
+            
             <tr>
                 <td class="quantity">Printed By:</td>
                 <td class="description">@Model.RetailerName</td>
