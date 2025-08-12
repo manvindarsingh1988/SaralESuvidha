@@ -21,6 +21,7 @@ namespace SaralESuvidha.ViewModel
 
         public float? MarginPercent { get; set; }
         public float? MarginPercentUpto200 { get; set; }
+        public float? PrepaidMarginPercent { get; set; }
 
         public decimal? MaxMargin { get; set; }
         public decimal? MaxDailyLimit { get; set; }
