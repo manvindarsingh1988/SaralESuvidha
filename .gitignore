@@ -12,11 +12,15 @@ SaralESuvidha/bin/*
 /UPPCLLibrary/StatusCheck/bin/*
 /UPPCLLibrary/StatusCheck/obj/*
 /UPPCLLibrary/bin/*
-/ForceFail/*.cs
-/ForceFail/*.csproj
 /ForceFail/bin/*
 /ForceFail/obj/*
 /SaralKYCDocManager/.vs/*
 /SaralKYCDocManager/WebApplication1/bin/*
 /SaralKYCDocManager/WebApplication1/obj/*
 /SaralKYCDocManager/WebApplication1/KYCDocFiles/*
+/.cr/personal/FavoritesList
+/ForceFail/ForceFail/.vs/*
+/ForceFail/ForceFail/bin/*
+/ForceFail/ForceFail/obj/*
+/SaralKYCDocManager/.cr/personal/FavoritesList
+/SaralKYCDocManager/WebApplication1/CashFlowFiles/*
