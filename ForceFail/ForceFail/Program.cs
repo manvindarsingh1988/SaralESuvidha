@@ -6,6 +6,7 @@ using ForceFail;
 using Newtonsoft.Json;
 using Razorpay.Api;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using UPPCLLibrary;
@@ -36,11 +37,21 @@ public class Program
 
     public static void Main()
     {
-        CheckAndUpdateRazorpayStatus();
-
-        CheckAndCreditAmountIfRazorResponseWasSuccess();
-
-        CheckAndUpdatePendingBillStatus();
+        try
+        {
+            CheckAndUpdateRazorpayStatus();
+        }
+        catch (Exception ex) { }
+        try
+        {
+            CheckAndCreditAmountIfRazorResponseWasSuccess();
+        }
+        catch (Exception ex) { }
+        try
+        {
+            CheckAndUpdatePendingBillStatus();
+        }
+        catch (Exception ex) { }
     }
 
     private static void CheckAndCreditAmountIfRazorResponseWasSuccess()
@@ -63,7 +74,11 @@ public class Program
             if (orders.Count > 0)
             {
                 Order order = orders[0];
-                var payment = order.Payments().FirstOrDefault();
+                var payment = order.Payments().FirstOrDefault(_ => _.Attributes.status == "captured");
+                if (payment == null)
+                {
+                    payment = order.Payments().LastOrDefault();
+                }
                 var regeneratedSignature = string.Empty;
                 if (payment != null && payment.Attributes?.error == null)
                 {
@@ -218,7 +233,11 @@ public class Program
             {
                 foreach (Order order in orders)
                 {
-                    var payment = order.Payments().FirstOrDefault();
+                    var payment = order.Payments().FirstOrDefault(_ => _.Attributes.status == "captured");
+                    if(payment == null)
+                    {
+                        payment = order.Payments().LastOrDefault();
+                    }
                     var regeneratedSignature = string.Empty;
                     if (payment != null && payment.Attributes?.error == null)
                     {
