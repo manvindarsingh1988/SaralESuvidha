@@ -51,4 +51,9 @@ namespace SaralESuvidha.ViewModel
         }
         
     }
+
+    public class Highlights
+    {
+        public string GlobalHighlights { get; set; }
+    }
 }

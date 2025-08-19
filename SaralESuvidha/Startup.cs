@@ -14,6 +14,7 @@ using UPPCLLibrary;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using SaralESuvidha.Filters;
 
 namespace SaralESuvidha
 {
@@ -76,7 +77,10 @@ namespace SaralESuvidha
             });
 
 
-            services.AddControllersWithViews()
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add(new GlobalHighlightFilter());
+            })
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;

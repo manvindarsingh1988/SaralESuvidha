@@ -536,6 +536,18 @@ namespace SaralESuvidha.Controllers
             return View();
         }
 
+        public IActionResult GlobalHighlights()
+        {
+            var highLights = StaticData.GetHighlights();
+            return View(highLights);
+        }
+
+        public IActionResult SaveGlobalHighlights(string message)
+        {
+            var result = StaticData.UpdateHighlights(message);
+            return Content(result ? "Saved successfully!" : "Error: Failed to update message.");
+        }
+
         public IActionResult ChangePassword()
         {
             return View();

@@ -1,0 +1,41 @@
+@model SaralESuvidha.ViewModel.Highlights
+
+@{
+    Layout = "_LayoutSysAdmin";
+    ViewData["title"] = "System Setting";
+}
+
+<form id="frmSystemParking" name="frmSystemParking" asp-action="" asp-controller="SysAdmin">
+    <div class="card">
+        <h6 class="card-header">
+            Global Highlights <span id="InfoDetail" name="InfoDetail"></span>
+        </h6>
+        <div class="card-datatable table-responsive">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-10 form-group">
+                        <label class="form-label">Message</label>
+                        <input asp-for="GlobalHighlights" type="text" class="form-control required">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="SaveMessage();">Save</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    
+    function SaveMessage() {
+        $.get("@Url.Action("SaveGlobalHighlights", "SysAdmin")?message=" + $('#GlobalHighlights').val(), function (data) {
+            if (data.indexOf('Errors:') > -1) {
+                $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+            } else {
+                $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                LoadSystem();
+            }
+        });
+    }
+
+
+</script>

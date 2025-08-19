@@ -4396,5 +4396,40 @@ namespace SaralESuvidha.ViewModel
             }
             return result;
         }
+
+        internal static Highlights GetHighlights()
+        {
+            Highlights result = new();
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<Highlights>("usp_GetHighlights", commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static bool UpdateHighlights(string message)
+        {
+            bool result = true;
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Message", message);
+                    con.Execute("usp_UpdateHighlights", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = false;
+            }
+            return result;
+        }
     }
 }

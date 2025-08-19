@@ -63,7 +63,7 @@ namespace SaralESuvidha.Models
                 OperationMessage = "Error: Margin Percent for Part or more than 4000 full payment can not be greater than 0.5%.";
                 return this;
             }
-            if (MarginPercent > .4)
+            if (PrepaidMarginPercent != null && PrepaidMarginPercent.GetValueOrDefault() > .4m)
             {
                 OperationMessage = "Error: Prepaid Margin Percent can not be greater than 0.4%.";
                 return this;

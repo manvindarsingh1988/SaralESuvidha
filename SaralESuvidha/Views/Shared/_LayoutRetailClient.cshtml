@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="~/assets/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.css">
     <link rel="stylesheet" href="~/assets/vendor/libs/flatpickr/flatpickr.css">
     <link rel="stylesheet" href="~/assets/css/main.css?8878">
+    <link rel="stylesheet" href="~/css/highlight.css" asp-append-version="true" />
 
     <!-- Load polyfills -->
     <script src="~/assets/vendor/js/polyfills.js"></script>
@@ -117,7 +118,14 @@
                 </div>
             </nav>
             <!-- / Layout navbar -->
-
+            @if (!string.IsNullOrEmpty(Convert.ToString(ViewData["GlobalHighlights"])))
+            {
+                <div class="highlight-bar">
+                    <span class="highlight-text">
+                        @ViewData["GlobalHighlights"]
+                    </span>
+                </div>
+            }
             <div class="layout-container">
 
                 <div class="layout-content">

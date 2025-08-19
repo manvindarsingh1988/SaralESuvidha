@@ -91,7 +91,7 @@ public class Program
                         string r_status = payment.Attributes.status.ToString();
                         string r_method = payment.Attributes.method.ToString();
                         string r_error = payment.Attributes.error_code.ToString();
-
+                        var paymentType = payment.Attributes.upi?.payer_account_type?.ToString();
 
                         RazorpayOrder razorpayOrder = RazorpayOrderLoadByRazorpayId(order.Attributes.id.ToString());
                         RTran fundTransferRTran = new RTran();
@@ -103,7 +103,7 @@ public class Program
                             fundTransferRTran.RequestMachine = "Auto-Check";
                             fundTransferRTran.RetailUserOrderNo = item.OrderNo; //
 
-                            if (r_method == "upi")// || r_method == "netbanking"
+                            if (r_method == "upi" && paymentType != "credit_card")// || r_method == "netbanking"
                             {
                                 fundTransferRTran.Amount = Convert.ToDecimal((decimal)razorpayOrder.RazorpayAmount / 100);
                             }
@@ -250,6 +250,7 @@ public class Program
                             string r_status = payment.Attributes.status.ToString();
                             string r_method = payment.Attributes.method.ToString();
                             string r_error = payment.Attributes.error_code.ToString();
+                            var paymentType = payment.Attributes.upi?.payer_account_type?.ToString();
 
                             RazorpayOrder razorpayOrder = RazorpayOrderLoadByRazorpayId(order.Attributes.id.ToString());
                             string payload = $"{order.Attributes.id.ToString()}|{payment.Attributes?.id}";
@@ -280,7 +281,7 @@ public class Program
                                         fundTransferRTran.RequestMachine = "Auto-Check";
                                         fundTransferRTran.RetailUserOrderNo = item.OrderNo; //
 
-                                        if (r_method == "upi")// || r_method == "netbanking"
+                                        if (r_method == "upi" && paymentType != "credit_card")// || r_method == "netbanking"
                                         {
                                             fundTransferRTran.Amount = Convert.ToDecimal((decimal)rAmount / 100);
                                         }
