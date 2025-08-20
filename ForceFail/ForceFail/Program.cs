@@ -103,14 +103,19 @@ public class Program
                             fundTransferRTran.RequestMachine = "Auto-Check";
                             fundTransferRTran.RetailUserOrderNo = item.OrderNo; //
 
-                            if (r_method == "upi" && paymentType != "credit_card")// || r_method == "netbanking"
-                            {
-                                fundTransferRTran.Amount = Convert.ToDecimal((decimal)razorpayOrder.RazorpayAmount / 100);
-                            }
-                            else
-                            {
-                                fundTransferRTran.Amount = Convert.ToDecimal(((decimal)razorpayOrder.RazorpayAmount / 100) - ((decimal)rFee / 100) - ((decimal)oFee / 100));
-                            }
+                            /*
+                                     if (r_method == "upi" && paymentType != "credit_card")// || r_method == "netbanking"
+                                     {
+                                         fundTransferRTran.Amount = Convert.ToDecimal((decimal)rAmount / 100);
+                                     }
+                                     else
+                                     {
+                                         fundTransferRTran.Amount = Convert.ToDecimal(((decimal)rAmount / 100) - ((decimal)rFee / 100) - ((decimal)oFee/100));
+                                     }
+                                     */
+
+                            //fee deduction for all type of transactions.
+                            fundTransferRTran.Amount = Convert.ToDecimal(((decimal)rAmount / 100) - ((decimal)rFee / 100) - ((decimal)oFee / 100));
 
                             fundTransferRTran.Extra1 = "razor";
                             fundTransferRTran.Extra2 = razorpayOrder.razorpay_order_id;
@@ -281,14 +286,20 @@ public class Program
                                         fundTransferRTran.RequestMachine = "Auto-Check";
                                         fundTransferRTran.RetailUserOrderNo = item.OrderNo; //
 
-                                        if (r_method == "upi" && paymentType != "credit_card")// || r_method == "netbanking"
-                                        {
-                                            fundTransferRTran.Amount = Convert.ToDecimal((decimal)rAmount / 100);
-                                        }
-                                        else
-                                        {
-                                            fundTransferRTran.Amount = Convert.ToDecimal(((decimal)rAmount / 100) - ((decimal)rFee / 100) - ((decimal)oFee / 100));
-                                        }
+
+                                        /*
+                                                 if (r_method == "upi" && paymentType != "credit_card")// || r_method == "netbanking"
+                                                 {
+                                                     fundTransferRTran.Amount = Convert.ToDecimal((decimal)rAmount / 100);
+                                                 }
+                                                 else
+                                                 {
+                                                     fundTransferRTran.Amount = Convert.ToDecimal(((decimal)rAmount / 100) - ((decimal)rFee / 100) - ((decimal)oFee/100));
+                                                 }
+                                                 */
+
+                                        //fee deduction for all type of transactions.
+                                        fundTransferRTran.Amount = Convert.ToDecimal(((decimal)rAmount / 100) - ((decimal)rFee / 100) - ((decimal)oFee / 100));
 
                                         fundTransferRTran.Extra1 = "razor";
                                         fundTransferRTran.Extra2 = razorpayOrder.razorpay_order_id;
