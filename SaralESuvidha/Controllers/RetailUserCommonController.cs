@@ -167,6 +167,7 @@ namespace SaralESuvidha.Controllers
                                     fundTransferRTran.RequestMachine = HttpContext.Request.Headers["User-Agent"].ToString();
                                     fundTransferRTran.RetailUserOrderNo = (int)HttpContext.Session.GetInt32("RetailUserOrderNo"); //
 
+                                    /*
                                     if (r_method == "upi" && paymentType != "credit_card")// || r_method == "netbanking"
                                     {
                                         fundTransferRTran.Amount = Convert.ToDecimal((decimal)rAmount / 100);
@@ -175,6 +176,11 @@ namespace SaralESuvidha.Controllers
                                     {
                                         fundTransferRTran.Amount = Convert.ToDecimal(((decimal)rAmount / 100) - ((decimal)rFee / 100) - ((decimal)oFee/100));
                                     }
+                                    */
+
+                                    //fee deduction for all type of transactions.
+                                    fundTransferRTran.Amount = Convert.ToDecimal(((decimal)rAmount / 100) - ((decimal)rFee / 100) - ((decimal)oFee / 100));
+
 
                                     fundTransferRTran.Extra1 = "razor";
                                     fundTransferRTran.Extra2 = o;
