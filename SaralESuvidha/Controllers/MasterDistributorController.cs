@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
+using SaralESuvidha.Services;
 
 namespace SaralESuvidha.Controllers
 {
@@ -18,10 +20,12 @@ namespace SaralESuvidha.Controllers
     public class MasterDistributorController : Controller
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly SabPaisaService _sabPaisaService;
 
-        public MasterDistributorController(IWebHostEnvironment hostingEnvironment)
+        public MasterDistributorController(IWebHostEnvironment hostingEnvironment, SabPaisaService sabPaisaService)
         {
             _hostingEnvironment = hostingEnvironment;
+            _sabPaisaService = sabPaisaService;
         }
 
         public IActionResult Index()
@@ -36,6 +40,8 @@ namespace SaralESuvidha.Controllers
         
         public IActionResult AccountTopup()
         {
+            ViewData["Razor"] = StaticData.CheckTopupServiceIsDown("Razor");
+            ViewData["SabPaisa"] = StaticData.CheckTopupServiceIsDown("SabPaisa");
             return View();
         }
         
@@ -284,5 +290,42 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
 
+        [AllowAnonymous] // 🚀 important
+        [IgnoreAntiforgeryToken]
+        public IActionResult SabPaisaCallback()
+        {
+            try
+            {
+                string query = Request.Form["encResponse"];
+                TempData["encResponse"] = query;
+                return Redirect(Url.Action(action: "SabPaisaCallback1", controller: "MasterDistributor"));
+            }
+            catch
+            {
+                return Redirect(Url.Action(action: "Index", controller: "MasterDistributor"));
+            }
+        }
+
+        public async Task<IActionResult> SabPaisaCallback1()
+        {
+            var query = TempData["encResponse"] as string;
+            if (string.IsNullOrEmpty(query))
+            {
+                return Redirect(Url.Action(action: "Index", controller: "MasterDistributor"));
+            }
+            string result = string.Empty;
+            try
+            {
+                var requestIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                var requestMachine = HttpContext.Request.Headers["User-Agent"].ToString();
+                var orderNo = (int)HttpContext.Session.GetInt32("RetailUserOrderNo");
+                var verified = await SabPaisaHelper.PostOrder(_sabPaisaService, query, requestIp, requestMachine, orderNo);
+                return View("SabPaisaCallback", verified);
+            }
+            finally
+            {
+                TempData["encResponse"] = "";
+            }
+        }
     }
 }

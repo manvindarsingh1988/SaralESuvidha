@@ -23,6 +23,15 @@ using RTran = SaralESuvidha.Models.RTran;
 using UPPCLLibrary.OTS;
 using Microsoft.VisualBasic;
 using QRCoder;
+using SaralESuvidha.Services;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+using SaralESuvidha.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Web;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Wordprocessing;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Database;
+using System.Reflection;
 
 namespace SaralESuvidha.Controllers
 {
@@ -30,17 +39,19 @@ namespace SaralESuvidha.Controllers
     public class RetailClientController : Controller
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly SabPaisaService _sabPaisaService;
 
-        public RetailClientController(IWebHostEnvironment hostingEnvironment)
+        public RetailClientController(IWebHostEnvironment hostingEnvironment, SabPaisaService sabPaisaService)
         {
             _hostingEnvironment = hostingEnvironment;
+            _sabPaisaService = sabPaisaService;
         }
 
         public IActionResult Index()
         {
             return View();
         }
-        
+
 
         public IActionResult ChangePassword()
         {
@@ -56,22 +67,22 @@ namespace SaralESuvidha.Controllers
         {
             return View();
         }
-        
+
         public IActionResult DefaultPrinter()
         {
             return View();
         }
-        
+
 
         public IActionResult DuplicateBillInfo()
         {
             string eBillInfo = HttpContext.Session.GetString("billinfo");
             return Content(eBillInfo);
         }
-        
-        public IActionResult PayBillUPPCL_A(string operatorName, string accountNumber, decimal billAmount, string additionalInfo1 = "", string customerName = null, string dueDate = null, string dueAmount = null, string p1 = "", string p2 = "", string inputSource = "web", string pi="")
+
+        public IActionResult PayBillUPPCL_A(string operatorName, string accountNumber, decimal billAmount, string additionalInfo1 = "", string customerName = null, string dueDate = null, string dueAmount = null, string p1 = "", string p2 = "", string inputSource = "web", string pi = "")
         {
-            
+
             string result = string.Empty;
             string retailerId = HttpContext.Session.GetString("RetailerId");
             string eBillInfo = HttpContext.Session.GetString("billinfo");
@@ -81,12 +92,12 @@ namespace SaralESuvidha.Controllers
             string requestIp = HttpContext.Connection.RemoteIpAddress?.ToString();
             //string retailerId, string eBillInfo, string retailUserOrderNo, string retailUserName, string userAgent, string requestIp
 
-            result = StaticData.PayBillUPPCL(operatorName, accountNumber, billAmount, retailerId,eBillInfo, retailUserOrderNo, retailUserName, userAgent, requestIp,
+            result = StaticData.PayBillUPPCL(operatorName, accountNumber, billAmount, retailerId, eBillInfo, retailUserOrderNo, retailUserName, userAgent, requestIp,
                 additionalInfo1, customerName, dueDate, dueAmount, p1, p2, inputSource, pi);
-            
+
             return Content(result);
         }
-        
+
         public IActionResult SearchRecharge()
         {
             return View();
@@ -99,7 +110,7 @@ namespace SaralESuvidha.Controllers
             {
                 DateTime dateR = Convert.ToDateTime(StaticData.ConvertHexToString(rDate));
                 if (HttpContext.Session != null)
-                    result = StaticData.SearchNumberByDateByClient(StaticData.ConvertHexToString(rNumber), dateR,(int)HttpContext.Session.GetInt32("RetailUserOrderNo"));
+                    result = StaticData.SearchNumberByDateByClient(StaticData.ConvertHexToString(rNumber), dateR, (int)HttpContext.Session.GetInt32("RetailUserOrderNo"));
             }
             catch (Exception ex)
             {
@@ -112,9 +123,9 @@ namespace SaralESuvidha.Controllers
         {
             string rtranId = StaticData.ConvertHexToString(t);
             //RTranReportServerWise rt = new RTranReportServerWise{Rid = rtranId};
-            return View(new RTranReportServerWise{Rid = rtranId}.LoadForRefundRequest());
+            return View(new RTranReportServerWise { Rid = rtranId }.LoadForRefundRequest());
         }
-        
+
         [HttpPost]
         public IActionResult SaveDispute(string Rid, string rem)
         {
@@ -156,7 +167,7 @@ namespace SaralESuvidha.Controllers
         {
             return View();
         }
-        
+
         public IActionResult AccountStatement()
         {
             return View();
@@ -171,11 +182,11 @@ namespace SaralESuvidha.Controllers
         {
             return View();
         }
-        
+
         public IActionResult EBillInfo(string operatorName, string accountNumber)
         {
             UPPCLManager.CheckTokenExpiry();
-            
+
             if (StaticData.RecordCount(operatorName, accountNumber) > 0)
             {
                 ESuvidhaBillFetchResponse eSuvidhaBillFetchResponse = new ESuvidhaBillFetchResponse();
@@ -186,13 +197,13 @@ namespace SaralESuvidha.Controllers
             {
                 HttpContext.Session.SetString("billinfo", "");
                 string eBillInfo = StaticData.ElectricityBillInfoUPPCL(operatorName, accountNumber);
-                
+
                 HttpContext.Session.SetString("billinfo", eBillInfo);
                 return Content(eBillInfo);
             }
-            
+
         }
-        
+
 
         public IActionResult DailySalesReportResult(string dateFrom, int x)
         {
@@ -212,19 +223,19 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
 
-        
-        
+
+
         public IActionResult DailyRechargeReportResult(string dateFrom, string dateTo, int x)
         {
             string result = string.Empty;
-            string filePath = Path.Combine(_hostingEnvironment.WebRootPath,"FileData/");
-            
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
+
             try
             {
                 DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(dateFrom));
                 DateTime dateT = Convert.ToDateTime(StaticData.ConvertHexToString(dateTo));
                 if (HttpContext.Session != null)
-                    result = StaticData.RechargeReportRetailClientByDate((int) HttpContext.Session.GetInt32("RetailUserOrderNo"), dateF, dateT, x, filePath);
+                    result = StaticData.RechargeReportRetailClientByDate((int)HttpContext.Session.GetInt32("RetailUserOrderNo"), dateF, dateT, x, filePath);
             }
             catch (Exception ex)
             {
@@ -236,8 +247,8 @@ namespace SaralESuvidha.Controllers
         public IActionResult DailyRechargeReportSummaryResult(string dateFrom, string dateTo, int x)
         {
             string result = string.Empty;
-            string filePath = Path.Combine(_hostingEnvironment.WebRootPath,"FileData/");
-            
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
+
             try
             {
                 DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(dateFrom));
@@ -295,7 +306,7 @@ namespace SaralESuvidha.Controllers
         {
             return View();
         }
-        
+
         public IActionResult PrintReceiptJson(string t)
         {
             //PaymentReceipt pr = new PaymentReceipt();
@@ -311,7 +322,7 @@ namespace SaralESuvidha.Controllers
                 return Content("INVALID DETAILS");
             }
         }
-        
+
         public IActionResult PrintReceiptThermal(string t)
         {
             //PaymentReceipt pr = new PaymentReceipt();
@@ -396,7 +407,7 @@ namespace SaralESuvidha.Controllers
                 var obj = JsonConvert.DeserializeObject<CaseInitResponse>(StaticData.GetApiResponseByApiTypeAndConsumerId(uppclLReceipt.AccountId, "OTS_CaseInit", tranId));
                 var obj1 = JsonConvert.DeserializeObject<AmountDetails>(StaticData.GetApiResponseByApiTypeAndConsumerId(uppclLReceipt.AccountId, "OTS_AmountDetails", tranId));
                 //PaymentReceipt pr = JsonConvert.DeserializeObject<PaymentReceipt>(StaticData.ReceiptByTranId(tranId));
-                
+
                 if (obj != null && obj1 != null)
                 {
                     decimal downPayment;
@@ -474,10 +485,12 @@ namespace SaralESuvidha.Controllers
 
         public IActionResult AccountTopup()
         {
+            ViewData["Razor"] = StaticData.CheckTopupServiceIsDown("Razor");
+            ViewData["SabPaisa"] = StaticData.CheckTopupServiceIsDown("SabPaisa");
             return View();
         }
-        
-        
+
+
 
         public IActionResult AccountTopupReport()
         {
@@ -486,7 +499,7 @@ namespace SaralESuvidha.Controllers
 
         public IActionResult CheckEligibilityForOTS(string accountId, string discomId)
         {
-            var obj = StaticData.CheckEligibilityForOTS(accountId, discomId);            
+            var obj = StaticData.CheckEligibilityForOTS(accountId, discomId);
             return Content(JsonConvert.SerializeObject(obj));
         }
 
@@ -501,7 +514,7 @@ namespace SaralESuvidha.Controllers
 
         public IActionResult InitiateOTSCase(string accountId, string discomId, int isFull, string amount, string downPayment, string registrationAmount)
         {
-            if(isFull == 1)
+            if (isFull == 1)
             {
                 var totalAmount = Convert.ToDecimal(registrationAmount);
                 if (amount == null)
@@ -517,7 +530,7 @@ namespace SaralESuvidha.Controllers
                 else
                 {
                     var val = Convert.ToDecimal(amount);
-                    
+
                     if (val < (totalAmount))
                     {
                         var caseInitResponse = new CaseInitResponse
@@ -569,6 +582,44 @@ namespace SaralESuvidha.Controllers
             UPPCLOTSReciptModal modal = OTSReciptGenerator.GenerateOTSRecipt(accountId, amount, isFull, tranId);
 
             return View(modal);
+        }
+
+        [AllowAnonymous] // 🚀 important
+        [IgnoreAntiforgeryToken]
+        public IActionResult SabPaisaCallback()
+        {
+            try
+            {
+                string query = Request.Form["encResponse"];
+                TempData["encResponse"] = query;
+                return Redirect(Url.Action(action: "SabPaisaCallback1", controller: "RetailClient"));
+            }
+            catch
+            {
+                return Redirect(Url.Action(action: "Index", controller: "RetailClient"));
+            }
+        }
+
+        public async Task<IActionResult> SabPaisaCallback1()
+        {
+            var query = TempData["encResponse"] as string;
+            if (string.IsNullOrEmpty(query))
+            {
+                return Redirect(Url.Action(action: "Index", controller: "RetailClient"));
+            }
+            string result = string.Empty;
+            try
+            {
+                var requestIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                var requestMachine = HttpContext.Request.Headers["User-Agent"].ToString();
+                var orderNo = (int)HttpContext.Session.GetInt32("RetailUserOrderNo");
+                var verified = await SabPaisaHelper.PostOrder(_sabPaisaService, query, requestIp, requestMachine, orderNo);
+                return View("SabPaisaCallback", verified);
+            }
+            finally
+            {
+                TempData["encResponse"] = "";
+            }
         }
     }
 }

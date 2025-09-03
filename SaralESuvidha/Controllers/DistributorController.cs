@@ -15,6 +15,8 @@ using DocumentFormat.OpenXml.EMMA;
 using Microsoft.AspNetCore.Authentication;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using Microsoft.AspNetCore.Authorization;
+using SaralESuvidha.Services;
 
 namespace SaralESuvidha.Controllers
 {
@@ -22,10 +24,12 @@ namespace SaralESuvidha.Controllers
     public class DistributorController : Controller
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly SabPaisaService _sabPaisaService;
 
-        public DistributorController(IWebHostEnvironment hostingEnvironment)
+        public DistributorController(IWebHostEnvironment hostingEnvironment, SabPaisaService sabPaisaService)
         {
             _hostingEnvironment = hostingEnvironment;
+            _sabPaisaService = sabPaisaService;
         }
         public IActionResult Index()
         {
@@ -50,6 +54,8 @@ namespace SaralESuvidha.Controllers
         
         public IActionResult AccountTopup()
         {
+            ViewData["Razor"] = StaticData.CheckTopupServiceIsDown("Razor");
+            ViewData["SabPaisa"] = StaticData.CheckTopupServiceIsDown("SabPaisa");
             return View();
         }
         
@@ -364,6 +370,44 @@ namespace SaralESuvidha.Controllers
                 result = "Errors: Exception: " + ex.Message;
             }
             return Content(result);
+        }
+
+        [AllowAnonymous] // 🚀 important
+        [IgnoreAntiforgeryToken]
+        public IActionResult SabPaisaCallback()
+        {
+            try
+            {
+                string query = Request.Form["encResponse"];
+                TempData["encResponse"] = query;
+                return Redirect(Url.Action(action: "SabPaisaCallback1", controller: "Distributor"));
+            }
+            catch
+            {
+                return Redirect(Url.Action(action: "Index", controller: "Distributor"));
+            }
+        }
+
+        public async Task<IActionResult> SabPaisaCallback1()
+        {
+            var query = TempData["encResponse"] as string;
+            if (string.IsNullOrEmpty(query))
+            {
+                return Redirect(Url.Action(action: "Index", controller: "Distributor"));
+            }
+            string result = string.Empty;
+            try
+            {
+                var requestIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                var requestMachine = HttpContext.Request.Headers["User-Agent"].ToString();
+                var orderNo = (int)HttpContext.Session.GetInt32("RetailUserOrderNo");
+                var verified = await SabPaisaHelper.PostOrder(_sabPaisaService, query, requestIp, requestMachine, orderNo);
+                return View("SabPaisaCallback", verified);
+            }
+            finally
+            {
+                TempData["encResponse"] = "";
+            }
         }
     }
 }

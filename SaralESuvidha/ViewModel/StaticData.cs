@@ -271,6 +271,20 @@ namespace SaralESuvidha.ViewModel
             }
         }
 
+        public static bool CheckTopupServiceIsDown(string type)
+        {
+            LoadSystemSetting();
+            if (type == "Razor" && !systemSetting.RazorTopUp.GetValueOrDefault())
+            {
+                return false;
+            }
+            if (type == "SabPaisa" && !systemSetting.SabPaisaTopUp.GetValueOrDefault())
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static string OperatorListJson()
         {
             string result = "[]";
@@ -3041,7 +3055,7 @@ namespace SaralESuvidha.ViewModel
         }
 
         
-        public static RecordSaveResponse RazorpayOrderSave(string name, decimal amount, string razorpayAmount, string email, string mobile, string retailerId)
+        public static RecordSaveResponse RazorpayOrderSave(string name, decimal amount, string razorpayAmount, string email, string mobile, string retailerId, string provider = "Razor")
         {
             RecordSaveResponse result = new RecordSaveResponse();
             try
@@ -3058,6 +3072,7 @@ namespace SaralESuvidha.ViewModel
                     parameters.Add("@CustomerMobile", mobile);
                     parameters.Add("@CustomerEmail", email);
                     parameters.Add("@RetailerId", retailerId);
+                    parameters.Add("@Provider", provider);
                     result = con.QuerySingleOrDefault<RecordSaveResponse>("usp_RazorPayOrderInsert", parameters, commandType: System.Data.CommandType.StoredProcedure);
                 }
             }

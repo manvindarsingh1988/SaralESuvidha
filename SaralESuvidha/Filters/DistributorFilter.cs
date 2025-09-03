@@ -14,6 +14,15 @@ namespace SaralESuvidha.Filters
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+            string action = filterContext.ActionDescriptor.RouteValues["action"];
+            string controller = filterContext.ActionDescriptor.RouteValues["controller"];
+
+            // 🚀 Skip session check for SabPaisaCallback
+            if (controller == "Distributor" && action == "SabPaisaCallback")
+            {
+                base.OnActionExecuting(filterContext);
+                return;
+            }
             if (filterContext.HttpContext.Session.GetInt32("RetailUserOrderNo") == null || filterContext.HttpContext.Session.GetInt32("RetailerType") != 6)
             {
                 /*filterContext.Result = new RedirectToRouteResult(

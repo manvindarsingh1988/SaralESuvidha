@@ -28,6 +28,20 @@
                         <option value="0">No</option>
                     </select>
                 </div>
+                <div class="col-lg-2 form-group">
+                    <label asp-for="RazorTopUp" class="form-label"></label>
+                    <select asp-for="RazorTopUp" class="form-control" data-style="btn-default">
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label asp-for="SabPaisaTopUp" class="form-label"></label>
+                    <select asp-for="SabPaisaTopUp" class="form-control" data-style="btn-default">
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
             </div>
             <button type="button" class="btn btn-primary" onclick="SaveMaintain();">Save</button>
             <span id="loaderInfo" name="loaderInfo"></span>
@@ -76,11 +90,13 @@
                     $('#IsDownMessage').val(data["IsDownMessage"]);
                     $('#IsDown').val(data["IsDown"] ===  false ? 0 : 1);
                     $('#IsOTSDown').val(data["IsOTSDown"] ===  false ? 0 : 1);
+                    $('#RazorTopUp').val(data["RazorTopUp"] ===  false ? 0 : 1);
+                    $('#SabPaisaTopUp').val(data["SabPaisaTopUp"] ===  false ? 0 : 1);
                 }
             },
             columns: [
                 { data: "Id", title: "Id", visible: false }, { data: "IsDownMessage", title: "IsDownMessage" } , { data: "IsDown", title: "IsDown", visible: true },
-                { data: "IsOTSDown", title: "IsOTSDown", visible: true }
+                { data: "IsOTSDown", title: "IsOTSDown", visible: true }, { data: "RazorTopUp", title: "RazorTopUp", visible: true }, { data: "SabPaisaTopUp", title: "SabPaisaTopUp", visible: true }
             ]
         });
         
@@ -89,7 +105,8 @@
     }
     
     function SaveMaintain() {
-        $.get("@Url.Action("SaveSystemMaintain", "SysAdmin")?m=" + $('#IsDownMessage').val() + "&active=" + $('#IsDown option:selected').val() + "&ots=" + $('#IsOTSDown option:selected').val(), function (data) {
+        $.get("@Url.Action("SaveSystemMaintain", "SysAdmin")?m=" + $('#IsDownMessage').val() + "&active=" + $('#IsDown option:selected').val() + "&ots=" + $('#IsOTSDown option:selected').val() 
+        + "&razor=" + $('#RazorTopUp option:selected').val() + "&sabPaisa=" + $('#SabPaisaTopUp option:selected').val(), function (data) {
             if (data.indexOf('Errors:') > -1) {
                 $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
             } else {

@@ -1,0 +1,29 @@
+﻿@model SaralESuvidha.Services.TransactionStatus
+
+@{
+    Layout = "_LayoutRetailClient";
+    ViewData["title"] = "Top up - Result";
+}
+<h2>Payment Result</h2>
+
+@if (Model.Status == "SUCCESS")
+{
+    <p style="color:green;">Payment Successful!</p>
+    <p>Txn ID: @Model.TxnId</p>
+    <p>Amount: @Model.Amount</p>
+    <p>Fee: @Model.Fee</p>
+}
+else if (Model.Status == "FAILED")
+{
+    <p style="color:red;">Payment Failed. (@Model.Message)</p>
+}
+else
+{
+    <p>Status: @Model.Status</p>
+}
+
+
+<div class="card-body" style="padding-left: 0px;">
+    <a class="btn btn-primary" asp-controller="RetailClient" asp-action="Index">Dashboard</a>
+    <a class="btn btn-primary" asp-controller="RetailClient" asp-action="AccountTopup">Account Topup</a>
+</div>

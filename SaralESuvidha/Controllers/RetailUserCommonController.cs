@@ -13,6 +13,9 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using Razorpay.Api;
+using SaralESuvidha.Services;
+using System.Net.NetworkInformation;
+using Org.BouncyCastle.Crypto;
 
 namespace SaralESuvidha.Controllers
 {
@@ -20,10 +23,12 @@ namespace SaralESuvidha.Controllers
     public class RetailUserCommonController : Controller
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly SabPaisaService _sabPaisaService;
 
-        public RetailUserCommonController(IWebHostEnvironment hostingEnvironment)
+        public RetailUserCommonController(IWebHostEnvironment hostingEnvironment, SabPaisaService sabPaisaService)
         {
             _hostingEnvironment = hostingEnvironment;
+            _sabPaisaService = sabPaisaService;
         }
 
         public IActionResult Index()
@@ -43,9 +48,33 @@ namespace SaralESuvidha.Controllers
                 return Content("Exception: " + ex.Message);
             }
         }
-        
+
+        public async Task<IActionResult> Initiate(string name, decimal amount, string email, string mobile)
+        {
+            var userType = HttpContext.Session.GetInt32("RetailerType");
+            var controller = "";
+            if(userType == 5)
+            {
+                controller = "RetailClient";
+            }
+            else if(userType == 6)
+            {
+                controller = "Distributor";
+            }
+            else
+            {
+                controller = "MasterDistributor";
+            }
+            var result = await SabPaisaHelper.IntiateOrder(_sabPaisaService, name, amount, email, mobile, Url.Action(action: "SabPaisaCallback", controller: controller, values: null, protocol: Request.Scheme), HttpContext.Session.GetString("RetailerId"));
+            return Content(result);
+        }
+
         public IActionResult GenerateOrder(string name, decimal amount, string email, string mobile)
         {
+            if (StaticData.CheckTopupServiceIsDown("Razor") == false)
+            {
+                return Content("Error: Please refresh the page and try again.");
+            }
             string retailerId = HttpContext.Session.GetString("RetailerId");
             string result = string.Empty;
             try

@@ -518,14 +518,16 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
         
-        public IActionResult SaveSystemMaintain(string m, int active, int ots)
+        public IActionResult SaveSystemMaintain(string m, int active, int ots, int razor, int sabPaisa)
         {
             string result = string.Empty;
             SystemSetting ss = new SystemSetting
             {
                 IsDown = active == 1 ? true : false,
                 IsDownMessage = m,
-                IsOTSDown = ots == 1 ? true : false
+                IsOTSDown = ots == 1 ? true : false,
+                RazorTopUp = razor == 1 ? true : false,
+                SabPaisaTopUp = sabPaisa == 1 ? true : false
             };
             result = ss.SaveSystemMaintain();
             return Content(result);
