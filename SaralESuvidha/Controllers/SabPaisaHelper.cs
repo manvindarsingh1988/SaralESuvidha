@@ -18,7 +18,7 @@ namespace SaralESuvidha.Controllers
             {
                 // Optional: verify with status API
                 var verified = await sabPaisaService.CheckStatusAsync(query);
-                var verified1 = await sabPaisaService.CheckStatusByJobAsync(verified.TxnId);
+                //var verified1 = await sabPaisaService.CheckStatusByJobAsync(verified.TxnId);
                 RazorpayOrder razorpayOrder = StaticData.RazorpayOrderLoadByRazorpayId(verified.TxnId);
                 var fee = verified.PaidAmount - verified.Amount;
                 verified.Fee = fee;
@@ -122,7 +122,8 @@ namespace SaralESuvidha.Controllers
                             ReturnUrl = url,
                             CustomerEmail = email,
                             CustomerName = name,
-                            CustomerPhone = mobile
+                            CustomerPhone = mobile,
+                            Udf20 = retailerId
                         };
                         var redirectPage = await sabPaisaService.InitiatePaymentAsync(request);
                         RecordSaveResponse orderIdSaveResponse = StaticData.RazorpayOrderUpdateOrderId(orderResponse.Id, orderResponse.Id);

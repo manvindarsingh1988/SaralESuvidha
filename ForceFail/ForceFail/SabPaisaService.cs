@@ -1,46 +1,52 @@
-﻿using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
-using Razorpay.Api;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using System.Transactions;
 using System.Web;
 
-namespace SaralESuvidha.Services
+namespace ForceFail
 {
     public class SabPaisaService
     {
         private readonly SabPaisaOptions _options;
         Encryption enc = new Encryption();
 
-        public SabPaisaService(IOptions<SabPaisaOptions> opts)
+        public SabPaisaService()
         {
-            _options = opts.Value;
+            _options = new SabPaisaOptions()
+            {
+                AuthIV = "",
+                AuthKey = "",
+                ClientCode = "",
+                InitiateUrl = "",
+                MerchantId = "",
+                StatusUrl = "",
+                TransUserName = "",
+                TransUserPassword = ""
+            };
         }
 
         public async Task<string> InitiatePaymentAsync(TransactionRequest request)
         {
-            string clientCode = _options.ClientCode; 
-            string transUserName = _options.TransUserName;  
-            string transUserPassword = _options.TransUserPassword;  
-            string authKey = _options.AuthKey;  
-            string authIV = _options.AuthIV;  
+            string clientCode = _options.ClientCode;
+            string transUserName = _options.TransUserName;
+            string transUserPassword = _options.TransUserPassword;
+            string authKey = _options.AuthKey;
+            string authIV = _options.AuthIV;
 
             string payerName = request.CustomerName;
-            string payerEmail = request.CustomerEmail ?? _options.Email;
+            string payerEmail = request.CustomerEmail;
             string payerMobile = request.CustomerPhone;
 
-            string clientTxnId = request.TxnId;  
-            string amount = request.Amount.ToString("F2");  
-            string amountType = "INR"; 
+            string clientTxnId = request.TxnId;
+            string amount = request.Amount.ToString("F2");
+            string amountType = "INR";
             string channelId = "W";
             string mcc = _options.MerchantId;
             string callbackUrl = request.ReturnUrl;
@@ -58,15 +64,13 @@ namespace SaralESuvidha.Services
             query = query + "&channelId=" + channelId.Trim() + "";
             query = query + "&mcc=" + mcc.Trim() + "";
             query = query + "&callbackUrl=" + callbackUrl.Trim() + "";
-            query = query + "&udf20=" + request.Udf20.Trim() + "";
-            query = query + "&udf1=" + "SARAL" + "";
             string encdata = enc.EncryptString(authKey, authIV, query);
-            string respString =  $"<form id=\"sabPaisaForm\" action=\"{_options.InitiateUrl}\" method=\"post\">" +
+            string respString = $"<form id=\"sabPaisaForm\" action=\"{_options.InitiateUrl}\" method=\"post\">" +
                                     "<input type=\"hidden\" name=\"encData\" value=\"" + encdata + "\" id=\"frm1\">" +
                                     "<input type=\"hidden\" name=\"clientCode\" value=\"" + clientCode + "\" id=\"frm2\">" +
                                     "<input type=\"submit\" name=\"submit\" value=\"submit\" id=\"submitButton\" class=\"form-control btn btn-primary\">" +
                                     "</form>";
-            
+
             return respString;
         }
 
@@ -130,22 +134,10 @@ namespace SaralESuvidha.Services
 
                     var list = decryptedJson.Split('&');
                     var dictParams = new Dictionary<string, string>();
-
                     foreach (var item in list)
                     {
-                        if (string.IsNullOrWhiteSpace(item)) continue;
-
                         var param = item.Split('=');
-                        if (param.Length == 2)
-                        {
-                            string key = param[0];
-                            string value = param[1] == "null" ? null : param[1];
-
-                            if (!dictParams.ContainsKey(key))
-                            {
-                                dictParams.Add(key, value);
-                            }
-                        }
+                        dictParams.Add(param.First(), param.Last() == "null" ? null : param.Last());
                     }
 
                     return new TransactionStatus() { Amount = Convert.ToDecimal(dictParams["amount"]), PaidAmount = Convert.ToDecimal(dictParams["paidAmount"]), Message = dictParams["sabpaisaMessage"], PaymentMode = dictParams["paymentMode"], Status = dictParams["status"], TxnId = dictParams["clientTxnId"], SabPaisaTxnId = dictParams["sabpaisaTxnId"] };
@@ -155,10 +147,10 @@ namespace SaralESuvidha.Services
                     return new TransactionStatus() { Status = "FAILED", Message = "No response received." };
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return new TransactionStatus() { Status = "FAILED", Message = "No response received." };
-            }            
+            }
         }
     }
 
@@ -178,7 +170,6 @@ namespace SaralESuvidha.Services
         public string StatusUrl { get; set; } = string.Empty;
         public string TransUserName { get; set; } = string.Empty;
         public string TransUserPassword { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
     }
 
     public class TransactionRequest
@@ -208,7 +199,6 @@ namespace SaralESuvidha.Services
 
         // Callback URL – can override the one from appsettings
         public string ReturnUrl { get; set; } = string.Empty;
-        public string Udf20 { get; set; } = string.Empty;
     }
 
     public class TransactionStatus
@@ -403,5 +393,4 @@ namespace SaralESuvidha.Services
 
         // Write the form HTML to the response
     }
-
 }

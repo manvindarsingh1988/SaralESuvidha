@@ -5,10 +5,12 @@ using Dapper;
 using ForceFail;
 using Newtonsoft.Json;
 using Razorpay.Api;
+using RestSharp;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Transactions;
 using UPPCLLibrary;
 using UPPCLLibrary.BillFail;
 using UPPCLLibrary.BillPost;
@@ -44,6 +46,11 @@ public class Program
         catch (Exception ex) { }
         try
         {
+            CheckAndUpdateSabpaisaStatus();
+        }
+        catch (Exception ex) { }
+        try
+        {
             CheckAndCreditAmountIfRazorResponseWasSuccess();
         }
         catch (Exception ex) { }
@@ -52,6 +59,88 @@ public class Program
             CheckAndUpdatePendingBillStatus();
         }
         catch (Exception ex) { }
+    }
+
+    private static void CheckAndUpdateSabpaisaStatus()
+    {
+        var date = DateTime.Now.ToString("yyyyMMdd");
+        var date1 = DateTime.Now.AddMinutes(-30).ToString("yyyy-MM-dd HH:mm:ss");
+        var con = new SqlConnection(constring);
+        var query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId  where CreateDate > '{date}' and CreateDate < '{date1}' and OrderStatus is null and Provider = 'SabPaisa'";
+        var result = con.Query<RazorpayOrderLite>(query, commandType: System.Data.CommandType.Text); ;
+        // Optional: verify with status API
+        foreach (var item in result)
+        {
+            try
+            {
+                var sabPaisaService = new SabPaisaService();
+                Task.Run(async () =>
+                {
+                    var verified = await sabPaisaService.CheckStatusByJobAsync(item.Id);
+                    RazorpayOrder razorpayOrder = RazorpayOrderLoadByRazorpayId(verified.TxnId);
+                    var fee = verified.PaidAmount - verified.Amount;
+                    verified.Fee = fee;
+                    RazorpayOrderUpdateFees(verified.TxnId, Convert.ToInt64(fee).ToString(), "", "", verified.Status);
+                    if (razorpayOrder.Amount == verified.Amount)
+                    {
+                        RecordSaveResponse recordSaveResponse = RazorpayOrderUpdateOPS(verified.TxnId, verified.SabPaisaTxnId, "");
+                        if (recordSaveResponse.OperationMessage.Contains("Success") && verified.Status.ToUpper() == "SUCCESS")
+                        {
+                            RTran fundTransferRTran = new RTran();
+                            try
+                            {
+                                string tranType = "cr";
+
+                                fundTransferRTran.RequestIp = "Auto-Check";
+                                fundTransferRTran.RequestMachine = "Auto-Check";
+                                fundTransferRTran.RetailUserOrderNo = item.OrderNo;
+
+                                fundTransferRTran.Amount = verified.Amount - fee;
+
+
+                                fundTransferRTran.Extra1 = "razor";
+                                fundTransferRTran.Extra2 = verified.TxnId;
+
+                                if (tranType == "cr")
+                                {
+                                    fundTransferRTran.CreditAmount = fundTransferRTran.Amount;
+                                    fundTransferRTran.TranType = 11;
+                                }
+
+                                if (tranType == "dr")
+                                {
+                                    fundTransferRTran.DebitAmount = fundTransferRTran.Amount;
+                                    fundTransferRTran.TranType = 12;
+                                }
+
+                                fundTransferRTran.Remarks =
+                                    "Wallet topup via Razorpay order-" + verified.TxnId + ", payment id-" + verified.SabPaisaTxnId + ", method-" + verified.PaymentMode;
+                                //fundTransferRTran.Remarks = "Wallet topup of Rs. " + razorpayOrder.Amount.ToString() + " , fees-" + (rFee/100).ToString() + " via Razorpay order-" + o + ", payment id-" + p;
+                                fundTransferRTran.RequestMessage = "WEBPORTAL";
+
+                                if (fundTransferRTran.Amount > 0)
+                                {
+                                    TransferFundByData("admin", fundTransferRTran);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                RazorpayOrderUpdateStausToFailed(item.Id, "failed");
+                            }
+                            finally
+                            {
+                                fundTransferRTran = null;
+                            }
+                        }
+                    }
+                });
+                Task.WaitAll();
+            }
+            catch(Exception ex)
+            {
+                RazorpayOrderUpdateStausToFailed(item.Id, "failed");
+            }                
+        }
     }
 
     private static void CheckAndCreditAmountIfRazorResponseWasSuccess()
@@ -223,7 +312,7 @@ public class Program
         RazorpayClient client = new RazorpayClient(key, secret);
         var con = new SqlConnection(constring);
         var queryParameters = new DynamicParameters();
-        var query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId  where CreateDate > '{date}' and CreateDate < '{date1}' and OrderStatus is null";
+        var query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId  where CreateDate > '{date}' and CreateDate < '{date1}' and OrderStatus is null and Provider = 'Razor'";
         var result = con.Query<RazorpayOrderLite>(query, queryParameters, commandType: System.Data.CommandType.Text);
 
         foreach (var item in result)
