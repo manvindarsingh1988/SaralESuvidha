@@ -74,14 +74,14 @@ public class Program
             try
             {
                 var sabPaisaService = new SabPaisaService();
-                Task.Run(async () =>
+                var t = Task.Run(async () =>
                 {
                     var verified = await sabPaisaService.CheckStatusByJobAsync(item.Id);
                     RazorpayOrder razorpayOrder = RazorpayOrderLoadByRazorpayId(verified.TxnId);
                     var fee = verified.PaidAmount - verified.Amount;
                     verified.Fee = fee;
-                    RazorpayOrderUpdateFees(verified.TxnId, Convert.ToInt64(fee).ToString(), "", "", verified.Status);
-                    if (razorpayOrder.Amount == verified.Amount)
+                    RazorpayOrderUpdateFees(item.Id, Convert.ToInt64(fee).ToString(), "", "", verified.Status);
+                    if (razorpayOrder != null && razorpayOrder.Amount == verified.Amount)
                     {
                         RecordSaveResponse recordSaveResponse = RazorpayOrderUpdateOPS(verified.TxnId, verified.SabPaisaTxnId, "");
                         if (recordSaveResponse.OperationMessage.Contains("Success") && verified.Status.ToUpper() == "SUCCESS")
@@ -95,7 +95,7 @@ public class Program
                                 fundTransferRTran.RequestMachine = "Auto-Check";
                                 fundTransferRTran.RetailUserOrderNo = item.OrderNo;
 
-                                fundTransferRTran.Amount = verified.Amount - fee;
+                                fundTransferRTran.Amount = verified.Amount;
 
 
                                 fundTransferRTran.Extra1 = "razor";
@@ -134,7 +134,7 @@ public class Program
                         }
                     }
                 });
-                Task.WaitAll();
+                t.Wait();
             }
             catch(Exception ex)
             {

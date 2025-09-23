@@ -21,14 +21,14 @@ namespace ForceFail
         {
             _options = new SabPaisaOptions()
             {
-                AuthIV = "",
-                AuthKey = "",
-                ClientCode = "",
-                InitiateUrl = "",
-                MerchantId = "",
-                StatusUrl = "",
-                TransUserName = "",
-                TransUserPassword = ""
+                AuthIV = "tr6ASsMaAPjQ/eIIzdZegETUwhUfaODu2bThDqFNAVh2oAfQRjQ+q0CEUxyZvz11",
+                AuthKey = "kSxIGCSzSTpn7NMYsRcjXiX6BIyGpN2mI9ZXtwQaz+Y=",
+                ClientCode = "SARA69",
+                InitiateUrl = "https://securepay.sabpaisa.in/SabPaisa/sabPaisaInit?v=1",
+                MerchantId = "4900",
+                StatusUrl = "https://txnenquiry.sabpaisa.in/SPTxtnEnquiry/getTxnStatusByClientxnId",
+                TransUserName = "anuraggupta2204@gmail.com",
+                TransUserPassword = "SARA69_SP23024"
             };
         }
 
