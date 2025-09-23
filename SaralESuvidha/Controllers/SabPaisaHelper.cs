@@ -37,7 +37,7 @@ namespace SaralESuvidha.Controllers
                             fundTransferRTran.RequestMachine = requestMachine;
                             fundTransferRTran.RetailUserOrderNo = orderNo;
 
-                            fundTransferRTran.Amount = verified.Amount - fee;
+                            fundTransferRTran.Amount = verified.Amount;
 
 
                             fundTransferRTran.Extra1 = "razor";

@@ -64,6 +64,8 @@ namespace ForceFail
             query = query + "&channelId=" + channelId.Trim() + "";
             query = query + "&mcc=" + mcc.Trim() + "";
             query = query + "&callbackUrl=" + callbackUrl.Trim() + "";
+            query = query + "&udf20=" + request.Udf20.Trim() + "";
+            query = query + "&udf1=" + "SARAL" + "";
             string encdata = enc.EncryptString(authKey, authIV, query);
             string respString = $"<form id=\"sabPaisaForm\" action=\"{_options.InitiateUrl}\" method=\"post\">" +
                                     "<input type=\"hidden\" name=\"encData\" value=\"" + encdata + "\" id=\"frm1\">" +
@@ -134,10 +136,22 @@ namespace ForceFail
 
                     var list = decryptedJson.Split('&');
                     var dictParams = new Dictionary<string, string>();
+
                     foreach (var item in list)
                     {
+                        if (string.IsNullOrWhiteSpace(item)) continue;
+
                         var param = item.Split('=');
-                        dictParams.Add(param.First(), param.Last() == "null" ? null : param.Last());
+                        if (param.Length == 2)
+                        {
+                            string key = param[0];
+                            string value = param[1] == "null" ? null : param[1];
+
+                            if (!dictParams.ContainsKey(key))
+                            {
+                                dictParams.Add(key, value);
+                            }
+                        }
                     }
 
                     return new TransactionStatus() { Amount = Convert.ToDecimal(dictParams["amount"]), PaidAmount = Convert.ToDecimal(dictParams["paidAmount"]), Message = dictParams["sabpaisaMessage"], PaymentMode = dictParams["paymentMode"], Status = dictParams["status"], TxnId = dictParams["clientTxnId"], SabPaisaTxnId = dictParams["sabpaisaTxnId"] };
@@ -199,6 +213,7 @@ namespace ForceFail
 
         // Callback URL – can override the one from appsettings
         public string ReturnUrl { get; set; } = string.Empty;
+        public string Udf20 { get; set; } = string.Empty;
     }
 
     public class TransactionStatus
@@ -393,4 +408,5 @@ namespace ForceFail
 
         // Write the form HTML to the response
     }
+
 }
