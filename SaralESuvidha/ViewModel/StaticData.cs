@@ -1198,6 +1198,9 @@ namespace SaralESuvidha.ViewModel
                     if (excelExport==1)
                     {
                         result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "UPPCLDailyRecharge", filePath);
+                        result = result.Replace("Download excel file", "Download excel file internal");
+                        result +=  "<br/>";
+                        result += DataTableToExcelEP(allDailyRecharge.ToDataTable(), "UPPCLDailyRecharge", filePath, new string[2] {"RId", "Payment_Type" });
                     }
                     else
                     {
@@ -3241,7 +3244,17 @@ namespace SaralESuvidha.ViewModel
             return (string)AppDomain.CurrentDomain.GetData("WebRootPath");
             //return Path.Combine((string)AppDomain.CurrentDomain.GetData("ContentRootPath"), path);
         }
-        
+
+        public static string DataTableToExcelEP(DataTable dataTableExcel, string fileName, string filePath, string[] removeColumns)
+        {
+            foreach (var column in removeColumns)
+            {
+                dataTableExcel.Columns.Remove(column);
+            }
+            return DataTableToExcelEP(dataTableExcel, fileName, filePath);
+        }
+
+
         public static string DataTableToExcelEP(DataTable dataTableExcel, string fileName, string filePath)
         {
             string result = "";
