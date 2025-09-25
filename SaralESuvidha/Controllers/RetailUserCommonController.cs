@@ -65,7 +65,7 @@ namespace SaralESuvidha.Controllers
             {
                 controller = "MasterDistributor";
             }
-            var result = await SabPaisaHelper.IntiateOrder(_sabPaisaService, name, amount, email, mobile, Url.Action(action: "SabPaisaCallback", controller: controller, values: null, protocol: Request.Scheme), HttpContext.Session.GetString("RetailerId"));
+            var result = await SabPaisaHelper.IntiateOrder(_sabPaisaService, name, amount, email, mobile, Url.Action("SabPaisaCallback", controller, null, "https"), HttpContext.Session.GetString("RetailerId"));
             return Content(result);
         }
 
