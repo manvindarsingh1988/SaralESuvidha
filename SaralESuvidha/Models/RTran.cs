@@ -1194,10 +1194,10 @@ namespace SaralESuvidha.Models
             StatusCheckResponse statusCheckResponse = new StatusCheckResponse();
             try
             {
-                statusCheckResponse = UPPCLManager.StatusCheck(UPPCL_BillId, RechargeMobileNumber, UPPCLManager.uppclConfig.AgentVANNo);
+                statusCheckResponse = UPPCLManager.StatusCheck(UPPCL_BillId, RechargeMobileNumber, UPPCLManager.uppclConfig.AgentVANNo, Id);
                 if (updateTransaction)
                 {
-                    if (statusCheckResponse.status == "FAILED") //   statusCheckResponse.message.Contains("No Record found.")
+                    if (statusCheckResponse.status == "FAILED" || statusCheckResponse.status == "Forcefully_Failed") //   statusCheckResponse.message.Contains("No Record found.")
                     {
                         RechargeStatus = "FAILURE";
                         OtherApiId = "FAILURE";

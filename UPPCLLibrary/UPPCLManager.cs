@@ -930,7 +930,7 @@ namespace UPPCLLibrary
             return tr;
         }
 
-        public static StatusCheckResponse StatusCheck(string billId, string consumerNumber, string vanNo)
+        public static StatusCheckResponse StatusCheck(string billId, string consumerNumber, string vanNo, string refid="")
         {
             StatusCheckResponse statusCheckResponse = new StatusCheckResponse();
 
@@ -951,7 +951,8 @@ namespace UPPCLLibrary
                 string postData = uppclConfig.BillPost_StatusCheck_PostData
                                     .Replace("_bill_id_from_fetch_api_", billId.Trim())
                                     .Replace("_consumer_account_number_", consumerNumber.Trim())
-                                    .Replace("_van_no_", vanNo.Trim());
+                                    .Replace("_van_no_", vanNo.Trim())
+                                    .Replace("_refid_", refid.Trim());
                 request.AddStringBody(postData, ContentType.Json);
 
                 var response = client.Execute<StatusCheckResponse>(request);
