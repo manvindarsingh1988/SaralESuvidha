@@ -49,3 +49,12 @@ SaralESuvidha/bin/*
 /SaralESuvidhaNew/UPPCLLibrary/obj/UPPCLLibrary.csproj.nuget.g.targets
 /SaralESuvidhaNew/UPPCLLibrary/obj/project.assets.json
 /SaralESuvidhaNew/UPPCLLibrary/obj/project.nuget.cache
+SaralESuvidha/Properties/PublishProfiles/
+SaralESuvidha/.vs/
+SaralESuvidhaNew/SaralESuvidha/bin/Debug/
+SaralESuvidha/Properties/PublishProfiles/FolderProfile.pubxml.user
+SaralESuvidhaNew/UPPCLLibrary/.vs/
+SaralESuvidha/UPPCLLibrary/.vs/
+UPPCLLibrary/.vs/
+SaralESuvidhaNew/SaralESuvidha/Properties/PublishProfiles/
+SaralESuvidhaNew/SaralESuvidha/bin/Release/
