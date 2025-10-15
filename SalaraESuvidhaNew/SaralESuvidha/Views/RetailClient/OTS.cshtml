@@ -1,0 +1,466 @@
+﻿@*
+
+*@
+@using Microsoft.AspNetCore.Http
+@{
+    Layout = "_LayoutRetailClient";
+    ViewData["title"] = "One Time Settlement(OTS)";
+}
+
+<form id="frmReport" method="post" action="#">
+    <div class="card" id="checkeligiblecard">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label >Select Operator:<span class="text-danger">*</span></label>
+                    <select id="selectEOperator" name="selectEOperator" class="form-control" data-style="btn-default"></select>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label >Account:<span class="text-danger">*</span></label>
+                    <input name="Account" id="Account" type="number" class="form-control">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="CheckEligibility();">Check Eligibility</button>
+                </div>
+            </div>
+            <div class="row">
+                <span id="InfoDetail" name="InfoDetail"></span>
+            </div>
+        </div>
+    </div>
+    <div class="card d-none" id="eligiblecard">
+        <div class="card-body">
+            <h4 class="card-title text-center text-success">Congratulations!! You are eligible to enroll in Uttar Pradesh One Time Settlement Scheme.</h4>
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label>Account:</label>
+                    <input id="AccountRO" name="AccountRO" class="form-control" readonly/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 form-group">
+                    <label>Name:</label>
+                    <label id="Name" name="Name" class="form-label" ></label>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label>Address:</label>
+                    <label id="Address" name="Address" class="form-label"></label>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label>Mobile:</label>
+                    <label id="Mobile" name="Mobile" class="form-label"></label>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label>Category:</label>
+                    <label id="Category" name="Category" class="form-label"></label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 form-group">
+                    <label>Principal amount:</label>
+                    <label id="principalamount" name="principalamount" class="form-label"></label>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label>LPSC amount:</label>
+                    <label id="lpscamount" name="lpscamount" class="form-label"></label>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label>Sanction Load:</label>
+                    <label id="sanctionload" name="sanctionload" class="form-label"></label>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label>Supply Type:</label>
+                    <label id="supplytype" name="supplytype" class="form-label"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card d-none" id="optioncard">
+        <div class="card-body">
+            <div class="row">
+                <span id="InfoDetail1" name="InfoDetail1"></span>
+            </div>
+            <div class="row">
+                <h4 class="card-title text-center text-success">Option 1</h4>
+            </div>
+            <div class="row">
+                <h4 class="card-title text-center text-success">UPSC Waive Off -  Full Payment</h4>
+            </div>
+            <div class="row">
+                <table class="table">
+                    <tr class="bg-primary">
+                        <th class="text-white">
+                            Remaining Amount
+                        </th>
+                        <th class="text-white">
+                            LPSC Waive Off (एलपीएससी छूट)
+                        </th>
+                        <th class="text-white">
+                            Registation Amount (पंजीकरण देय राशि)
+                        </th>
+                        <th class="text-white">
+                            Select Option
+                        </th>
+                    </tr>
+                    <tr>
+                        <td><span id="registrationAmount"></span></td>
+                        <td><span id="lpscWaiveOff"></span></td>
+                        <td><span id="registationPayableAmount"></span></td>
+                        <td><input name="option" id="full" type="radio" checked></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col d-flex
+                        align-items-center
+                        justify-content-center text-success">
+
+                    <h4>
+                        OR (अथवा)
+                    </h4>
+
+                </div>
+            </div>
+            <div class="row">
+                <h4 class="card-title text-center text-success">Option 2</h4>
+            </div>
+            <div class="row">
+                <h4 class="card-title text-center text-success">UPSC Waive Off -  Installment</h4>
+            </div>
+            <div class="row">
+                <table class="table">
+                    <tr class="bg-primary">
+                        <th class="text-white">
+                            Installments (किस्त)
+                        </th>
+                        <th class="text-white">
+                            Installment Amount (किस्त राशि)
+                        </th>
+                        <th class="text-white">
+                            Remaining Amount
+                        </th>
+                        <th class="text-white">
+                            LPSC Waive Off (एलपीएससी छूट)
+                        </th>
+                        <th class="text-white">
+                            Registation Amount (पंजीकरण देय राशि)
+                        </th>
+                        <th class="text-white">
+                            Select Option
+                        </th>
+                    </tr>
+                    <tr>
+                        <td><span id="installments"></span></td>
+                        <td><span id="installmentAmount"></span></td>
+                        <td><span id="registrationAmountI"></span></td>
+                        <td><span id="lpscWaiveOffI"></span></td>
+                        <td><span id="registationPayableAmountI"></span></td>                        
+                        <td><input name="option" id="installment" type="radio"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="row" id="amountdiv">
+               <div class="col-lg-2 form-group">
+                    <label>Pay Amount:</label>
+                    <input id="amount" name="amount" type="number" class="form-control"  />
+                </div>
+            </div>
+            <div class="row">
+                @* <div class="col d-flex
+                        align-items-center
+                        justify-content-center">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="CheckEligibility();">Pay Now</button>
+                </div> *@
+                <div class="container my-3">
+                    <div class="col-md-12 text-center">
+                        <button type="button" class="btn btn-primary" onclick="PayNow()">Pay Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card d-none" id="submitcard">
+        <div class="card-body">
+            <h4 class="card-title text-center">Consumer Information</h4>
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label>Account:</label>
+                    <input id="AccountRO1" name="AccountRO1" class="form-control" readonly />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 form-group">
+                    <label>Name:</label>
+                    <label id="Name1" name="Name1" class="form-label"></label>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label>Registration Amount:</label>
+                    <label id="ramount" name="ramount" class="form-label"></label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container my-3">
+                    <div class="col-md-12 text-center">
+                        <button type="button" class="btn btn-primary hide" id="sub" onclick="Submit()">Submit</button>
+                        <button type="button" class="btn btn-outline-primary" id="btnVerifyAmount" name="btnVerifyAmount" onclick="javascript: VerifyAmount();">Verify Amount</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 form-group">
+                    <label class="form-label"> PIN <span class="text-danger">* </span></label>
+                    <input name="UserPin" id="UserPin" type="password" autocomplete="off" class="form-control d-inline w-25">
+                </div>
+            </div>
+            <div class="row">
+                <span id="InfoDetail2" name="InfoDetail2"></span>
+            </div>
+        </div>
+    </div>
+    <div class="card d-none" id="result">
+        <div class="card-body">
+            <h4 class="card-title text-center">Consumer Information</h4>
+            <div class="row">
+                <div class="col-sm-12 form-group">
+                    <span id="EBillActionMessage" name="EBillActionMessage"></span>
+                    <button type="button" class="btn btn-primary" onclick="PrintReceipt()">Print Recipt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="modal fade" id="modals-update">
+    <div class="modal-dialog editDialog">
+        <div class="modal-content">
+            <!--form-->
+            <div class="modal-header">
+                <h5 class="modal-title">Verify Amount Window</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+            </div>
+            <div id="modals-update-message" class="modal-body">
+                <div class="row">
+                    <div class="col-sm-2 form-group">
+                        <label class="form-label">Amount <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-sm-4 form-group">
+                        <input type="number" class="text-primary form-control" id="txtVerifyAmount" name="txtVerifyAmount" autocomplete="off" placeholder="Enter Amount" />
+                    </div>
+                </div>
+                <div id="updateMessage">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    function CheckEligibility() {
+        if($('#Account').val() == null || $('#Account').val() == '') {
+            $('#InfoDetail').html("Account can not be blank.").removeClass('text-success').addClass('text-danger');
+            return;
+        }
+        if ($('#selectEOperator').val() == null || $('#selectEOperator').val() == '') {
+            $('#InfoDetail').html("Select valid operator.").removeClass('text-success').addClass('text-danger');
+            return;
+        }
+        $('#InfoDetail').html('').addClass('text-success').removeClass('text-danger');
+        $.getJSON("@Url.Action("CheckEligibilityForOTS", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val(),
+            function (data) {
+                if (data.Data && data.Data.Result == "True") {
+                    $.getJSON("@Url.Action("GetAmountDetailsForOTS", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val(),
+                        function (data1) {
+                            if(data1.Status == "error") {
+                                $('#InfoDetail').html(data1.Message).removeClass('text-success').addClass('text-danger');
+                            }
+                            else {
+                                console.log(data1);
+                                $('#eligiblecard').removeClass('d-none');
+                                $('#optioncard').removeClass('d-none');
+                                $('#checkeligiblecard').addClass('d-none');
+                                $('#AccountRO').val(data1.Data.AccountId);
+                                $('#registrationAmount').html(data1.Data.FullPaymentList[0].Downpayment);
+                                $('#lpscWaiveOff').html(data1.Data.FullPaymentList[0].LPSCWaivOff);
+                                $('#registationPayableAmount').html(data1.Data.FullPaymentList[0].RegistrationAmount);
+                                $('#registrationAmountI').html(data1.Data.InstallmentList1[0].Downpayment);
+                                $('#lpscWaiveOffI').html(data1.Data.InstallmentList1[0].LPSCWaivOff);
+                                $('#registationPayableAmountI').html(data1.Data.InstallmentList1[0].RegistrationAmount);
+                                $('#installments').html(data1.Data.InstallmentList1[0].NoOfInstallments);
+                                $('#installmentAmount').html(data1.Data.InstallmentList1[0].InstallmentAmount);
+                                $('#Name').html(data1.Data.ConsumerName);
+                                $('#Address').html('NA');
+                                $('#Mobile').html('NA');
+                                $('#Category').html(data1.Data.TarrifType);
+                                $('#principalamount').html(data1.Data.Payment31);
+                                $('#lpscamount').html(data1.Data.LPSC31);
+                                $('#sanctionload').html(data1.Data.SanctionLoad);
+                                $('#supplytype').html(data1.Data.SupplyType);
+                            }                            
+                        });
+                }
+                else {
+                    $('#InfoDetail').html(data.Message).removeClass('text-success').addClass('text-danger');
+                }
+            });
+    }
+    function PayNow() {
+         var isFull = $("#full").prop("checked") ? 1 : 0;
+         $.getJSON("@Url.Action("InitiateOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&isFull=' + isFull + '&amount=' + $('#amount').val() + '&downPayment=' + $('#registrationAmount').text() + '&registrationAmount=' + $('#registationPayableAmount').text(),
+            function (data) {
+                if(data.Status == "success") {
+                    console.log(data);
+                    $('#Name1').html(data.Data.BillDetails.ConsumerName);
+                    if (isFull) {
+                        $('#ramount').html($('#amount').val());
+                    }
+                    else {
+                        $('#ramount').html($('#registationPayableAmountI').text());
+                    }
+                    
+                    $('#AccountRO1').val(data.Data.BillDetails.KNumber);
+                    $('#eligiblecard').addClass('d-none');
+                    $('#optioncard').addClass('d-none');
+                    $('#submitcard').removeClass('d-none');
+                }
+                else {
+                    $('#InfoDetail1').html(data.Message).removeClass('text-success').addClass('text-danger');
+                }
+            });        
+    }
+
+    function VerifyAmount() {
+        $('#modals-update').modal('show');
+    }
+
+    function Submit() {
+        if($('#AccountRO1').val() == null || $('#AccountRO1').val() == '') {
+            $('#InfoDetail2').html("Failed to fetch details. Please check Discom Id again.").removeClass('text-success').addClass('text-danger');
+            return;
+        }
+        if ($('#UserPin').val().length != 6) {
+            $('#InfoDetail2').html('<span class="text-danger">Invalid pin.</span>');
+            return;
+        }
+        var isFull = $("#full").prop("checked") ? 1 : 0;
+        $.get("@Url.Action("SubmitOTSCase", "RetailClient")" + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + isFull  + "&pi=" + ascii2hex($('#UserPin').val()),
+            function (data) {
+                console.log(data);
+                var resText = data.split("$$")[0];
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail2').html(resText).removeClass('text-success').addClass('text-danger');
+                } else {
+                    //success
+                    var resText = data.split("$$")[0];
+                    var reciptId = data.split("$$")[1];
+                    $('#result').removeClass('d-none');
+                    $('#submitcard').addClass('d-none');
+                    $('#EBillActionMessage').html('<span class="text-success">' + resText + '</span>');
+                    $('#EBillActionMessage').attr("alt", reciptId);
+                }
+            });
+    }
+
+    function Full() {
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+        
+        if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else {
+            window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 1 + "&reciptId=" + $('#EBillActionMessage').attr('alt');
+        }
+        
+    }
+
+    function Installment() {
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+                
+        if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else {
+            window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + '&discomId=' + $('#selectEOperator').val() + '&amount=' + $('#amount').val() + '&isFull=' + 0 + "&reciptId=" + $('#EBillActionMessage').attr('alt');            
+        }
+    }
+
+    function LoadEOperatorDdl() {
+        $.getJSON("@Url.Action("ActiveOperatorList", "Common")" + "?o=" + a2hex('Electricity') + '&_t=' + $.now(),
+            function (data) {
+                $("#selectEOperator").empty();
+                $.each(data,
+                    function (index, value) {
+                        $('#selectEOperator').append('<option value="' + value.OperatorName + '" data-info1="' + value.AdditionalInfo1 + '" data-info2="' + value.AdditionalInfo2 + '">' + value.DetailedOperatorName + '</option>');
+                    });
+                $('#selectEOperator option[value="@Context.Session.GetString("DefaultUtilityOperator")"]').prop('selected', true);
+            });
+
+    }
+
+    function printrec(idToPrint) {
+        $.get('@Url.Action("PrintOTSReceiptThermal", "RetailClient")?t=' + idToPrint + '&dt=' + Date.now() + '&x=0',
+            function (data) {
+                RoboTemplatesWebViewApp.printThermalFromBase64(data);
+            });
+    }
+
+    function PrintReceipt() {
+        var isFull = $("#full").prop("checked") ? 1 : 0;
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+        
+        if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + $('#EBillActionMessage').attr('alt'), "_blank");
+        }else {
+            window.location.href = '@Url.Action("ReceiptOTSUPPCL", "RetailClient")' + "?accountId=" + $('#Account').val() + ' &discomId=' + $('#selectEOperator').val() + ' &amount=' + $('#amount').val() + ' &isFull=' + isFull + "&reciptId=" + $('#EBillActionMessage').attr('alt');                        
+        }
+    }
+
+    $('#txtVerifyAmount').keyup(function () {
+        if (Number($(this).val()) > 0) {
+            if (Number($(this).val()) === Number($('#ramount').text())) {
+                $('#modals-update').modal('hide');
+                $('#txtVerifyAmount').val('');
+                $('#sub').removeClass("hide");
+                $('#btnVerifyAmount').addClass("hide");
+            } else {
+                $('#sub').addClass("hide");
+                $('#btnVerifyAmount').removeClass("hide");
+            }
+        }
+    });
+
+    $(function () {
+        $('#Account').val('');
+        $('#amount').val('');
+        LoadEOperatorDdl();
+        $("input[name=option]").change(function(){
+        if($("#full").is(':checked')){
+            $("#amountdiv").show();
+        }else{
+            $("#amountdiv").hide();
+        }
+        
+        });
+        
+        $("#amount").keypress(function (e) {
+            console.log(e)
+            console.log(1)
+            if (e.which < 48 || 57 < e.which)
+                e.preventDefault();
+        });
+    });
+</script>

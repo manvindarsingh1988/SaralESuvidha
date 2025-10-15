@@ -1,0 +1,183 @@
+﻿@model int
+<div class="modal fade" id="AadharKYCModalPopUp" role="dialog">
+    <div class="modal-dialog err-pop" id="sdmodal1">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="DivClose1" type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <h3 class="text-center">User KYC Info</h3>
+                    <div class="form-row">
+                        <div class="form-group col-lg-12">
+                            <input type="number" class="form-control" id="aadharid" placeholder="Enter your 12 digit Aadhar card no">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div id="otpdiv" class="form-group col-lg-12 hide">
+                            <input type="number" class="form-control" id="otp" placeholder="Enter your 6 digit OTP">
+                        </div>
+                    </div>
+                    <div class="form-row hide" id="pandiv">
+                        <div class="form-group col-lg-4">
+                            <input type="text" class="form-control" id="pan" placeholder="Enter your Pan id">
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <input type="text" class="form-control" id="name" placeholder="Enter your name as per Pan details">
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <input type="text" class="form-control" id="dob" placeholder="Date of birth(DD/MM/YYYY)">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-lg-12">
+                            <input type="button" data-loading-text="Loading..." id="sendotp" value="Send OTP" onclick="SendOTP();" class="form-control btn btn-primary" />
+                            <input type="button" data-loading-text="Loading..." id="verifyotp" value="Verify OTP" onclick="VerifyOTP();" class="form-control btn btn-primary hide" />
+                            <input type="button" data-loading-text="Loading..." id="verifypan" value="Verify PAN" onclick="VerifyPAN();" class="form-control btn btn-primary hide" />
+                            <input type="button" data-loading-text="Loading..." id="loadingbtn" value="Loading..." class="form-control btn btn-primary hide" disabled/>
+                            <span id="KYCloaderInfo" name="KYCloaderInfo"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function SendOTP() {
+        $('#sendotp').button('loading');
+        $('#loadingbtn').removeClass('hide');
+        $('#sendotp').addClass('hide');
+        $("#KYCloaderInfo").html('');
+        $("#KYCloaderInfo").html("Sending OTP...").removeClass('text-danger').addClass('text-success');
+        var sid = $('#aadharid').val();
+        if(!sid || sid > 999999999999 || sid < 100000000000) {
+            $("#KYCloaderInfo").html('Enter a valid aadhar no.').removeClass('text-success').addClass('text-danger');
+            $('#loadingbtn').addClass('hide');
+            $('#sendotp').removeClass('hide');
+            return;
+        }
+        $.getJSON("@Url.Action("SendAadharOTP", "Common")?aadharId=" + sid, function (data) {
+            if (!data || !data.message) {
+                $("#KYCloaderInfo").html('Try with this Addhar card after 45 seconds').removeClass('text-success').addClass('text-danger');
+                $('#sendotp').button('reset');
+                $('#loadingbtn').addClass('hide');
+                $('#sendotp').removeClass('hide');
+                return;
+            }
+            if (data.message == "OTP sent successfully") { 
+                $("#KYCloaderInfo").html(data.message).removeClass('text-danger').addClass('text-success');
+                $("#otpdiv").removeClass('hide');
+                $("#sendotp").addClass('hide');
+                $("#verifyotp").removeClass('hide');
+                $("#aadharid").attr("disabled", true);
+                $('#aadharid').attr("alt", data.reference_id);
+                $('#loadingbtn').addClass('hide');
+            }
+            else {
+                $("#KYCloaderInfo").html(data.message).removeClass('text-success').addClass('text-danger');
+                $('#loadingbtn').addClass('hide');
+                $('#sendotp').removeClass('hide');
+            }
+            $('#sendotp').button('reset');
+        });
+    }
+
+    function VerifyOTP() {
+        $('#verifyotp').button('loading');
+        $('#loadingbtn').removeClass('hide');
+        $('#verifyotp').addClass('hide');
+        $("#KYCloaderInfo").html("Verifying OTP...").removeClass('text-danger').addClass('text-success');
+        var reference_id = $('#aadharid').attr('alt');
+        var aadharid = $('#aadharid').val();
+        var otp = $('#otp').val();
+        if (!otp || otp > 999999 || otp < 100000) {
+            $("#KYCloaderInfo").html('Enter a valid OTP.').removeClass('text-success').addClass('text-danger');
+            $('#loadingbtn').addClass('hide');
+            $('#verifyotp').removeClass('hide');
+            return;
+        }
+        $.getJSON("@Url.Action("VerifyAadharOTP", "Common")?referenceId=" + reference_id + "&otp=" + otp + "&aadharId=" + aadharid, function (data) {
+            if (!data || !data.message) {
+                $("#KYCloaderInfo").html('Try with this Addhar card after sometime').removeClass('text-success').addClass('text-danger');
+                $('#verifyotp').button('reset');
+                $('#loadingbtn').addClass('hide');
+                $('#verifyotp').removeClass('hide');
+                return;
+            }
+            if (data.message == "Aadhaar Card Exists") {
+                $("#KYCloaderInfo").html(data.message).removeClass('text-danger').addClass('text-success');
+                $("#otpdiv").addClass('hide');
+                $("#pandiv").removeClass('hide');
+                $("#sendotp").addClass('hide');
+                $("#verifyotp").addClass('hide');
+                $("#verifypan").removeClass('hide');
+                $("#pan").removeClass('hide');
+                $('#loadingbtn').addClass('hide');
+            }
+            else {
+                $("#KYCloaderInfo").html(data.message).removeClass('text-success').addClass('text-danger');
+                $('#loadingbtn').addClass('hide');
+                $('#verifyotp').removeClass('hide');
+            }
+            $('#verifyotp').button('reset');
+        });
+    }
+
+    function VerifyPAN() {
+        $('#verifypan').button('loading');
+        $('#loadingbtn').removeClass('hide');
+        $('#verifypan').addClass('hide');
+         $("#KYCloaderInfo").html("Verifying PAN...").removeClass('text-danger').addClass('text-success');
+        var reference_id = $('#aadharid').attr('alt');
+        var pan = $('#pan').val();
+        var name = $('#name').val();
+        var dob = $('#dob').val();
+        if (!pan || !name || !dob) {
+            $("#KYCloaderInfo").html('Enter a valid data.');
+            $('#loadingbtn').addClass('hide');
+            $('#verifypan').removeClass('hide');
+            return;
+        }
+        $.getJSON("@Url.Action("VerifyPAN", "Common")?pan=" + pan + "&name=" + name + "&dob=" + dob + "&referenceId=" + reference_id, function (data) {
+            if (data && (data.message || data.remarks)) {
+                $("#KYCloaderInfo").html(data.message != null ? data.message : data.remarks).removeClass('text-success').addClass('text-danger')
+                $('#verifypan').button('reset');
+                $('#loadingbtn').addClass('hide');
+                $('#verifypan').removeClass('hide');
+                return;
+            }
+            else if(data && data.status == "valid") {
+                $("#AadharKYCModalPopUp").modal('hide');
+                if(@Model == "5") {
+                    window.location.href = '@Url.Action("LoadUser", "Distributor")?id=' + reference_id;
+                }
+                else if(@Model == "6") {
+                    window.location.href = '@Url.Action("LoadUser", "MasterDistributor")?id=' + reference_id;
+                }
+                else {
+                    window.location.href = '@Url.Action("LoadUser", "SysAdmin")?id=' + reference_id;
+                }
+                $('#verifypan').button('reset');
+                $('#loadingbtn').addClass('hide');
+            }
+            else {
+                $("#KYCloaderInfo").html('Please enter valid PAN data.').removeClass('text-success').addClass('text-danger');
+                $('#verifypan').button('reset');
+                $('#loadingbtn').addClass('hide');
+                $('#verifypan').removeClass('hide');
+            }
+        });
+    }
+
+    $(function () {
+        $("#AadharKYCModalPopUp").modal({
+                        backdrop: 'static',
+                        keyboard: true, 
+                        show: true
+                });
+    });
+
+</script>

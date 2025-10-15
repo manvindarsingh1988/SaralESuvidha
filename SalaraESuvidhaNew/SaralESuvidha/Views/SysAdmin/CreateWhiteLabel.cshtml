@@ -1,0 +1,220 @@
+﻿@model SaralESuvidha.ViewModel.RetailUserViewModel;
+@{
+    Layout = "_LayoutSysAdmin";
+    ViewData["title"] = "Create White Label";
+}
+<form id="frmMain" name="frmMain" asp-action="SaveWhiteLabel" asp-controller="SysAdmin">
+        <h5>Create White Level</h5>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="FirstName" class="form-label"></label> <span asp-validation-for="FirstName" class="text-danger"></span>
+                    <input asp-for="FirstName" type="text" autocomplete="off" class="form-control">
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="MiddleName" class="form-label"></label>
+                    <input asp-for="MiddleName" type="text" autocomplete="off" class="form-control">
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="LastName" class="form-label"></label> <span asp-validation-for="LastName" class="text-danger"></span>
+                    <input asp-for="LastName" type="text" autocomplete="off" class="form-control">
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="Gender" class="form-label"></label>
+                    <select asp-for="Gender" class="form-control" data-style="btn-default">
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Transgender</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="DateOfBirth" class="form-label"></label> <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    <input asp-for="DateOfBirth" type="text" class="form-control flatpickr-date">
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="StateName" class="form-label"></label> <span asp-validation-for="StateName" class="text-danger"></span>
+                    <select asp-for="StateName" class="form-control" onblur="javascript: LoadCityDdl();"></select>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="City" class="form-label"></label> <span asp-validation-for="City" class="text-danger"></span>
+                    <select asp-for="City" class="form-control"></select>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="PinCode" class="form-label"></label> <span asp-validation-for="PinCode" class="text-danger"></span>
+                    <input asp-for="PinCode" type="number" autocomplete="off" class="form-control">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="form-group">
+                    <label asp-for="Address" class="form-label"></label> <span asp-validation-for="Address" class="text-danger"></span>
+                <input asp-for="Address" type="text" autocomplete="off" class="form-control">
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="EMail" class="form-label"></label> <span asp-validation-for="EMail" class="text-danger"></span>
+                    <input asp-for="EMail" type="text" autocomplete="off" class="form-control">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="Mobile" class="form-label"></label> <span asp-validation-for="Mobile" class="text-danger"></span>
+                    <input asp-for="Mobile" type="number" autocomplete="off" class="form-control">
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="MarginType" class="form-label"></label>
+                    <select asp-for="MarginType" class="form-control" data-style="btn-default">
+                        <option value="1">Fixed</option>
+                        <option value="0">Variable</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="Commission" class="form-label"></label> <span asp-validation-for="Commission" class="text-danger"></span>
+                    <input asp-for="Commission" type="number" autocomplete="off" class="form-control">
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label asp-for="Active" class="form-label"></label>
+                    <select asp-for="Active" class="form-control" data-style="btn-default">
+                        <option value="1">Active</option>
+                        <option value="0">InActive</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-primary hide" onclick="javascript: CreateWL();">Save</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="reset" class="btn btn-default" onclick="">Reset</button>
+        <span id="loaderInfo" name="loaderInfo"></span>
+    </form>
+
+<script type="text/javascript">
+    function ValidateSave() {
+        return true;
+        if ($('#FirstName').val() === '') {
+            $('#modals-info-message').html('First Name is required.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+        if ($('#LastName').val() === '') {
+            $('#modals-info-message').html('Last Name is required.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+        if ($('#City').val() === '' || $('#City').val() === null) {
+            $('#modals-info-message').html('City is required. Select state then city.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+        if ($('#Mobile').val() === '') {
+            $('#modals-info-message').html('Mobile Number is required.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+        if ($('#Mobile').val().length !== 10) {
+            $('#modals-info-message').html('Mobile Number is incorrect.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+
+
+        if ($('#Commission').val() === '') {
+            $('#modals-info-message').html('Margin Percent is required.');
+            $('#modals-info').modal('show');
+            return false;
+        }
+
+        return true;
+    }
+
+    function CreateWL() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("SaveWhiteLabel", "SysAdmin")",
+            data: $("form").serialize(),
+            contentType: 'application/json; charset=utf-8',
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                if (data.indexOf('Error:') > -1) {
+                    //Error
+                }
+                else {
+                    //success
+                    $('#modals-info-message').html(data);
+                    $('#modals-info').modal('show');
+                }
+            },
+            error: function () {
+                $('#modals-info-message').html('Error in creating White Label.');
+                $('#modals-info').modal('show');
+            }
+        });
+    }
+
+    function LoadStateDdl() {
+        $.getJSON("@Url.Action("StateList", "Home", new {id = 96})", function (data) {
+            $("#StateName").empty();
+            $('#StateName').append('<option value="">Select State</option>');
+            $.each(data, function (index, value) {
+                $('#StateName').append('<option value="' + value.Id + '">' + value.RegionName + '</option>');
+            });
+            LoadCityDdl();
+        });
+    }
+
+    function LoadCityDdl() {
+        var sid = $('#StateName option:selected').val();
+        $("#loaderInfo").html("LOADING");
+        $.getJSON("@Url.Action("CityList", "Home")" + "?id=" + sid, function (data) {
+            $("#City").empty();
+            $('#City').append('<option value="">Select City</option>');
+            $.each(data, function (index, value) {
+                $('#City').append('<option value="' + value.CityName + '">' + value.CityName + '</option>');
+            });
+        });
+        $("#loaderInfo").html('');
+    }
+
+
+
+    $(function() {
+        LoadStateDdl();
+    });
+
+</script>
+

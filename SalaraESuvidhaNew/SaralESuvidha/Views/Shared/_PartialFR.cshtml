@@ -1,0 +1,42 @@
+﻿@using Microsoft.AspNetCore.Http
+<form id="frmFundRequest" name="frmFundRequest" method="post" action="#" autocomplete="off">
+    <div class="card" style="height:450px; ; position: relative;">
+        <input type="hidden" name="OrderNo" id="OrderNo" value="@Context.Session.GetInt32("RetailUserOrderNo").ToString()" />
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-12 form-group">
+                    <div style="float:left;" id="BalMessage" name="BalMessage" class="text-primary"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-1 form-group">
+                    <input placeholder="Amount" name="txtAmount" id="txtAmount" type="text" oninput="javascript: LoadAmountHindi();" class="form-control form-control-sm number required" autocomplete="off">
+                </div>   
+            </div>
+            <div class="row">
+                <div class="col-sm-12 form-group">
+                    <span id="InfoDetailFR" name="InfoDetailFR"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 form-group" id="ActionButton" name="ActionButton">
+                    <button id="btnRequest" name="btnRequest" type="button" class="btn btn-primary btn-sm" onclick="RequestFund();">Request</button>
+                </div>                
+            </div>
+            <div class="row" style="position: absolute; bottom: 10px; width: 100%;">
+                <div class="col-sm-12 form-group">
+                    <button id="btnLogout" name="btnLogout" type="button" class="btn btn-danger btn-sm" style="margin-left: auto;" onclick="Logout();">Logout</button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="col-sm-2 form-group d-none">
+        <span id="AmountInWords" name="AmountInWords" class="form-control form-control-sm text-primary"></span>
+    </div>
+    <div class="col-sm-2 form-group d-none">
+        <input placeholder="Remarks" name="txtRemarks" id="txtRemarks" type="text" value="Fund request for bill" maxlength="80" class="form-control form-control-sm" />
+    </div>
+</form>
+

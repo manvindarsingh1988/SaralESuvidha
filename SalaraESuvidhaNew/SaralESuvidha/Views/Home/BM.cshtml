@@ -1,0 +1,128 @@
+﻿@using SaralESuvidha.ViewModel
+@model List<RetailUserUPPCLBalance>
+@{
+    ViewData["Title"] = "Retail User Balances";
+}
+
+@{
+    Layout = "_LayoutBlank";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <style>
+        .table-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+            .table-container table {
+                width: 48%;
+            }
+
+        .alternate-row {
+            background-color: #f2f2f2;
+        }
+
+        .balance-red {
+            color: #FF0000;
+        }
+
+        .balance-dark-red {
+            color: #8B0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="table-container">
+            <table id="table1" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>USL</th>
+                        <th>First Name</th>
+                        <th>Mobile</th>
+                        <th>VAN Id</th>
+                        <th>UPPCL Balance</th>
+                        <th>Balance Time (Minutes)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <table id="table2" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>USL</th>
+                        <th>First Name</th>
+                        <th>Mobile</th>
+                        <th>VAN Id</th>
+                        <th>UPPCL Balance</th>
+                        <th>Balance Time (Minutes)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="mt-3">
+            <small>Last updated: <span id="lastUpdated"></span>.</small>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            function populateTables(data) {
+                $('#lastUpdated').text(new Date().toLocaleTimeString());
+
+                var half = Math.ceil(data.length / 2);
+                var table1Data = data.slice(0, half);
+                var table2Data = data.slice(half);
+
+                function populateTable(tableId, tableData) {
+                    var tbody = $(`#${tableId} tbody`);
+                    tbody.empty();
+                    $.each(tableData, function (index, item) {
+                        var rowClass = index % 2 === 0 ? 'alternate-row' : '';
+                        var balanceClass = item.UPPCL_Balance > 25000 ? 'balance-dark-red' : item.UPPCL_Balance > 10000 ? 'balance-red' : '';
+                        var row = `
+                            <tr class="${rowClass}">
+                                <td>${item.Id || ''}</td>
+                                <td>${item.USL || ''}</td>
+                                <td>${item.FirstName || ''}</td>
+                                <td>${item.Mobile || ''}</td>
+                                <td>${item.VANId || ''}</td>
+                                <td class="${balanceClass}">${parseFloat(item.UPPCL_Balance || 0).toFixed(2)}</td>
+                                <td>${item.BalanceTime || ''}</td>
+                            </tr>`;
+                        tbody.append(row);
+                    });
+                }
+
+                populateTable('table1', table1Data);
+                populateTable('table2', table2Data);
+            }
+
+            var initialData = @Html.Raw(Json.Serialize(Model));
+            populateTables(initialData);
+
+            function refreshData() {
+                window.location.reload();
+            }
+
+            if (window.refreshInterval) {
+                clearInterval(window.refreshInterval);
+            }
+
+            window.refreshInterval = setInterval(refreshData, 60000);
+
+        });
+    </script>
+</body>
+</html>

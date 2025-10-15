@@ -1,0 +1,85 @@
+﻿@{
+    Layout = "_LayoutBillPay";
+}
+
+<section class="container">
+    <div class="bg-white shadow-md rounded p-4">
+        <div class="row g-4">
+
+            <!-- Mobile Recharge
+            ============================================= -->
+            <div class="col-lg-4 col-xxl-5">
+                <h2 class="text-4 mb-3">Mobile Recharge or Bill Payment</h2>
+                <form id="recharge-bill" method="post">
+                    <div class="mb-3">
+                        <div class="form-check form-check-inline">
+                            <input id="prepaid" name="rechargeBillpayment" class="form-check-input" checked="" required type="radio">
+                            <label class="form-check-label" for="prepaid">Prepaid</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input id="postpaid" name="rechargeBillpayment" class="form-check-input" required type="radio">
+                            <label class="form-check-label" for="postpaid">Postpaid</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" data-bv-field="number" id="mobileNumber" required placeholder="Enter Mobile Number">
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-select" id="operator" required="">
+                            <option value="">Select Your Operator</option>
+                            <option>Airtel</option>
+                            <option>VI</option>
+                            <option>Reliance Jio</option>
+                            <option>BSNL</option>
+                            <option>MTNL</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">&#8377;</span> <a href="#" data-bs-target="#view-plans" data-bs-toggle="modal" class="view-plans-link d-none">View Plans</a>
+                        <input class="form-control" id="amount" placeholder="Enter Amount" required type="text">
+                    </div>
+                    <div class="d-grid"><a class="btn btn-primary" href="recharge-order-summary.html">Continue to Recharge</a></div>
+                </form>
+            </div>
+            <!-- Mobile Recharge end -->
+            <!-- Slideshow
+            ============================================= -->
+            <div class="col-lg-8 col-xxl-7">
+                <div class="owl-carousel owl-theme single-slider" data-animateout="fadeOut" data-animatein="fadeIn" data-autoplay="true" data-loop="true" data-autoheight="true" data-nav="true" data-items="1">
+                    <div class="item"><a href="#"><img class="img-fluid" src="~/images/slider/banner-1.jpg" alt="banner 1" /></a></div>
+                    <div class="item"><a href="#"><img class="img-fluid" src="~/images/slider/banner-2.jpg" alt="banner 2" /></a></div>
+                </div>
+            </div>
+            <!-- Slideshow end -->
+
+        </div>
+    </div>
+</section>
+
+<!-- Tabs
+============================================= -->
+<div class="section pt-4 pb-3">
+    <div class="container">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item"> <a class="nav-link active" id="mobile-recharge-tab" data-bs-toggle="tab" href="#mobile-recharge" role="tab" aria-controls="mobile-recharge" aria-selected="true">Mobile Recharge</a> </li>
+            <li class="nav-item"> <a class="nav-link" id="billpayment-tab" data-bs-toggle="tab" href="#billpayment" role="tab" aria-controls="billpayment" aria-selected="false">Bill Payment</a> </li>
+            <li class="nav-item"> <a class="nav-link" id="why-quickai-tab" data-bs-toggle="tab" href="#why-quickai" role="tab" aria-controls="why-quickai" aria-selected="false">Why SaralESuvidha</a> </li>
+        </ul>
+        <div class="tab-content my-3" id="myTabContent">
+            <div class="tab-pane fade show active" id="mobile-recharge" role="tabpanel" aria-labelledby="mobile-recharge-tab">
+                <p>SaralESuvidha supports all major prepaid mobile operators in India, including Airtel Prepaid Recharge, VI prepaid recharge, Jio prepaid recharge, BSNL prepaid recharge, and others. You can browse and select from a wide range of recharge plans, filter them by type or amount, and compare the benefits of different plans. SaralESuvidha also frequently offers exclusive discounts and cashback offers on mobile recharges, making it an even more attractive option for users.</p>
+            </div>
+            <div class="tab-pane fade" id="billpayment" role="tabpanel" aria-labelledby="billpayment-tab">
+                <p>Prepaid mobile recharge allows you to pay in advance for the usage of voice, SMS, and data services. Postpaid recharge, on the other hand, allows you to pay for the services you have already used at the end of the billing cycle. Prepaid recharge offers greater control over your spending and usage, while postpaid recharge offers convenience and flexibility.</p>
+            </div>
+            <div class="tab-pane fade" id="why-quickai" role="tabpanel" aria-labelledby="why-quickai-tab">
+                <p>SaralESuvidha frequently offers exclusive discounts and cashback offers on mobile recharges, which is a major reason why users prefer to use it for their mobile recharges. These offers are available on a regular basis and can be availed by both new and existing users. By availing of these offers, users can save a significant amount of money on their mobile recharges. These exclusive offers and cashback deals are available for all major mobile operators in India, including Airtel, Vodafone Idea, Reliance Jio, BSNL, and more.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Tabs end --> 
+
+<script type="text/javascript">
+$('#mobilerecharge').addClass('active');
+</script>

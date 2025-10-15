@@ -1,0 +1,151 @@
+<form id="frmFundTransfer" name="frmFundTransfer" method="post" action="#">
+    <div class="card mb-4">
+        <h6 class="card-header">Fund Transfer To Account <span id="InfoDetail" name="InfoDetail"></span></h6>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">User USL</label>
+                    <input id="OrderNo" name="OrderNo" class="form-control" onblur="javascript: LoadDetail();" data-style="btn-default" required>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">Amount<span class="text-danger">*</span></label>
+                    <input name="txtAmount" id="txtAmount" type="text" onblur="javascript: LoadAmount();" class="form-control number required">
+                </div>
+                <div class="col-lg-5 form-group">
+                    <label class="form-label">Amount In Words</label>
+                    <span id="AmountInWords" name="AmountInWords" class="form-control text-primary"></span>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label class="form-label">Remarks</label>
+                    <input name="txtRemarks" id="txtRemarks" type="text" maxlength="80" class="form-control" />
+                </div>
+            </div>
+            <div id="ActionButton" name="ActionButton">
+                <button type="button" class="btn btn-primary" onclick="TransferFund();">Transfer</button>
+                <button type="button" class="btn btn-primary" onclick="DeductFund();">Deduct</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#frmFundTransfer').validate({
+            ignore: '.ignore, .select2-input',
+            focusInvalid: false,
+            rules: {
+                'txtAmount': {
+                    required: true
+                }
+            },
+            messages: {
+                'txtAmount': {
+                    required: 'Amount is required.'
+                }
+            },
+            errorPlacement: function errorPlacement(error, element) {
+                var $parent = $(element).parents('.form-group');
+
+                // Do not duplicate errors
+                if ($parent.find('.jquery-validation-error').length) {
+                    return;
+                }
+
+                $parent.append(
+                    error.addClass('jquery-validation-error small form-text invalid-feedback')
+                );
+            },
+            highlight: function(element) {
+                var $el = $(element);
+                var $parent = $el.parents('.form-group');
+                $el.addClass('is-invalid');
+                if ($el.hasClass('select2-hidden-accessible') || $el.attr('data-role') === 'tagsinput') {
+                    $el.parent().addClass('is-invalid');
+                }
+            },
+            unhighlight: function(element) {
+                $(element).parents('.form-group').find('.is-invalid').removeClass('is-invalid');
+            }
+        });
+
+    });
+
+    function TransferFund() {
+        if (!$('#frmFundTransfer').valid()) {
+            $('#InfoMessage').html('Can not transfer fund to ' + $('#OrderNo').val() + '.').removeClass('pam-info').addClass('pam-error');
+            return;
+        } else {
+            if ($('#OrderNo').val().length > 0) {
+                $.get("@Url.Action("TransferValidate", "MasterDistributor")?did=" + a2hex($('#OrderNo').val()) + "&amt=" + a2hex($('#txtAmount').val()) + "&rem=" + a2hex($('#txtRemarks').val()) + "&ac=" + a2hex('cr'), function (data) {
+                    if (data.indexOf('Errors:') > -1) {
+                        $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                    } else {
+                        //success
+                        $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    }
+                    GetBalance();
+                });
+            }
+            else {
+                $('#InfoDetail').html('');
+            }
+        }
+    }
+
+    function DeductFund() {
+        if (!$('#frmFundTransfer').valid()) {
+            $('#InfoMessage').html('Can not transfer fund to ' + $('#OrderNo').val() + '.').removeClass('pam-info').addClass('pam-error');
+            return;
+        } else {
+            if ($('#OrderNo').val().length > 0) {
+                $.get("@Url.Action("TransferValidate", "MasterDistributor")?did=" + a2hex($('#OrderNo').val()) + "&amt=" + a2hex($('#txtAmount').val()) + "&rem=" + a2hex($('#txtRemarks').val()) + "&ac=" + a2hex('dr'), function (data) {
+                    if (data.indexOf('Errors:') > -1) {
+                        $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                    } else {
+                        //success
+                        $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    }
+                    GetBalance();
+                });
+            }
+            else {
+                $('#InfoDetail').html('');
+            }
+        }
+    }
+    
+    function ShowAction(){
+        $('#ActionButton').removeClass('d-none');
+    }
+    
+    function HideAction(){
+        $('#ActionButton').addClass('d-none');
+        $('#OrderNo').focus();
+    }
+    
+    function LoadDetail() {
+        if ($('#OrderNo').val().length > 0) {
+            $.get("@Url.Action("RetailUserDetail", "RetailUserCommon")?usd=" + a2hex($('#OrderNo').val()), function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                    HideAction();
+                } else {
+                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    ShowAction();
+                }
+            });
+        }
+        else {
+            $('#InfoDetail').html('');
+        }
+
+    }
+
+    function LoadAmount() {
+        $.get("@Url.Action("AmountToInr", "Common")?amount=" + $('#txtAmount').val(), function (data) {
+            $("#AmountInWords").html('<span class="">&#x20B9; ' + data + '</span>');
+        });
+    }
+
+</script>

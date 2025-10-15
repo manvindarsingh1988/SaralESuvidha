@@ -1,0 +1,581 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    Layout = "_LayoutRetailClient";
+    ViewData["title"] = "Retailer Dashboard";
+}
+
+
+<div class="row">
+<div class="col-lg-6" id="divPart1" name="divPart1">
+    <div id="PrepaidRecharge" class="hide part1">
+        <div class="card mb-4">
+            <h6 class="card-header">
+                <i class="lnr lnr-phone-handset display-5 d-inline text-primary"></i> Prepaid Mobile Recharge
+            </h6>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <label class="form-label">Cellular Provider</label> <span id="error"></span>
+                        <select id="selectPreOperator" name="selectPreOperator" class="form-control" onblur="javascript: ClearInput();" data-style="btn-default"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <span id="PreActionMessage" name="PreActionMessage"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 form-group">
+                        <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                        <input name="PreAccountNumber" id="PreAccountNumber" type="text" class="form-control required">
+                    </div>
+                    <div class="col-lg-4 form-group">
+                        <label class="form-label">Recharge Amount <span class="text-danger">*</span></label>
+                        <input name="PreAmount" id="PreAmount" type="text" class="form-control required">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-success" id="btnPayPrepaid" name="btnPayPrepaid" onclick="">Recharge Now</button>
+                <span id="PrePaidLoader" name="PrePaidLoader"></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="DthRecharge" class="hide part1">
+        <div class="card mb-4">
+            <h6 class="card-header">
+                <i class="lnr lnr-phone-handset display-5 d-inline text-primary"></i> DTH Recharge
+            </h6>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <label class="form-label">DTH Provider</label> <span id="error"></span>
+                        <select id="selectDthOperator" name="selectDthOperator" class="form-control" onblur="ClearInput();" data-style="btn-default"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <span id="DthActionMessage" name="DthActionMessage"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 form-group">
+                        <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                        <input name="DthAccountNumber" id="DthAccountNumber" type="text" class="form-control required">
+                    </div>
+                    <div class="col-lg-4 form-group">
+                        <label class="form-label">Recharge Amount <span class="text-danger">*</span></label>
+                        <input name="DthAmount" id="DthAmount" type="text" class="form-control required">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-success" id="btnPayDth" name="btnPayDth" onclick="PayDth();">Recharge Now</button>
+                <span id="DthLoader" name="DthLoader"></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="ElectricityBillPayment" class="hide part1">
+        <div class="card mb-4">
+            <h6 class="card-header">
+                <i class="lnr lnr-sun display-5 d-inline text-primary"></i> Electricity Bill Payment
+            </h6>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <label class="form-label">Electricity Provider</label> <span id="error"></span>
+                        <select id="selectEOperator" name="selectEOperator" class="form-control" onblur="javascript: ClearInput();" data-style="btn-default"></select>
+                    </div>
+                </div>
+                <div id="extraInfo" class="d-none">
+                    <div class="row d-none">
+                        <div class="col-sm-12 form-group">
+                            <label class="form-label">Meter Type</label> <span id="error"></span>
+                            <select id="selectMeterType" name="selectMeterType" class="form-control" onblur="" data-style="btn-default">
+                                <option value="Select">Select</option>
+                                <option value="Normal">Normal</option>
+                                <option value="Smart">Smart</option>
+                                <option value="Prepaid">Prepaid</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row d-none hide">
+                        <div class="col-sm-12 form-group">
+                            <label class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="customCheckb3">
+                                <span class="custom-control-label">Part Payment</span> <span id="partPaymentInfo" class="text-danger d-none">No commission on part payment.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <label class="form-label">Payment Type</label> <span id="error"></span>
+                        <select id="selectPaymentType" name="selectPaymentType" class="form-control" onblur="" data-style="btn-default">
+                            <option value="Full Payment">Full Payment</option>
+                            <option value="Part Payment">Part Payment</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <span id="EBillActionMessage" name="EBillActionMessage"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 form-group">
+                        <label class="form-label">Account Number <span class="text-danger">*</span></label>
+                        <input name="EbillAccountNumber" id="EbillAccountNumber" type="text" class="form-control required">
+                    </div>
+                    <div class="col-sm-4 form-group">
+                        <label class="form-label">Payer Mobile</label>
+                        <input name="EbillAdditionalDetail" id="EbillAdditionalDetail" type="text" class="form-control">
+                    </div>
+                    <div class="col-lg-4 form-group">
+                        <label class="form-label">Pay Amount <span class="text-danger">*</span></label>
+                        <input name="EbillAmount" id="EbillAmount" type="number" class="form-control required" readonly="readonly" min="1">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" id="btnEbillCheck" name="btnEbillCheck" onclick="javascript: LoadBillInfo();">Check Bill</button>
+                <button type="button" class="btn btn-outline-primary" id="btnVerifyAmount" name="btnVerifyAmount" onclick="javascript: VerifyAmount();">Verify Amount</button>
+                <span class="paytran hide">
+                <label class="form-label"> PIN <span class="text-danger">* </span></label> <input name="UserPin" id="UserPin" type="password" autocomplete="off" class="form-control d-inline w-25">
+
+                <button type="button" class="btn btn-success" id="btnPayEBill" name="btnPayEBill" onclick="javascript: PayEBill();">Pay Bill</button>
+                </span>
+                <span id="EBillLoader" name="EBillLoader"></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="PostpaidBillPayment" class="hide part1">
+        We are working on Postpaid BillPayment
+    </div>
+
+</div>
+
+<div class="col-lg-6" id="divPart2" name="divPart2">
+    <div id="PrepaidRecharge2" class="hide part2">
+        More to come soon...
+    </div>
+
+    <div id="DthRecharge2" class="hide part2">
+        More to come soon...
+    </div>
+
+    <div id="ElectricityBillPayment2" class="hide part2">
+        <div class="card mb-4">
+            <h6 class="card-header">
+                Bill Detail <span class="text-primary d-inline" id="EBillLoading" name="EBillLoading"></span>
+            </h6>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <input class="text-primary form-control" id="EbillConsumerName" name="EbillConsumerName" autocomplete="off" placeholder="Consumer Name">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <span class="text-primary form-control small_font" id="EbillConsumerAddress" name="EbillConsumerAddress"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 form-group">
+                        <label class="form-label d-block">BillDate: </label>
+                        <span class="text-primary form-control" id="EbillBillDate" name="EbillBillDate"></span>
+                    </div>
+                    <div class="col-sm-3 form-group">
+                        <label class="form-label d-block">DueDate</label>
+                        <span class="text-danger form-control" id="EbillDueDate" name="EbillDueDate"></span>
+                    </div>
+                    <div class="col-sm-2 form-group">
+                        <label class="form-label d-block">Bill Amount</label>
+                        <span class="text-primary form-control" id="EbillBillAmountTotal" name="EbillBillAmountTotal"></span>
+                    </div>
+                    <div class="col-sm-4 form-group">
+                        <label class="form-label d-block">Outstanding Amount</label>
+                        <span class="text-success form-control" id="EbillBillAmount" name="EbillBillAmount"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <span class="text-primary form-control" id="EbillExtra1" name="EbillExtra1"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <span class="text-primary form-control" id="EbillExtra2" name="EbillExtra2"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4 hide">
+            <h6 class="card-header">
+                Quick Operator Selection
+            </h6>
+            <div class="card-body">
+                <button type="button" class="btn btn-primary" onclick="">UPPCL - Rural</button>
+                <button type="button" class="btn btn-primary" onclick="">UPPCL - Urban</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="PostpaidBillPayment2" class="hide part2">
+        We are working on Postpaid BillPayment
+    </div>
+
+</div>
+</div>
+
+<!-- Modal template -->
+<div class="modal fade" id="modals-update">
+    <div class="modal-dialog editDialog">
+        <div class="modal-content">
+            <!--form-->
+            <div class="modal-header">
+                <h5 class="modal-title">Verify Amount Window</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+            </div>
+            <div id="modals-update-message" class="modal-body">
+                <div class="row">
+                    <div class="col-sm-2 form-group">
+                        <label class="form-label">Amount <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-sm-4 form-group">
+                        <input type="number" class="text-primary form-control" id="txtVerifyAmount" name="txtVerifyAmount" autocomplete="off" placeholder="Enter Amount" />
+                    </div>
+                </div>
+                <div id="updateMessage">
+                
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal template End -->
+
+<input type="hidden" id="printId" name="printId" />
+
+<script type="text/javascript">
+    var partPayment = '';
+    var meterType = '';
+    var division = '';
+    var subDivision = '';
+    var projectArea = '';
+    var tdConsumer = '';
+    var discom = '';
+    var maxAmount = 0;
+    var minAmount = 0;
+    
+    function LoadElectricityBill() {
+        $('.part1, .part2').removeClass("show").addClass("hide");
+        $('#ElectricityBillPayment').removeClass("hide").addClass("show");
+        $('#ElectricityBillPayment2').removeClass("hide").addClass("show");
+    }
+
+    function LoadEOperatorDdl() {
+        $.getJSON("@Url.Action("ActiveOperatorList", "Common")" + "?o=" + a2hex('Electricity') + '&_t=' +$.now(),
+            function(data) {
+                $("#selectEOperator").empty();
+                $.each(data,
+                    function(index, value) {
+                        $('#selectEOperator').append('<option value="' + value.OperatorName + '" data-info1="' + value.AdditionalInfo1 + '" data-info2="' + value.AdditionalInfo2 + '">' + value.DetailedOperatorName + '</option>');
+                    });
+                $('#selectEOperator option[value="@Context.Session.GetString("DefaultUtilityOperator")"]').prop('selected', true);
+            });
+            
+    }
+   
+
+    function LoadBillInfo() {
+        $('#EbillAmount').val('');
+        $('#selectPaymentType').val('Full Payment').change();
+        $('.paytran').removeClass("show").addClass("hide");
+
+        if (ValidInputEBillCheck()) {
+            $('#EBillActionMessage').html('');
+            $('#EBillLoading').html('Getting bill details ' + loaderImgInner);
+            $('#btnEbillCheck').addClass('hide').removeClass('show');
+            $('#EBillLoader').html(loaderImgGreenInner + ' <span class="text-primary">Getting Bill details of ' + $('#EbillAccountNumber').val() + ' - ' + $('#selectEOperator').val() + '</span>');
+            $.getJSON("@Url.Action("EBillInfo", "RetailClient")?operatorName=" + $('#selectEOperator').val() + "&accountNumber=" + $('#EbillAccountNumber').val() + '&_t=' + $.now(),
+                function (data) {
+                   
+                    if(data.Reason.length>0){
+                       ShowFetchBill();
+                       $('#EBillActionMessage').html('<span class="text-danger">' + data.Reason + '. <br /></span>');
+                       alert(data.Reason);
+                       ClearInput();
+                    }else{
+                            $("#EbillConsumerName").val(data.BillFetchResponse.Body.PaymentDetailsResponse.ConsumerName);
+                            $("#EbillDueDate").html(data.BillFetchResponse.Body.PaymentDetailsResponse.BillDueDate);
+                            $("#EbillBillAmount").html(data.PayAmount);
+                            $("#EbillBillAmountTotal").html(data.BillFetchResponse.Body.PaymentDetailsResponse.BillAmount);
+                            $("#EbillConsumerAddress").html(data.AddressLine);
+                            $("#EbillExtra1").html(data.DiscomDetails);
+                            $("#EbillExtra2").html(data.AmountDetails);
+                            $("#EbillBillDate").html(data.BillFetchResponse.Body.PaymentDetailsResponse.BillDate);
+                            if (data.BillFetchResponse.Body.PaymentDetailsResponse.AccountInfo != null) {
+                                $("#EbillAmount").val(data.PayAmount);
+                            }
+                    }
+                                                            
+                    ShowFetchBill();
+                    
+                    minAmount = Number(data.MinimumPayAmount);
+                    maxAmount = Number(data.MaximumPayAmount);
+                });
+            
+        }
+    }
+
+    function ShowFetchBill() {
+        $('#EBillLoading').html('');
+        $('#EBillLoader').html('');
+        $('#btnEbillCheck').addClass('show').removeClass('hide');
+    }
+
+    function ValidInputEBillCheck() {
+        if ($('#EbillAccountNumber').val() === '') {
+            $('#EBillActionMessage').html('<span class="text-danger">Account number required.</span>');
+            return false;
+        }
+
+        return true;
+    }
+
+    function ValidInputEBill() {
+        
+        if ($('#EbillAccountNumber').val() === '') {
+            $('#EBillActionMessage').html('<span class="text-danger">Account number required.</span>');
+            return false;
+        }
+
+        if ($('#EbillAmount').val() === '') {
+            $('#EBillActionMessage').html('<span class="text-danger">Amount required.</span>');
+            return false;
+        }
+        
+        if (Number($('#EbillAmount').val()) % 1 != 0) {
+            $('#EBillActionMessage').html('<span class="text-danger">Invalid amount.</span>');
+            return false;
+        }
+                        
+        if ($('#selectEOperator option:selected').val() === 'UPPCLR' || $('#selectEOperator option:selected').val() === 'UPPCLU') {
+            if ($('#selectMeterType option:selected').val() === 'Select') {
+                $('#EBillActionMessage').html('<span class="text-danger">Meter type required.</span>');
+                $('#selectMeterType').focus();
+                return false;
+            }else{
+                meterType = $('#selectMeterType option:selected').val();
+            }
+        }else{
+            partPayment = '';
+            meterType = '';
+        }
+        
+        if ($('#EbillAmount').val() != '') {
+            var billAmount = $('#EbillBillAmount').html();
+            var amountPaying = $('#EbillAmount').val();
+            if(Number(amountPaying) != Number(billAmount)){
+                if(Number(amountPaying)<minAmount){
+                    $('#EBillActionMessage').html('<span class="text-danger">Part payment minimum amount ' + minAmount + ' required.</span>');
+                    return false;
+                }
+            }
+            
+            if(Number(amountPaying)>200000){
+                $('#EBillActionMessage').html('<span class="text-danger">Maximum bill amount upto Rs. 200000 can be paid.</span>');
+                return false;
+            }
+            
+            if(billAmount === ''){
+                $('#EBillActionMessage').html('<span class="text-danger">Please check the bill then pay.</span>');
+                return false;
+            }
+            
+            if(Number(amountPaying) > Number(billAmount)){
+                $('#EBillActionMessage').html('<span class="text-danger">Can not pay greater than bill amount. Bill amount is ' + billAmount + '.</span>');
+                return false;
+            }
+
+            if ($('#UserPin').val() === '') {
+                $('#EBillActionMessage').html('<span class="text-danger">PIN required.</span>');
+                return false;
+            }
+
+            if ($('#UserPin').val().length != 6) {
+                $('#EBillActionMessage').html('<span class="text-danger">Invalid pin.</span>');
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function PayEBill() {
+        $('#EBillActionMessage').html('');
+        $('#btnEbillCheck').addClass("d-none");
+        
+        if (ValidInputEBill()) {
+            $('#btnPayEBill').addClass('hide').removeClass('show');
+            $('#EBillLoader').html(loaderImgInner);
+            $.get("@Url.Action("PayBillUPPCL_A", "RetailClient")?operatorName=" + $('#selectEOperator').val() + "&accountNumber=" + $('#EbillAccountNumber').val() + "&billAmount=" + $('#EbillAmount').val() + "&additionalInfo1=" + $('#EbillAdditionalDetail').val() + "&customerName=" + $('#EbillConsumerName').val().toUpperCase() + "&dueDate=" + $('#EbillDueDate').html() + "&dueAmount=" + $('#EbillBillAmount').html() + "&p1=" + $('#EbillAdditionalDetail').val() + "&p2=" + partPayment + "&pi=" + ascii2hex($('#UserPin').val()),
+                function(data) {
+                    if (data.indexOf('Errors:') > -1) {
+                        $('#EBillActionMessage').html('<span class="text-danger">' + data + '</span>');
+                    } else {
+                        //success
+                        $('#EBillActionMessage').html('<span class="text-success">' + data + '</span>');
+                        ClearInput();
+                        $('#EbillAccountNumber').focus();
+                    }
+                    $('#btnPayEBill').addClass('show').removeClass('hide');
+                    $('#EBillLoader').html('');
+                    GetBalance();
+                    $('#btnEbillCheck').removeClass("d-none");
+                });
+        }
+    }
+
+    function ClearInput() {
+        $('#updateMessage').html('');
+        $('#EBillLoading').html('');
+        $('#EBillLoader').html('');
+        $('#EbillAccountNumber').val('');
+        $('#PreAccountNumber').val('');
+        $('#DthAccountNumber').val('');
+        $('#EbillAmount').val('');
+        $('#PreAmount').val('');
+        $('#DthAmount').val('');
+        $('#EbillAdditionalDetail').val('');
+        $("#EbillConsumerName").val('');
+        $('#UserPin').val('');
+        $("#EbillDueDate").html('');
+        $("#EbillBillAmount").html('');
+        $("#EbillConsumerAddress").html('');
+        $("#EbillBillDate").html('');
+        $("#EbillExtra1").html('');
+        $("#EbillExtra2").html('');
+        $("#EbillBillAmountTotal").html('');
+        $('#txtVerifyAmount').val('');
+        $('.paytran').removeClass("show").addClass("hide");
+        //$('#EBillActionMessage').html('');
+        minAmount = 0;
+        maxAmount = 0;
+    }
+    
+    function printrec(idToPrint){
+         $.get('@Url.Action("PrintReceiptThermal", "RetailClient")?t=' + idToPrint + '&dt=' + Date.now() + '&x=0',
+            function(data) {        
+                RoboTemplatesWebViewApp.printThermalFromBase64(data);            
+        });
+    }
+        
+    function PrintReceipt(idToPrint){
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+        
+        if (navigator.userAgent.includes('etopapp')){
+            printrec(idToPrint);
+        }else if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptUPPCLT?t=' + idToPrint, "_blank");
+        }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptUPPCLTL?t=' + idToPrint, "_blank");
+        }else{
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptUPPCL?t=' + idToPrint, "_blank");
+        }      
+    }
+        
+    function VerifyAmount(){
+       $('#updateMessage').html('');
+       $('#txtVerifyAmount').val('');
+       $('#modals-update').modal('show');
+       $('#txtVerifyAmount').focus();
+       
+    }
+    
+     $('#EbillAmount').keyup(function() {
+         $('.paytran').removeClass("show").addClass("hide");
+     });
+    
+    $('#txtVerifyAmount').keyup(function() {
+        if(Number($(this).val()) > 0) {
+            AmountToWord($(this).val());
+            if (Number($(this).val()) === Number($('#EbillAmount').val())){
+               $('#modals-update').modal('hide');    
+               $('#updateMessage').html('');
+               $('#txtVerifyAmount').val('');
+               $('.paytran').removeClass("hide").addClass("show");
+            }else{
+                $('.paytran').removeClass("show").addClass("hide");   
+            }
+        }
+    });
+    
+    function AmountToWord(amount){
+       if (Number($('#txtVerifyAmount').val())>0){
+        $.get("@Url.Action("AmountToWord", "RetailUserCommon")?amount=" + amount,
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#updateMessage').html('<span class="text-danger">' + data + '</span>');
+                } else {
+                    data = data.replace(/Lakh/gi, '<span class="text-danger text-big">Lakh</span>');
+                    data = data.replace(/Thousand/gi, '<span class="text-instagram">Thousand</span>');
+                    data = data.replace(/Hundred/gi, '<span class="text-facebook">Hundred</span>');
+                    $('#updateMessage').html('<span class="text-success">' + data + '</span>');
+                }
+            });   
+       }
+    }
+
+    $(document).ready(function () {
+        LoadEOperatorDdl();
+        
+        $('#selectMeterType').val('Normal').change();
+        $('#selectPaymentType').val('Full Payment').change();
+        
+        $('#customCheckb3').change(function() {
+            if(this.checked) {
+                $('#partPaymentInfo').removeClass('d-none');
+                partPayment = 'PartPayment';
+            }else{
+                $('#partPaymentInfo').addClass('d-none');
+                partPayment = '';
+            }
+        });
+        
+        $('#selectPaymentType').change(function() {
+            if($(this).val() === 'Full Payment') {
+                //$("#EbillAmount").val($("#EbillBillAmount").html());
+                $('#EbillAmount').prop('readonly', 'readonly');
+            }else{
+                $('#EbillAmount').prop('readonly', '');
+                $('#EbillAmount').val('');
+            }
+            
+            $('.paytran').removeClass("show").addClass("hide"); 
+        });
+        
+        $('#selectEOperator').change(function() {
+            //console.log($(this).val());
+            ClearInput();
+            if($(this).val() === 'UPPCLR' || $(this).val() === 'UPPCLU' || $(this).val() === 'UPPCLU_PVVNL' || $(this).val() === 'UPPCLU_MVVNL' || $(this).val() === 'UPPCLU_DVVNL' || $(this).val() === 'UPPCLU_PUVNL') {
+                $('#extraInfo').removeClass('d-none');
+            }else{
+                $('#extraInfo').addClass('d-none');
+                $('#selectMeterType').val('Normal').change();
+                $('#customCheckb3').prop('checked', false);
+                $('#partPaymentInfo').addClass('d-none');
+                
+                partPayment = '';
+            }
+            $('#selectPaymentType').val('Full Payment').change();
+        });
+        
+        LoadElectricityBill();
+    });
+
+</script>

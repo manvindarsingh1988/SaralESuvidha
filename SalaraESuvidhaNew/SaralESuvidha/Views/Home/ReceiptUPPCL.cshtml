@@ -1,0 +1,178 @@
+﻿@using System.Globalization
+@model SaralESuvidha.ViewModel.PaymentReceiptUPPCL
+@{
+    Layout = "_LayoutBlank";
+}
+    <html>
+    <head>
+        <title>RECEIPT PRINT - @Model.TelecomOperatorName - @Model.RechargeMobileNumber</title>
+        <style type="text/css">
+            body {
+                font-family: sans-serif;
+            }
+
+            .head {
+                text-align: right;
+                padding: 10px 20px 10px 20px;
+                font-size: small;
+                width: 25%;
+            }
+            
+            h1{
+                font-size: larger;
+            }
+
+            .headvalue {
+                text-align: left;
+                padding: 10px 0 10px 0;
+                width: 25%;
+            }
+
+            .border_bottom {
+                border-bottom: 1px solid #CCCCCC;
+            }
+
+            .border_top {
+                border-top: 1px solid #CCCCCC;
+            }
+
+            .grey_color {
+                color: #888888;
+            }
+
+            .small_font {
+                font-size: 12px;
+                padding: 5px;
+            }
+        </style>
+    </head>
+    @{
+    var tranId = Model.LiveId;
+    int balanceAmount = Convert.ToInt32(Model.Amount);
+    try
+    {
+        balanceAmount = Convert.ToInt32(Model.Extra2) - Convert.ToInt32(Model.Amount);
+    }
+    catch (Exception)
+    {
+        
+    }
+    
+    }
+    <body>
+        <div style="text-align: center;">
+            <table cellpadding="0" cellspacing="0" border="0" style="width:1050px;">
+                <tr>
+                    <td style="text-align: center;" class="border_bottom">
+                        <img src="~/images/@(Model.ApiOperatorCode).png" style="" alt="@Model.TelecomOperatorName" />
+                    </td>
+                    <td colspan="2" style="text-align: left; vertical-align: middle;" class="border_bottom">
+                        <h1>@Model.TelecomOperatorName</h1>
+                    </td>
+                    <td style="text-align: center;" class="border_bottom">
+                        <img width="80" height="80" src="@(Model.QrCode)" style="" alt="Verify Receipt QR Code" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4"><hr /></td>
+                </tr>
+                <tr>
+                    <td class="head">Division:</td>
+                    <td class="headvalue">@Model.UPPCL_Division</td>
+                    <td class="head">Sub Division:</td>
+                    <td class="headvalue">@Model.UPPCL_SubDivision</td>
+                </tr>
+                <tr>
+                    <td class="head">Consumer Id:</td>
+                    <td>@Model.RechargeMobileNumber</td>
+                    <td class="head">Consumer Name:</td>
+                    <td><strong>@Model.EndCustomerName</strong></td>
+                </tr>
+                <tr>
+                    <td class="head">Address:</td>
+                    <td colspan="3">@Model.UPPCL_ConsumerAddress</td>
+                </tr>
+                <tr>
+                    <td class="head">Payer Mobile:</td>
+                    <td class="headvalue">@Model.EndCustomerMobileNumber</td>
+                    <td class="head">Payment Status:</td>
+                    <td class="headvalue">@Model.RechargeStatus</td>
+                </tr>
+                <tr>
+                    <td class="head">Bill Number:</td>
+                    <td>@Model.UPPCL_BillId</td>
+                    <td class="head">Connection Status:</td>
+                    <td>@Html.Raw(Model.UPPCL_TDConsumer == true ? "<span style='color:red'>Disconnected</span>" : "<span style='color:green'>Connected</span>")</td>
+                </tr>
+                <tr>
+                    <td class="head">Receipt Number:</td>
+                    <td class="headvalue">@Model.ReceiptNumber</td>
+                    <td class="head">Receipt Reference Number:</td>
+                    <td class="headvalue">@tranId</td>
+                </tr>
+                <tr>
+                    <td class="head">Payment Type:</td>
+                    <td class="headvalue">Wallet Payment</td>
+                    <td class="head">Payment Date:</td>
+                    <td class="headvalue">@Model.CreateDate.Value.ToString("dd-MM-yyyy HH:mm")</td>
+                </tr>
+               
+                <tr>
+                    <td class="head">Bill Date:</td>
+                    <td class="headvalue">@Model.UPPCL_BillDate</td>
+                    <td class="head">Due Date:</td>
+                    <td class="headvalue">@Model.Extra1</td>
+                </tr>
+                
+                <tr>
+                    <td class="head">Bill Amount:</td>
+                    <td class="headvalue">&#x20B9; @Model.UPPCL_BillAmount</td>
+                    <td class="head">Outstanding Amount:</td>
+                    <td class="headvalue">&#x20B9; @Model.Extra2</td>
+                </tr>
+
+                <tr>
+                    <td class="head">Paid Amount:</td>
+                    <td colspan="3" class="headvalue">&#x20B9; <strong>@Model.Amount</strong> (&#x20B9; @Model.AmountInWords)</td>
+                </tr>
+                
+                <tr>
+                    <td class="head">Balance Amount:</td>
+                    <td colspan="3" class="headvalue">&#x20B9; <strong>@balanceAmount.ToString()</strong></td>
+                </tr>
+                
+                <tr>
+                    <td class="head">Receipt Printed By:</td>
+                    <td class="headvalue">@Model.RetailerName</td>
+                    <td class="head">Print Date:</td>
+                    <td class="headvalue">@DateTime.Now.ToString("dd-MM-yyyy HH:mm")</td>
+                </tr>
+                <tr>
+                    <td class="head">Agency Name:</td>
+                    <td colspan="headvalue" class="headvalue">@Model.AgencyName</td>
+                    <td class="head">Agent Id:</td>
+                    <td colspan="headvalue" class="headvalue">@Model.RetailUserId</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: center; vert-align: middle; padding: 10px;" class="border_top border_bottom">
+                        <span class="small_font">@Model.ReceiptMessage</span>
+                        
+                        <br />
+                        <span class="grey_color small_font">This is computer generated receipt and does not require signature.<br />
+                        Your bill will be updated within 1 days from the date of payment received. <br /></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 10px;">
+                        <input type="button" name="btnPrint" value="PRINT" onclick="javascript: PrintReceipt();" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <script type="text/javascript">
+            function PrintReceipt() {
+                window.print();
+            }
+        </script>
+    </body>
+    </html>

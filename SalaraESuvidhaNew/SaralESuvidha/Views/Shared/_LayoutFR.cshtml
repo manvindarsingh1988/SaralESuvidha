@@ -1,0 +1,309 @@
+﻿@using Microsoft.AspNetCore.Http
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="images/favicon.png" rel="icon" />
+    <title>SaralESuvidha - Recharge & Bill Payment, Booking</title>
+    <meta name="description" content="SaralESuvidha - Recharge & Bill Payment, Booking">
+    <meta name="author" content="SaralESuvidha.com">
+
+    <!-- Web Fonts
+    ============================================= -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet
+    ============================================= -->
+    <link rel="stylesheet" type="text/css" href="~/vendor/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/vendor/font-awesome/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/vendor/owl.carousel/assets/owl.carousel.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/stylesheet.css" />
+    <link rel="stylesheet" href="~/assets/css/main.css?8878">
+
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+
+    <style type="text/css">
+        #BalMessage, #txtAmount {
+            margin: 0;
+            padding: 0 5px;
+        }
+
+        #txtAmount {
+            flex: 1;
+        }
+
+        .form-control{
+            background-color: #fff;
+            opacity: 1 !important;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div data-loader="dual-ring"></div>
+    </div>
+    <!-- Preloader End -->
+    <!-- Document Wrapper
+    ============================================= -->
+    <div id="main-wrapper" style="padding-right:5px;">
+
+        @RenderBody()
+
+    </div>
+    <!-- Document Wrapper end -->
+
+ 
+
+    <!-- Script -->
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/owl.carousel/owl.carousel.min.js"></script>
+    <script src="~/js/theme.js"></script>
+    <!-- Main script <script src="~/js/site.js"></script> -->
+    
+
+    <script type="text/javascript">
+        var loaderImg = '<img src="assets/img/Infinity-0.8s-21px.gif" alt="working" />';
+        var loaderImgGreen = '<img src="assets/img/InfinityGreen-0.8s-21px.gif" alt="working" />';
+        var loaderImgInner = '<img src="/assets/img/Infinity-0.8s-21px.gif" alt="working" />';
+
+        function loadPartialView() {
+            $.ajax({
+                url: '/FR/GetContent',
+                type: 'GET',
+                success: function (response) {
+                    $('#contentContainer').html(response);
+                },
+                error: function () {
+                    $('#contentContainer').html('<p>Error loading content.</p>');
+                }
+            });
+        }
+
+        function GetBalance() {
+            $("#BalMessage").html('');
+            $.get("@Url.Action("GetBalanceSWallet", "FR")", function (data) {
+                var balS = '<span class="text-facebook">SW=&#8377; ' + data + '</span>';
+                $.get("@Url.Action("GetBalanceUWallet", "FR")", function (data) {
+                    $("#BalMessage").html(balS + '<br /><span class="text-success">UW=&#8377; ' + data + '</span>');
+                    
+                });
+            });
+        }
+
+        function Logout() {
+            $.get("@Url.Action("Logout", "FR")", function (data) {
+                loadPartialView();
+            });
+        }
+
+        function a2hex(str) {
+            var arr = [];
+            for (var i = 0, l = str.length; i < l; i++) {
+                var hex = Number(str.charCodeAt(i)).toString(16);
+                arr.push(hex);
+            }
+            return arr.join('');
+        }
+
+        $(document).ready(function() {
+            
+            @{
+                var userRole = Context.Session.GetString("RetailerId");
+                if (!string.IsNullOrEmpty(userRole) && userRole == "RetailerId")
+                {
+                        @:$('#frmFundRequest').validate({
+                                @:ignore: '.ignore, .select2-input',
+                                        @:focusInvalid: false,
+                                        @:rules:
+                                    @:{
+                                            @:'txtAmount': {
+                                                @:required: true
+                                                @:}
+                                    @:},
+                                        @:messages:
+                                    @:{
+                                            @:'txtAmount': {
+                                                @:required: 'Amount is required.'
+                                                @:}
+                                    @:},
+                                        @:errorPlacement: function errorPlacement(error, element)
+                                    @:{
+                                            @:var $parent = $(element).parents('.form-group');
+
+                                            @:// Do not duplicate errors
+                                            @:if ($parent.find('.jquery-validation-error').length) {
+                                                    @:return;
+                                            @:}
+
+                                                @:$parent.append(
+                                                        @:error.addClass('jquery-validation-error small form-text invalid-feedback')
+                                                @:);
+                                    @:},
+                                        @:highlight: function(element) {
+                                            @:var $el = $(element);
+                                            @:var $parent = $el.parents('.form-group');
+                                                @:$el.addClass('is-invalid');
+                                            @:if ($el.hasClass('select2-hidden-accessible') || $el.attr('data-role') === 'tagsinput') {
+                                                        @:$el.parent().addClass('is-invalid');
+                                            @:}
+                                    @:},
+                                        @:unhighlight: function(element) {
+                                                @:$(element).parents('.form-group').find('.is-invalid').removeClass('is-invalid');
+                                    @:}
+                            @:});
+                }
+            }
+
+            loadPartialView();
+
+        });
+
+        function isInteger(value) {
+            return $.isNumeric(value) && Math.floor(value) == value && value > 0;
+        }
+
+        function ValidInputFR() {
+            if ($('#txtAmount').val() === '') {
+                $('#InfoDetailFR').html('<span class="text-warning">Amount required.</span>');
+                return false;
+            }
+
+            if (!isInteger($('#txtAmount').val())) {
+                $('#InfoDetailFR').html('<span class="text-warning">Valid amount required.</span>');
+                return false;
+            }
+
+            return true;
+        }
+
+        function RequestFund() {
+            if (!ValidInputFR()) {
+                //$('#InfoDetailFR').html('Can not accept fund request from ' + $('#OrderNo').val() + '.').removeClass('pam-info').addClass('pam-error');
+                return;
+            } else {
+                if ($('#OrderNo').val().length > 0) {
+                    $('#btnRequest').addClass('d-none');
+                    $('#InfoDetailFR').html('Validating fund request, please wait ' + loaderImgInner);
+                    $.get("@Url.Action("FundRequestValidate", "RetailClient")?did=" + a2hex($('#OrderNo').val()) + "&amt=" + a2hex($('#txtAmount').val()) + "&rem=" + a2hex($('#txtRemarks').val()) + "&ac=" + a2hex('dr'), function (data) {
+                        if (data.indexOf('Errors:') > -1) {
+                            $('#InfoDetailFR').html(data).removeClass('text-success').removeClass('text-black').addClass('text-danger');
+                            $('#txtAmount').val('');
+                            $('#btnRequest').removeClass('d-none');
+                        } else {
+                            //success
+                            var msg = data.split('.')
+                            var smsg = $.trim(msg[msg.length - 1]);
+                            $('#InfoDetailFR').html(smsg).removeClass('text-danger').removeClass('text-black').addClass('text-success');
+                            $('#txtAmount').val('');
+                            $('#btnRequest').removeClass('d-none');
+                        }
+                        GetBalance();
+                    });
+                }
+                else {
+                    $('#InfoDetailFR').html('');
+                }
+            }
+        }
+
+
+        function ShowAction(){
+            $('#ActionButton').removeClass('d-none');
+        }
+
+        function HideAction(){
+            $('#ActionButton').addClass('d-none');
+            $('#OrderNo').focus();
+        }
+
+        function LoadAmount() {
+            $.get("@Url.Action("AmountToInr", "Common")?amount=" + $('#txtAmount').val(), function (data) {
+                $("#InfoDetailFR").html('<span class="">&#x20B9; ' + data + '</span>');
+            });
+        }
+
+        function LoadAmountHindi() {
+            $.get("@Url.Action("AmountToInrHindi", "Common")?amount=" + $('#txtAmount').val(), function (data) {
+                $("#InfoDetailFR").html('<span class="">' + data + '</span>').removeClass('text-success').removeClass('text-danger').addClass('text-black');
+            });
+        }
+
+        function ValidInput() {
+            if ($('#mobileno').val() === '') {
+                $('#InfoDetail').html('<span class="text-warning">Mobile number required.</span>');
+                return false;
+            }
+
+            if ($('#password').val() === '') {
+                $('#InfoDetail').html('<span class="text-warning">Password required.</span>');
+                return false;
+            }
+
+            return true;
+        }
+
+        function IAgree() {
+            $.get("@Url.Action("UpdateAgreementAceptStatus", "Home")",
+                function (data) {
+                    if(data == "status updated.") {
+                            var resText = $('#terms-modal').attr('alt');
+                        if (resText.indexOf('Retailer') > -1) {
+                            $('#InfoDetail').html('<span class="">' + resText + '</span>');
+                            window.location.href = "/RetailClient/Index";
+                        }
+                        else if (resText.indexOf('Distributor') > -1 && resText.indexOf('Master') < 0) {
+                            $('#InfoDetail').html('<span class="">' + resText + '</span>');
+                            window.location.href = "/Distributor/Index";
+                        }
+                        else if (resText.indexOf('MasterDistributor') > -1) {
+                            $('#InfoDetail').html('<span class="">' + resText + '</span>');
+                            window.location.href = "/MasterDistributor/Index";
+                        }
+                    }
+                });
+        }
+
+        function Login() {
+            if(ValidInput()){
+                if (localStorage && navigator.userAgent.includes('etopapp')) {
+                    localStorage.setItem('esuserid', $("#mobileno").val());
+                    localStorage.setItem('espassword', $("#password").val());
+                }
+
+                $.get("@Url.Action("RetailLogin", "FR")?m=" + $('#mobileno').val() + "&p=" + $('#password').val(),
+                    function(data) {
+                        var resText = data.split("$$")[0];
+                        var kycMessage = data.split("$$")[1];
+                        var agreementAccepted = data.split("$$")[2];
+                        if (resText.indexOf('Errors:') > -1) {
+                            $('#InfoDetail').html('<span class="text-danger">' + resText + '</span>');
+                        } else if (resText.indexOf('Retailer') > -1) {
+                            $('#InfoDetail').html('<span class="">' + resText + '</span>');
+                            loadPartialView();
+                            GetBalance();
+                        } else if (resText.indexOf('Distributor') > -1 && resText.indexOf('Master') < 0) {
+                            $('#InfoDetail').html('<span class="">' + 'Distributor' + '</span>');
+                        } else if (resText.indexOf('MasterDistributor') > -1) {
+                            $('#InfoDetail').html('<span class="">' + 'MasterDistributor' + '</span>');
+                        }
+                        if (kycMessage) {
+                             alert(kycMessage);
+                        }
+                    });
+            }
+        }
+
+        
+
+        $(document).ready(function () {
+            GetBalance();
+        });
+
+    </script>
+
+</body>
+</html>

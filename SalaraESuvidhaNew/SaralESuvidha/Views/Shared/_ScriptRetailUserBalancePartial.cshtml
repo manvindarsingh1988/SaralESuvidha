@@ -1,0 +1,11 @@
+﻿<script type="text/javascript">
+    function GetBalance() {
+        $.get("@Url.Action("GetBalance", "RetailUserCommon")", function (data) {
+            $("#BalMessage").html('<span class="text-facebook">[&#8377; ' + data + ']</span>');
+        });
+    }
+
+    $(document).ready(function () {
+        GetBalance();
+    });
+</script>

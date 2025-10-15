@@ -1,0 +1,891 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+<link href="images/favicon.png" rel="icon" />
+<title>SaralESuvidha - Recharge & Bill Payment, Booking</title>
+<meta name="description" content="SaralESuvidha - Recharge & Bill Payment, Booking">
+<meta name="author" content="SaralESuvidha.com">
+
+<!-- Web Fonts
+============================================= -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+<!-- Stylesheet
+============================================= -->
+<link rel="stylesheet" type="text/css" href="~/vendor/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="~/vendor/font-awesome/css/all.min.css" />
+<link rel="stylesheet" type="text/css" href="~/vendor/owl.carousel/assets/owl.carousel.min.css" />
+<link rel="stylesheet" type="text/css" href="~/css/stylesheet.css" />
+
+<script src="~/vendor/jquery/jquery.min.js"></script> 
+
+</head>
+<body>
+<!-- Preloader -->
+<div id="preloader">
+  <div data-loader="dual-ring"></div>
+</div>
+<!-- Preloader End --> 
+
+<!-- Document Wrapper   
+============================================= -->
+<div id="main-wrapper"> 
+  
+  <!-- Header
+  ============================================= -->
+  <header id="header">
+    <div class="container">
+      <div class="header-row">
+        <div class="header-column justify-content-start"> 
+          
+          <!-- Logo
+          ============================================= -->
+          <div class="logo me-2 me-lg-3"> <a href="" class="d-flex" title="SaralESuvidha"><img src="~/images/logo.png" alt="SaralESuvidha" /></a> </div>
+          <!-- Logo end --> 
+          
+        </div>
+        <div class="header-column justify-content-end"> 
+          
+          <!-- Primary Navigation
+          ============================================= -->
+          <nav class="primary-menu navbar navbar-expand-lg">
+            <div id="header-nav" class="collapse navbar-collapse">
+              <ul class="navbar-nav">
+                <li class="dropdown"> <a class="dropdown-toggle" asp-controller="Home" asp-action="ElectricityRecharge">Home</a>
+                </li>
+                <li class="dropdown"> <a class="dropdown-toggle" href="#">Utility Bill Payment</a>
+                </li>
+                <li class="dropdown"> <a class="dropdown-toggle" asp-controller="Home" asp-action="Terms" target="_blank">Terms & Condition</a>
+                </li>
+                <li class="dropdown"> <a class="dropdown-toggle" asp-controller="Home" asp-action="PrivacyPolicy" target="_blank">Privacy Policy</a>
+                </li>
+                <li class="dropdown"> <a class="dropdown-toggle" asp-controller="Home" asp-action="RefundCancellation" target="_blank">Refund & Cancellation</a>
+                </li>
+                <li class="dropdown"> <a class="dropdown-toggle" href="#">Contact</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+          <!-- Primary Navigation end --> 
+          
+          <!-- Collapse Button
+		  =============================== -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#header-nav"> <span></span> <span></span> <span></span> </button>
+          <div class="vr mx-2 h-25 my-auto"></div>
+          <!-- Login Signup
+		  =============================== -->
+          <nav class="login-signup navbar navbar-expand">
+            <ul class="navbar-nav">
+              <li class="profile"><a class="pe-0" data-bs-toggle="modal" data-bs-target="#login-modal" href="#" title="Login / Sign up"><span class="d-none d-sm-inline-block">Login / Sign up</span> <span class="user-icon ms-sm-2"><i class="fas fa-user"></i></span></a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- Header end --> 
+  
+  <!-- Content
+  ============================================= -->
+<div id="content">
+    
+    <!-- Secondary Navigation
+    ============================================= -->
+    <div class="bg-secondary">
+        <div class="container">
+            <ul class="nav secondary-nav">
+                <li class="nav-item d-none"> <a id="mobilerecharge" class="nav-link" asp-controller="Home" asp-action="Index"><span><i class="fas fa-mobile-alt"></i></span> Mobile</a> </li>
+                <li class="nav-item d-none"> <a id="dthrecharge" class="nav-link" asp-controller="Home" asp-action="RechargeBillDTH"><span><i class="fas fa-tv"></i></span> DTH</a> </li>
+                <li class="nav-item d-none"> <a id="datacard" class="nav-link" asp-controller="Home" asp-action="DataCardRecharge"><span><i class="fas fa-credit-card"></i></span> DataCard</a> </li>
+                <li class="nav-item"> <a id="broadband" class="nav-link" asp-controller="Home" asp-action="BroadbandRecharge"><span><i class="fas fa-wifi"></i></span> Broadband</a> </li>
+                <li class="nav-item d-none"> <a id="landline" class="nav-link" asp-controller="Home" asp-action="LandlineRecharge"><span><i class="fas fa-phone"></i></span> Landline</a> </li>
+                <li class="nav-item"> <a id="cabletv" class="nav-link" asp-controller="Home" asp-action="CableTVRecharge"><span><i class="fas fa-plug"></i></span> CableTv</a> </li>
+                <li class="nav-item"> <a id="electricity" class="nav-link" asp-controller="Home" asp-action="ElectricityRecharge"><span><i class="fas fa-lightbulb"></i></span> Electricity</a> </li>
+                <li class="nav-item"> <a id="metro" class="nav-link" asp-controller="Home" asp-action="MetroRecharge"><span><i class="fas fa-subway"></i></span> Metro</a> </li>
+                <li class="nav-item"> <a id="gas" class="nav-link" asp-controller="Home" asp-action="GasRecharge"><span><i class="fas fa-flask"></i></span> Gas</a> </li>
+                <li class="nav-item"> <a id="water" class="nav-link" asp-controller="Home" asp-action="WaterRecharge"><span><i class="fas fa-tint"></i></span> Water</a> </li>
+            </ul>
+        </div>
+    </div>
+    <!-- Secondary Navigation end -->
+
+    @RenderBody()
+
+    <!-- Refer & Earn
+    ============================================= -->
+    <div class="container d-none">
+        <section class="section bg-white shadow-md rounded px-5">
+            <h2 class="text-9 fw-600 text-center">Refer & Earn</h2>
+            <p class="lead text-center mb-5">Refer your friends and earn up to &#8377; 2.</p>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="featured-box style-4">
+                        <div class="featured-box-icon bg-light-4 text-primary rounded-circle"> <i class="fas fa-bullhorn"></i> </div>
+                        <h3>You Refer Friends</h3>
+                        <p class="text-3">Share your referral link with friends. They get &#8377; 2.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="featured-box style-4">
+                        <div class="featured-box-icon bg-light-4 text-primary rounded-circle"> <i class="fas fa-sign-in-alt"></i> </div>
+                        <h3>Your Friends Register</h3>
+                        <p class="text-3">Your friends Register with using your referral link.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="featured-box style-4">
+                        <div class="featured-box-icon bg-light-4 text-primary rounded-circle"> <i class="fas fa-dollar-sign"></i> </div>
+                        <h3>Earn You</h3>
+                        <p class="text-3">You get Rs. 2. You can use these credits to take recharge.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pt-4"> <a href="#" class="btn btn-primary">Get Started Earn</a> </div>
+        </section>
+    </div>
+    <!-- Refer & Earn end -->
+
+    <!-- Mobile App
+    ============================================= -->
+    <section class="section pb-0">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 col-lg-6 text-center"> <img class="img-fluid" alt="" src="~/images/app-mobile.png"> </div>
+                <div class="col-md-7 col-lg-6">
+                    <h2 class="text-9 fw-600 my-4">Download Our SaralESuvidha<br class="d-none d-lg-inline-block">
+                        Mobile App Now</h2>
+                    <p class="lead">Download our app for the fastest, most convenient way to send Recharge.</p>
+                    <p>SaralESuvidha is a digital payment platform that offers easy and convenient prepaid mobile recharge services for all major operators in India. With SaralESuvidha, you can quickly and easily recharge your mobile with just a few clicks. The platform offers a user-friendly interface that allows you to select your operator, enter your mobile number, and choose the desired recharge plan.</p>
+                    <ul>
+                        <li>Recharge</li>
+                        <li>Bill Payment</li>
+                        <li>Booking Online</li>
+                        <li>and much more.....</li>
+                    </ul>
+                    <div class="d-flex flex-wrap pt-2"> <a class="me-4" href=""><img alt="" src="~/images/app-store.png"></a><a href=""><img alt="" src="~/images/google-play-store.png"></a> </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Mobile App end -->
+
+</div>
+  <!-- Content end --> 
+  
+  <!-- Footer
+  ============================================= -->
+  <footer id="footer">
+    <section class="section bg-white shadow-md pt-4 pb-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6 col-md-3">
+            <div class="featured-box text-center">
+              <div class="featured-box-icon"> <i class="fas fa-lock"></i> </div>
+              <h4>100% Secure Payments</h4>
+              <p>Moving your card details to a much more secured place.</p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <div class="featured-box text-center">
+              <div class="featured-box-icon"> <i class="fas fa-thumbs-up"></i> </div>
+              <h4>Trust pay</h4>
+              <p>100% Payment Protection. Easy Return Policy.</p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <div class="featured-box text-center">
+              <div class="featured-box-icon"> <i class="fas fa-bullhorn"></i> </div>
+              <h4>Refer & Earn</h4>
+              <p>Invite a friend to sign up and earn up to Rs. 100.</p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <div class="featured-box text-center">
+              <div class="featured-box-icon"> <i class="far fa-life-ring"></i> </div>
+              <h4>24X7 Support</h4>
+              <p>We're here to help. Have a query and need help ? <a href="#">Click here</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="container mt-4">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <p>Payment</p>
+          <ul class="payments-types">
+            <li><a href="#" target="_blank"> <img data-bs-toggle="tooltip" src="~/images/payment/visa.png" alt="visa" title="Visa"></a></li>
+            <li><a href="#" target="_blank"> <img data-bs-toggle="tooltip" src="~/images/payment/discover.png" alt="discover" title="Discover"></a></li>
+            <li><a href="#" target="_blank"> <img data-bs-toggle="tooltip" src="~/images/payment/paypal.png" alt="paypal" title="PayPal"></a></li>
+            <li><a href="#" target="_blank"> <img data-bs-toggle="tooltip" src="~/images/payment/american.png" alt="american express" title="American Express"></a></li>
+            <li><a href="#" target="_blank"> <img data-bs-toggle="tooltip" src="~/images/payment/mastercard.png" alt="discover" title="Discover"></a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <p>Subscribe</p>
+          <div class="input-group newsletter">
+            <input class="form-control" placeholder="Your Email Address" name="newsletterEmail" id="newsletterEmail" type="text">
+            <button class="btn btn-secondary shadow-none px-3" type="submit">Subscribe</button>
+          </div>
+        </div>
+         <div class="col-4 col-sm pb-4">
+              <div class="footer-text font-secondary text-tiny font-weight-bold mb-3" id="contactus">CONTACT US</div>
+              <div>
+                  SaralESuvidha C/O Saral E-Commerce Pvt. Ltd.<br />
+                  B-49 Kanpur Road Yojna, Neelam Heights <br />Near Phoenix United Mall<br/>
+                  Kanpur Road Lucknow, 226012<br/>
+                  +91 941-500-4756 <br/>
+                  anurag@saralecpl.com
+              </div>
+              <!--<a href="#" class="footer-link d-block small pb-2">FAQ</a>
+              <a href="#" class="footer-link d-block small pb-2">Support</a>
+              <a href="#" class="footer-link d-block small pb-2">Consultant</a>-->
+          </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="footer-copyright">
+        <ul class="nav justify-content-center">
+          <li class="nav-item"> <a class="nav-link active" href="#">About Us</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">Faq</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">Contact</a> </li>
+          <li class="nav-item"> <a class="nav-link" asp-controller="Home" asp-action="RefundCancellation" target="_blank">Refund & Cancellation</a> </li>
+          <li class="nav-item"> <a class="nav-link" asp-controller="Home" asp-action="Terms" target="_blank">Terms & Condition</a> </li>
+          <li class="nav-item"> <a class="nav-link" asp-controller="Home" asp-action="PrivacyPolicy" target="_blank">Privacy Policy</a> </li>
+        </ul>
+        <p class="copyright-text">Copyright © 2024 <a href="#">SaralESuvidha, A Division of Saral E-Commerce Pvt. Ltd.</a>. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+  <!-- Footer end --> 
+  
+</div>
+<!-- Document Wrapper end --> 
+
+<!-- Back to Top
+============================================= --> 
+<a id="back-to-top" data-bs-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a> 
+
+<!-- Modal Dialog - View Plans
+============================================= -->
+<div id="view-plans" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Browse Plans</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3 mb-4" method="post">
+          <div class="col-12 col-sm-6 col-lg-3">
+            <select class="form-select" required="">
+              <option value="">Select Your Operator</option>
+              <option>1st Operator</option>
+              <option>2nd Operator</option>
+              <option>3rd Operator</option>
+              <option>4th Operator</option>
+              <option>5th Operator</option>
+              <option>6th Operator</option>
+              <option>7th Operator</option>
+            </select>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <select class="form-select" required="">
+              <option value="">Select Your Circle</option>
+              <option>1st Circle</option>
+              <option>2nd Circle</option>
+              <option>3rd Circle</option>
+              <option>4th Circle</option>
+              <option>5th Circle</option>
+              <option>6th Circle</option>
+              <option>7th Circle</option>
+            </select>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <select class="form-select" required="">
+              <option value="">All Plans</option>
+              <option>Topup</option>
+              <option>Full Talktime</option>
+              <option>Validity Recharge</option>
+              <option>SMS</option>
+              <option>Data</option>
+              <option>Unlimited Talktime</option>
+              <option>STD</option>
+            </select>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3 d-grid">
+            <button class="btn btn-primary" type="submit">View Plans</button>
+          </div>
+        </form>
+        <div class="plans">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$10<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">8<span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">7 Days<span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">Talktime $8 & 2 Local & National SMS & Free SMS valid for 2 day(s)</div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$15<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">13<span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">15 Days<span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">Regular Talktime</div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$50<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">47<span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">28 Days<span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">47 Local Vodafone min free </div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$100<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">92<span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">28 Days<span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">Local min 92 & 10 Local & National SMS & Free SMS valid for 28 day(s).</div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$150<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">143<span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">60 Days<span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">Talktime $143 & 50 Local & National SMS & Free SMS valid for 60 day(s).</div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$220<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">8 <span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">7 Days <span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">Full Talktime</div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$250<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">250<span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">28 Days<span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">Full Talktime + 50 SMS per day for 28 days.</div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$300<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">301<span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">64 Days<span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">Full Talktime</div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$410<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">0<span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">28 Days<span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">Unlimited Local,STD & Roaming calls</div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$501<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">510<span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">180 Days<span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">Full Talktime + 100 SMS per day for 180 days.</div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$799<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">820<span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">250 Days<span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">Full Talktime + 100 SMS per day for 250 days.</div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row align-items-center">
+            <div class="col-4 col-lg-2 text-5 text-primary text-center">$999<span class="text-1 text-muted d-block">Amount</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">1099<span class="text-1 text-muted d-block">Talktime</span></div>
+            <div class="col-4 col-lg-2 text-3 text-center">356 Days<span class="text-1 text-muted d-block">Validity</span></div>
+            <div class="col-7 col-lg-3 my-2 my-lg-0 text-1 text-muted">Full Talktime + 100 SMS per day for 356 days.</div>
+            <div class="col-5 col-lg-3 my-2 my-lg-0 text-end text-lg-center">
+              <button class="btn btn-sm btn-outline-primary shadow-none text-nowrap" type="submit">Recharge</button>
+            </div>
+          </div>
+          <hr class="my-4">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Dialog - View Plans end --> 
+
+<!-- Login Modal
+=========================== -->
+<div id="login-modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0">
+      <div class="modal-body py-4 px-0">
+        <button type="button" class="btn-close position-absolute top-0 end-0 mt-1 me-1 mt-sm-2 me-sm-2" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Login Form
+        ====================== -->
+        <div class="row">
+          <div class="col-11 col-md-10 mx-auto">
+            <ul class="nav nav-tabs nav-justified mb-4" role="tablist">
+              <li class="nav-item"> <a class="nav-link text-5 lh-lg active">Login</a> </li>
+              <li class="nav-item"> <a class="nav-link text-5 lh-lg" href="" data-bs-toggle="modal" data-bs-target="#signup-modal" data-bs-dismiss="modal">Sign Up</a> </li>
+            </ul>
+              <p class="text-4 fw-300 text-muted text-center mb-4">We are glad to see you again!</p>
+              <div id="ActionMessage"></div>
+            <form id="loginForm" method="post">
+              <div class="mb-3">
+                <input type="number" class="form-control" id="mobileno" required placeholder="Mobile">
+              </div>
+              <div class="mb-3">
+                <input type="password" class="form-control" id="password" required placeholder="Password">
+              </div>
+              <div class="row my-4">
+                <div class="col">
+                  <div class="form-check text-3">
+                    <input id="remember-me" name="remember" class="form-check-input" type="checkbox">
+                    <label class="form-check-label text-2" for="remember-me">Remember Me</label>
+                  </div>
+                </div>
+                <div class="col text-2 text-end"><a class="btn-link" href="" data-bs-toggle="modal" data-bs-target="#forgot-password-modal" data-bs-dismiss="modal">Forgot Password ?</a></div>
+              </div>
+              <div class="d-grid my-4">
+                <button class="btn btn-primary" type="button" onclick="Login();">Login</button>
+              </div>
+            </form>
+            <div class="d-flex align-items-center my-3">
+              <hr class="flex-grow-1">
+              <span class="mx-2 text-2 text-muted">Or Login with Social Profile</span>
+              <hr class="flex-grow-1">
+            </div>
+            <div class="d-flex  flex-column align-items-center mb-3">
+              <ul class="social-icons social-icons-colored social-icons-circle">
+                <li class="social-icons-facebook"><a href="#" data-bs-toggle="tooltip" title="Log In with Facebook"><i class="fab fa-facebook-f"></i></a></li>
+                <li class="social-icons-twitter"><a href="#" data-bs-toggle="tooltip" title="Log In with Twitter"><i class="fab fa-twitter"></i></a></li>
+                <li class="social-icons-google"><a href="#" data-bs-toggle="tooltip" title="Log In with Google"><i class="fab fa-google"></i></a></li>
+                <li class="social-icons-linkedin"><a href="#" data-bs-toggle="tooltip" title="Log In with Linkedin"><i class="fab fa-linkedin-in"></i></a></li>
+              </ul>
+            </div>
+            <p class="text-2 text-center mb-0">New to SaralESuvidha? <a class="btn-link" href="" data-bs-toggle="modal" data-bs-target="#signup-modal" data-bs-dismiss="modal">Sign Up</a></p>
+          </div>
+        </div>
+        <!-- Login Form End --> 
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Login Modal End --> 
+
+<!-- Sign Up Modal
+=========================== -->
+<div id="signup-modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0">
+      <div class="modal-body py-4 px-0">
+        <button type="button" class="btn-close position-absolute top-0 end-0 mt-1 me-1 mt-sm-2 me-sm-2" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Sign Up Form
+        ====================== -->
+        <div class="row">
+          <div class="col-11 col-md-10 mx-auto">
+            <ul class="nav nav-tabs nav-justified mb-4" role="tablist">
+              <li class="nav-item"> <a class="nav-link text-5 lh-lg" href="" data-bs-toggle="modal" data-bs-target="#login-modal" data-bs-dismiss="modal">Log In</a> </li>
+              <li class="nav-item"> <a class="nav-link text-5 lh-lg active">Sign Up</a> </li>
+            </ul>
+              <p class="text-4 fw-300 text-muted text-center mb-4">Looks like you're new here! just drop an email to signup[@@]SaralESuvidha.[com] to get your account created.</p>
+              
+              <div class="d-none">
+              <form id="signupForm" method="post">
+              <div class="mb-3">
+                <input type="text" class="form-control" id="fullName" required placeholder="Your Name">
+              </div>
+              <div class="mb-3">
+                <input type="email" class="form-control" id="emailAddress" required placeholder="Email Id">
+              </div>
+              <div class="mb-3">
+                <input type="password" class="form-control" id="loginPassword" required placeholder="Password">
+              </div>
+              <div class="form-check text-3 my-4">
+                <input id="agree" name="agree" class="form-check-input" type="checkbox">
+                <label class="form-check-label text-2" for="agree">I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</label>
+              </div>
+              <div class="d-grid my-4">
+                <button class="btn btn-primary" type="submit">Sign Up</button>
+              </div>
+            </form>
+            <div class="d-flex align-items-center my-3">
+              <hr class="flex-grow-1">
+              <span class="mx-2 text-2 text-muted">Or Sign Up with Social Profile</span>
+              <hr class="flex-grow-1">
+            </div>
+              <div class="d-flex  flex-column align-items-center mb-3">
+                  <ul class="social-icons social-icons-colored social-icons-circle">
+                      <li class="social-icons-facebook"><a href="#" data-bs-toggle="tooltip" title="Sign Up with Facebook"><i class="fab fa-facebook-f"></i></a></li>
+                      <li class="social-icons-twitter"><a href="#" data-bs-toggle="tooltip" title="Sign Up with Twitter"><i class="fab fa-twitter"></i></a></li>
+                      <li class="social-icons-google"><a href="#" data-bs-toggle="tooltip" title="Sign Up with Google"><i class="fab fa-google"></i></a></li>
+                      <li class="social-icons-linkedin"><a href="#" data-bs-toggle="tooltip" title="Sign Up with Linkedin"><i class="fab fa-linkedin-in"></i></a></li>
+                  </ul>
+              </div>
+              </div>
+
+              <p class="text-2 text-center mb-0">Already have an account? <a class="btn-link" href="" data-bs-toggle="modal" data-bs-target="#login-modal" data-bs-dismiss="modal">Log In</a></p>
+          </div>
+        </div>
+        <!-- Sign Up Form End --> 
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Sign Up Modal End --> 
+
+<!-- Forgot Password Modal
+============================== -->
+<div id="forgot-password-modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0">
+      <div class="modal-body py-4 px-0">
+        <button type="button" class="btn-close position-absolute top-0 end-0 mt-1 me-1 mt-sm-2 me-sm-2" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Forgot Password Form
+        =========================== -->
+        <div class="row">
+          <div class="col-11 col-md-10 mx-auto">
+            <h3 class="text-center mt-3 mb-4">Forgot your password?</h3>
+            <p class="text-center text-3 text-muted">Enter your Email or Mobile and we’ll help you reset your password.</p>
+            <form id="forgotForm" class="form-border" method="post">
+              <div class="mb-3">
+                <input type="text" class="form-control" id="emailAddress" required placeholder="Enter Email or Mobile Number">
+              </div>
+              <div class="d-grid my-4">
+                <button class="btn btn-primary" type="submit">Continue</button>
+              </div>
+            </form>
+            <p class="text-center mb-0"><a class="btn-link" href="" data-bs-toggle="modal" data-bs-target="#login-modal" data-bs-dismiss="modal">Return to Log In</a> <span class="text-muted mx-3">|</span> <a class="btn-link" href="" data-bs-toggle="modal" data-bs-target="#otp-modal" data-bs-dismiss="modal">Request OTP</a></p>
+          </div>
+        </div>
+        <!-- Forgot Password Form End --> 
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Forgot Password Modal End --> 
+
+<!-- OTP Modal
+============================== -->
+<div id="otp-modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0">
+      <div class="modal-body py-4 px-0">
+        <button type="button" class="btn-close position-absolute top-0 end-0 mt-1 me-1 mt-sm-2 me-sm-2" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- OTP Form
+        =========================== -->
+        <div class="row">
+          <div class="col-11 col-md-10 mx-auto">
+            <h3 class="text-center mt-3 mb-4">Two-Step Verification</h3>
+            <p class="text-center"><img class="img-fluid" src="images/otp-icon.png" alt="verification"></p>
+            <p class="text-muted text-3 text-center">Please enter the OTP (one time password) to verify your account. A Code has been sent to <span class="text-dark text-4">+91******179</span></p>
+            <form id="otp-screen" class="form-border" method="post">
+              <div class="row gx-3">
+                <div class="col">
+                  <input type="text" class="form-control text-center text-6 px-0 py-2" maxlength="1" required autocomplete="off">
+                </div>
+                <div class="col">
+                  <input type="text" class="form-control text-center text-6 px-0 py-2" maxlength="1" required autocomplete="off">
+                </div>
+                <div class="col">
+                  <input type="text" class="form-control text-center text-6 px-0 py-2" maxlength="1" required autocomplete="off">
+                </div>
+                <div class="col">
+                  <input type="text" class="form-control text-center text-6 px-0 py-2" maxlength="1" required autocomplete="off">
+                </div>
+              </div>
+              <div class="d-grid my-4">
+                <button class="btn btn-primary" type="submit">Verify</button>
+              </div>
+            </form>
+            <p class="text-2 text-center">Not received your code? <a class="btn-link" href="#">Resend code</a></p>
+            <p class="text-2 text-center mb-0"><a class="btn-link" href="#">Call me</a></p>
+          </div>
+        </div>
+        <!-- OTP Form End --> 
+      </div>
+    </div>
+  </div>
+</div>
+<!-- OTP Modal End -->
+    
+<div id="terms-modal" class="modal fade" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0">
+            <div class="modal-body py-4 px-0">
+                <button type="button" class="btn-close position-absolute top-0 end-0 mt-1 me-1 mt-sm-2 me-sm-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="form-group">
+                <div style="height:600px;overflow:auto;background:#fff;padding:5px;">
+                    <p><strong><u>TERMS &amp; CONDITIONS - UTILITY SERVICES</u></strong></p>
+                    <p><strong>IMPORTANT NOTICE: PLEASE READ THESE TERMS AND CONDITIONS CAREFULLY BEFORE YOU CLICK ON &ldquo;I AGREE.&rdquo;</strong></p>
+                    <p>These Terms and Conditions ("Terms") constitute an electronic contract formed under the Information Technology Act, 2000, and the rules made thereunder, as well as the amended provisions pertaining to electronic documents/records in various statutes, as amended by the Information Technology Act, 2000. This document is published and shall be construed in accordance with the provisions of the Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011, under the Information Technology Act, 2000, which require the publishing of a privacy policy for the collection, use, storage, and transfer of sensitive personal data or information.</p>
+                    <p>BY USING THE WEBSITE OR ACCESSING THE SERVICES, YOU INDICATE THAT YOU UNDERSTAND, AGREE, AND CONSENT TO THESE TERMS AND CONDITIONS. IF YOU DO NOT AGREE WITH THE TERMS OF THIS WEBSITE, PLEASE DO NOT USE THIS WEBSITE. BY CONTINUING TO USE THE SERVICES, YOU HEREBY PROVIDE YOUR UNCONDITIONAL CONSENT TO &ldquo;Saral Ecommerce Private Limited (SARAL).&rdquo; AS PROVIDED UNDER SECTION 43A AND SECTION 72A OF THE INFORMATION TECHNOLOGY ACT, 2000.</p>
+                    <ol>
+                        <li>
+                            <strong>INTRODUCTION AND SCOPE OF THESE TERMS AND CONDITIONS</strong>
+                            <ol>
+                                <li>"SARAL" is a platform providing utility services to consumers through a network of agents. SARAL is a company incorporated under the Companies Act, 2013, with its registered office at PLOT No-49, Sec-B Near Phonix Mall, Kanpur Road, Yojna LKO, Lucknow, UP - 226012 (hereinafter referred to as the "<strong>Company/ Saral</strong>," which expression shall mean and include its successors and permitted assigns).</li>
+                                <li>SARAL provides various utility services including but not limited to bill payments, and other utility-related transactions (herein referred to as "Utility Services").</li>
+                                <li>The terms and conditions subject to which Utility Services are provided to the Consumers (as defined below) are mentioned herein, and the use of Utility Services by Consumers is subject to this Consumers&rsquo; acceptance of the following terms and conditions (as may be amended from time to time) ("Agreement" / "Terms of Use").</li>
+                                <li>These Terms, along with the Privacy Policy (as defined), constitute an agreement between Saral Ecommerce Private Limited "SARAL" and the retailers of SARAL <strong>("Retailer"/ Merchant</strong>), entitling such Retailers/ Merchants to provide the Utility Services (as defined herein) to the customers in India through the portal/website<strong>: www.saralesuvidha.com ("Terminal").</strong> These Terms are in addition to any other agreement that may have been executed between SARAL and such Retailers for the purpose of providing the Utility Services.</li>
+                                <li>You acknowledge that you propose to be engaged with SARAL as its Retailer to provide the Utility Services to customers in India and have commenced the log-in to the Terminal. However, please note that before you commence providing the Utility Services as a Retailer of SARAL, you are required to read and understand these Terms. Only if you agree to these Terms, you can proceed and continue to log in and provide the Utility Services as a Retailer of SARAL. By continuing to log in and access the Terminal and provide the Utility Services, it shall be deemed that you agree to be bound by these Terms. In case you do not agree to these Terms, you are required not to proceed with log-in and leave the Terminal immediately. Please note that if you do not agree to these Terms, you are not entitled to provide the Utility Services and be associated with SARAL as its Retailer.</li>
+                                <li>You agree and acknowledge that the access and use of the Terminal by You is voluntary and of your own accord, and your access and use of the Terminal shall be subject to the Applicable Laws (as defined).</li>
+                                <li>You acknowledge that, in respect of certain Utility Services, you shall not be entitled to deal in them unless your account has been approved by the respective Service Providers (as defined).</li>
+                                <li>The phrase 'to provide the Utility Services' or 'provisioning of the Utility Services' used in these terms shall be construed to mean 'onward provisioning, sale, distribution, and supply of Utility Services through the Terminal'.</li>
+                                <li>The terms and conditions specific to particular Utility Service(s) shall be applicable to you and SARAL when you opt for such Utility Service(s).</li>
+                            </ol>
+                        </li>
+                    </ol>
+                    <p>&nbsp;</p>
+                    <ol start="2">
+                        <li><strong>DEFINITIONS</strong></li>
+                    </ol>
+                    <p>The words and expressions beginning with capital letters in these Terms shall, unless the context otherwise requires, have the meanings ascribed to them herein:</p>
+                    <ol>
+                        <li><strong>Applicable Law:</strong> means any and all applicable laws, statutes, rules, regulations, directions, guidelines, ordinances, orders, policies, judgments, decrees, or other requirements or official directives of any Governmental, statutory and regulatory authorities related to the provision of Utility Services.</li>
+                        <li><strong>Consumers:</strong> means the end users approaching the Retailers/ Merchant for availing the Utility Services.</li>
+                        <li><strong>Retailer Point Location:</strong> means the shop or office premises owned or rented by the Retailer, to be used for the purpose of rendering Utility Services to the Consumers.</li>
+                        <li><strong>Privacy Policy:</strong> means the policy which is separately given on the Terminal.</li>
+                        <li><strong>Utility Services:</strong> means the following services, under the brand &ldquo;SARAL&rdquo; as made available to the Retailer for onward provisioning, sale, distribution, and supply through the terminal:</li>
+                    </ol>
+                    <p>&nbsp;&nbsp; 1) Utility bill payments.</p>
+                    <p>&nbsp;&nbsp; 2) Recharge services.</p>
+                    <p>&nbsp;&nbsp; 3) Other utility-related transactions as specified by SARAL from time to time.</p>
+                    <ol>
+                        <li><strong>Service Provider:</strong> means the entities engaged in the business of the provision of the Utility Services in respect of which SARAL has or may have agreements from time to time, authorizing SARAL for onward provisioning, sale, distribution, and supply of such Utility Services through the Retailers.</li>
+                        <li><strong>Transactions:</strong> mean the electronic transactions undertaken by you pertaining to onward provisioning, sale, distribution, and supply of Utility Services to the Consumers through the Terminal.</li>
+                    </ol>
+                    <ol start="3">
+                        <li><strong>MERCHANT&rsquo;S OBLIGATIONS</strong></li>
+                        <li>Authorization: By accepting these Terms and Conditions, you expressly authorize and give your consent to Saral to receive, hold, disburse, and settle funds on your behalf for Utility Services only. This authorization permits Saral to receive Customer Payment Amounts from Transactions into Saral's account for further processing solely related to Utility Services. Saral will process and transfer such payments received into a trade balance maintained by you and/or to the bank account designated by you at the time of registration, or any other account as instructed by you ("Merchant Account"). This authorization remains in effect until specifically terminated.</li>
+                        <li>By accepting these Terms and Conditions, you also expressly authorize Saral to hold, receive, and settle funds on your behalf for any other value-added services that you may opt for and instruct on the permitted use of the application. However, such authorization is limited to transactions explicitly related to Utility Services.</li>
+                        <li>Termination: SARAL reserves the right, at its sole and absolute discretion, to terminate your engagement as a Merchant of SARAL upon giving you 15 days' prior written notice, without assigning any reason. Similarly, you have the right to terminate your engagement as a Merchant of SARAL upon giving SARAL 30 days' prior written notice.</li>
+                        <li>SARAL may terminate your engagement as a Merchant of SARAL immediately, upon written notice, if there is (i) a material adverse change in the business environment, (ii) a change in Applicable Law, or (iii) a requirement or directive of the Service Provider, which prevents the continuation of the arrangement under these Terms, or if SARAL's license/permission/approval given by any statutory/regulatory authority, bank, or Service Provider is revoked or terminated for any reason.</li>
+                        <li>SARAL may terminate your engagement as a Merchant of SARAL immediately, upon written notice, if you cease or threaten to cease carrying on all or a substantial part of your business, become insolvent, make an assignment for the benefit of your creditors, have a receiver appointed for your business, or have an order for the winding up or liquidation of your business (other than for the purposes of amalgamation or reconstruction).</li>
+                    </ol>
+                    <ul>
+                        <li>SARAL may, at its sole discretion, temporarily deny, limit, or suspend your log-in and access to the Terminal for providing the Services, or take any other action it deems fit, including levying liquidated damages (as specified below), or pursuing any available remedies under Applicable Law. SARAL may also terminate your engagement as a Merchant of SARAL immediately in the following Events of Default: a) Material violations, breaches, defaults, or non-compliance of these Terms and/or Privacy Policy. b) Involvement in gross negligence, serious misdemeanors, criminal offences, or cybercrimes. c) Overcharging customers for Utility Services or collecting unauthorized fees/charges. d) Frequent customer complaints or misconduct. e) Failure to address customer complaints/disputes despite warnings by SARAL. f) Breach of Privacy Policy; g) Misuse of the Services or breach of trust; h) Unauthorized disclosure of SARAL's confidential information; i) Engagement in illegal activities or aiding such activities; j) Harming SARAL, its customers, suppliers, or third parties in any way.</li>
+                    </ul>
+                    <ol>
+                        <li>
+                            <strong>Effects of Termination:</strong> Termination of your engagement as a Merchant with SARAL, for any reason, shall have the following effects and consequences:
+                            <ol>
+                                <li>You must cease representing SARAL in your dealings with third parties.</li>
+                                <li>All rights granted to you or SARAL under these Terms terminate, and your log-in and access to the Terminal are revoked.</li>
+                                <li>You must promptly return all assets, inventories, materials, instruction books, manuals, and other provided items to SARAL in good condition.</li>
+                                <li>You are not entitled to claim any compensation for termination.</li>
+                                <li>Termination does not affect any accrued rights or obligations under these Terms.</li>
+                                <li>SARAL retains the right to use information supplied by you or collected during your use of the Terminal and provision of the Services for Utility Services purposes only.</li>
+                            </ol>
+                        </li>
+                        <li>
+                            <strong>Liquidated Damages, Fines, and Penalties:</strong>
+                            <ol>
+                                <li>In the event of an Event of Default related to Utility Services, SARAL may impose liquidated damages per instance. You agree to pay these damages on demand without contest.</li>
+                                <li>You are liable to pay and indemnify SARAL for any fines or penalties imposed by statutory/regulatory/governmental authorities, RBI, or courts due to your acts or omissions while providing the Utility Services. SARAL may, at its discretion, set off/adjust such fines/penalties from any payments owed to you.</li>
+                                <li>Explanation: For the purposes of this clause, "you" shall also include your employees, officers, agents, representatives, successors, and assigns.</li>
+                            </ol>
+                        </li>
+                    </ol>
+                    <p>&nbsp;</p>
+                    <ol start="5">
+                        <li><strong>LIMITATION OF LIABILITY: </strong>SARAL, including its officers, directors, shareholders, employees, sub-contractors, vendors, suppliers, business associates, parent companies, sister companies, subsidiaries, and other affiliates, will not be liable, to the maximum extent permitted by applicable law, for any direct, indirect, incidental, or consequential damages, or any other damages and losses (including loss of profit, loss of data, and work stoppage), costs, expenses, and payments, regardless of the alleged liability or form of action, including negligence, intellectual property infringement, product liability, and strict liability. This applies to any damage that may result from the use of the Terminal or the inability to access the Terminal and provision of the Utility Services, or from any failure, error, or downtime in the function of the Utility Services, or from any fault or error made by SARAL's staff, or from your reliance on content delivered through the Utility Services. SARAL's liability will not exceed the total cost paid by the customer under the disputed transaction. Your sole remedy, in any event, will be limited to the correction of such errors as deemed fit by SARAL at its sole discretion.</li>
+                        <li>
+                            <strong>DISCLAIMER OF WARRANTIES:</strong>
+                            <ol>
+                                <li>Except as expressly set forth in these terms, Saral expressly disclaims any other warranty with respect to the use or provisioning of the Utility Services or any content or information delivered through the Utility Services to you or the customer. The Utility Services are provided without any express or implied guarantee or assurance of quality or reliability. Saral disclaims all express and implied warranties with regard to the Utility Services.</li>
+                                <li>Saral does not warrant or guarantee that the Utility Services will operate in an uninterrupted, timely, secure, or error-free manner, or that the Utility Services will always be available or free from errors or unauthorized access.</li>
+                                <li>Saral does not warrant or guarantee that the Utility Services will meet your specific needs. Saral does not warrant that the content provided will be legal, non-infringing, or free from objectionable materials.</li>
+                                <li>Saral does not warranty or make representations regarding the accuracy and veracity of the information provided through the Utility Services.</li>
+                                <li>The Utility Services and content are not intended to constitute or form the basis of any advice, and Saral does not accept liability for any claim or loss arising from any advice given, decisions made, or transactions made in reliance on the Utility Services or content.</li>
+                                <li>Saral cannot guarantee that the Utility Services and content will be free from viruses or other code that may have contaminating or destructive elements.</li>
+                                <li>Saral may use information supplied by you during the course of accessing the terminal and providing the Utility Services, subject to the Privacy Policy.</li>
+                                <li>You understand and agree that the use of the Terminal and providing the Utility Services is entirely at your own risk.</li>
+                            </ol>
+                        </li>
+                    </ol>
+                    <p>&nbsp;</p>
+                    <ol start="7">
+                        <li><strong>CHARGEBACKS RELATED TO UTILITY SERVICES</strong></li>
+                    </ol>
+                    <p>&nbsp;</p>
+                    <ol>
+                        <li>SARAL shall not be held liable for any chargebacks related to Utility Services provided by the Merchant. In the event of a chargeback initiated by a customer for Utility Services, the Merchant shall bear full responsibility for resolving the dispute and reimbursing SARAL for any associated costs, including but not limited to chargeback fees, administrative expenses, and any refunded amounts.</li>
+                        <li>Merchant agrees to promptly investigate and respond to any chargeback notifications received from SARAL or the payment gateway provider related to Utility Services transactions. The Merchant shall provide all necessary documentation and evidence to support the legitimacy of the transaction in question.</li>
+                        <li>The Merchant indemnifies SARAL against any losses, damages, or liabilities incurred due to chargebacks related to Utility Services transactions, including any fines, penalties, or fees imposed by payment networks, banks, or regulatory authorities. The Merchant agrees to reimburse SARAL for any such losses upon demand.</li>
+                        <li>Merchant shall promptly notify SARAL of any chargebacks related to Utility Services transactions and shall cooperate fully in the resolution process. Failure to notify SARAL in a timely manner may result in additional penalties or fees for which the Merchant shall be responsible.</li>
+                    </ol>
+                    <p>&nbsp;</p>
+                    <ol start="8">
+                        <li><strong>INDEMNIFICATION:</strong> You agree to indemnify and hold SARAL, its licensors, business partners, contractors, sub-contractors, vendors, suppliers, merchants, parent companies, sister companies, subsidiaries, and other affiliates of SARAL, and their respective officers, directors, shareholders, and employees, indemnified and harmless from any claim, liabilities, damages, costs, losses, demands, expenses, chargebacks, charges, and penalties, including reasonable attorneys' fees, made by any third party in connection with or arising out of provisioning of the Utility Services, acts of commission or omission amounting to non-adherence to these Terms, breaches of Applicable Laws, fraudulent activities, illegal practices, negligence, or mischief on your part, infringement of intellectual property rights, or unauthorized use of the Utility Services/devices supplied by SARAL.</li>
+                        <li><strong>CONFIDENTIALITY:</strong> You undertake that you shall treat as confidential all Confidential Information of SARAL and shall not disclose it. For the avoidance of doubt, "Confidential Information" shall include (without limitation) (a) various types of information and other information of a similar nature, whether or not set forth in writing, such as discoveries, ideas, concepts, software, designs, pricing policies, and Customer information, and (b) any information disclosed to SARAL by any third party under obligations of confidentiality to SARAL.</li>
+                        <li><strong>AMENDMENTS TO THE TERMS</strong>: SARAL reserves the right to amend and modify these Terms and the Privacy Policy from time to time without prior notice to you. Your continued access to the Terminal and provision of the Utility Services will indicate your acceptance of the amended Terms. If you disagree with any of the amended Terms, you must discontinue your use of the Terminal and provision of the Utility Services. SARAL recommends that you periodically review these Terms as they may change over time.</li>
+                        <li><strong>ENTIRE AGREEMENT:</strong> These Terms, including the Privacy Policy, constitute the entire agreement between you and SARAL governing your access to the Terminal and provision of the Utility Services. In cases where other agreements have been executed between SARAL and Retailers for the provision of Services, the provisions of such agreements shall apply in addition to these Terms. However, in the event of any inconsistency between the provisions of these Terms and such agreements, the provisions of these Terms shall prevail to the extent of the inconsistency.</li>
+                        <li><strong>GOVERNING LAW AND JURISDICTION:</strong> These Terms shall be governed by the laws of India, and any disputes or matters arising from these Terms and/or the Utility Services shall be subject to the exclusive jurisdiction of the courts in Lucknow. In the case of a dispute, it shall be referred to Mediation as amended. The venue for mediation shall be Lucknow, and proceedings shall be conducted in English. Subject to the provisions above, the courts having jurisdiction shall exclusively be the courts in Lucknow, India.</li>
+                        <li><strong>WAIVER AND SEVERABILITY OF TERMS: </strong>Failure or delay by SARAL to enforce any provision of these Terms at any time shall not be construed as a waiver of SARAL's rights hereunder, nor shall it affect the validity of these Terms or prejudice SARAL's rights to take subsequent action. No remedy provided by these Terms is intended to be exclusive, and each remedy shall be cumulative and in addition to any other remedies available under law. If any provision (or part thereof) of these Terms is found to violate any Applicable Law, such provision (or part thereof) shall be deemed deleted from these Terms to the extent of such violation. The remainder of these Terms shall remain in full force and effect as if the provision (or part thereof) had not originally been included in these Terms. SARAL shall have the discretion to provide an acceptable alternative provision in place of the deleted provision, which shall be binding on you without any contest or objection.</li>
+                        <li><strong>SURVIVAL:</strong> You agree and confirm that the indemnities, confidentiality obligations, limitation of liability, disclaimer of warranties, and dispute resolution mechanism shall remain in effect beyond the expiration of these Terms.</li>
+                        <li><strong>ASSIGNMENT:</strong> You shall not assign or transfer any of your rights, benefits, or interests under these Terms without prior written approval from SARAL. However, SARAL reserves the right to assign these Terms to its affiliates or a Bank without requiring your consent. In the event of such an assignment, the Bank may, at its sole discretion, terminate this Agreement and cease any payments to you, if applicable.</li>
+                        <li><strong>GRIEVANCE REDRESSAL AND GRIEVANCE OFFICER: </strong>In accordance with the Information Technology Act, 2000, and the rules made thereunder, you can address grievances by emailing the Grievance Officer at <strong>anuraggupta2204@gmail.com</strong>. You also agree to inform Customers of the provisions of the Customer Grievance Policy or any updates communicated by SARAL from time to time.</li>
+                        <li><strong>DATA PROTECTION AND PRIVACY:</strong> SARAL is committed to protecting your personal information and ensuring your privacy. By using our services, you consent to the collection, processing, and storage of your data as described in our Privacy Policy. We may share your information with third parties as necessary to provide our services or as required by law. You hereby agree and permit Saral to use personal information (including sensitive personal data) and to share the same with statutory/regulatory/law enforcement authorities and payment networks, for monitoring and/or reporting purposes.</li>
+                        <li><strong>COMMUNICATION WITH SARAL:</strong> You shall communicate with SARAL by sending written correspondence via registered post or courier to its registered office.</li>
+                    </ol>
+                    <p><strong>Note: These terms and conditions are specific to Utility Services provided by SARAL. Any breach of these terms and conditions may lead to immediate termination of engagement and legal action as per the applicable laws. By continuing to use the services, you acknowledge and agree to abide by these terms and conditions.</strong></p>
+                    <p>&nbsp;</p>
+                    <p><strong>I hereby agree to the terms and conditions stated above:</strong></p>
+                </div>
+            </div>
+            <br />
+            <div class="form-group p-1">
+                    <button class="btn btn-primary btn-sm float-right" onclick="IAgree();">I AGREE</button>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>
+
+<!-- Script --> 
+<script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script> 
+<script src="~/vendor/owl.carousel/owl.carousel.min.js"></script> 
+<script src="~/js/theme.js"></script>
+
+<script type="text/javascript">
+    function Privacy(){
+        window.location = window.location.origin + '/Home/Privacy';    
+    }
+    
+    function ValidInput() {
+        if ($('#mobileno').val() === '') {
+            $('#ActionMessage').html('<span class="text-warning">Mobile number required.</span>');
+            return false;
+        }
+
+        if ($('#password').val() === '') {
+            $('#ActionMessage').html('<span class="text-warning">Password required.</span>');
+            return false;
+        }
+
+        return true;
+    }
+
+    function IAgree() {
+        $.get("@Url.Action("UpdateAgreementAceptStatus", "Home")",
+            function (data) {
+                if(data == "status updated.") {
+                        var resText = $('#terms-modal').attr('alt');
+                    if (resText.indexOf('Retailer') > -1) {
+                        $('#ActionMessage').html('<span class="">' + resText + '</span>');
+                        window.location.href = "/RetailClient/Index";
+                    }
+                    else if (resText.indexOf('Distributor') > -1 && resText.indexOf('Master') < 0) {
+                        $('#ActionMessage').html('<span class="">' + resText + '</span>');
+                        window.location.href = "/Distributor/Index";
+                    }
+                    else if (resText.indexOf('MasterDistributor') > -1) {
+                        $('#ActionMessage').html('<span class="">' + resText + '</span>');
+                        window.location.href = "/MasterDistributor/Index";
+                    }
+                }                
+            });
+    }
+
+    function Login() {
+        if(ValidInput()){
+            if (localStorage && navigator.userAgent.includes('etopapp')) {
+                localStorage.setItem('esuserid', $("#mobileno").val());
+                localStorage.setItem('espassword', $("#password").val());
+            }
+            
+            $.get("@Url.Action("RetailLogin", "Home")?m=" + $('#mobileno').val() + "&p=" + $('#password').val(),
+                function(data) {
+                    var resText = data.split("$$")[0];
+                    var kycMessage = data.split("$$")[1];
+                    var agreementAccepted = data.split("$$")[2];
+                    if (resText.indexOf('Errors:') > -1) {
+                        $('#ActionMessage').html('<span class="text-danger">' + resText + '</span>');
+                    } else if (resText.indexOf('Retailer') > -1) {
+                        $('#ActionMessage').html('<span class="">' + resText + '</span>');
+                        
+                        if(agreementAccepted == "0") {
+                                $('#terms-modal').modal('show');
+                            $('#terms-modal').attr("alt", resText);
+                        }
+                        else {
+                                window.location.href = "/RetailClient/DailyRechargeReport";
+                        }
+                    } else if (resText.indexOf('Distributor') > -1 && resText.indexOf('Master') < 0) {
+                        $('#ActionMessage').html('<span class="">' + resText + '</span>');                        
+                        if (agreementAccepted == "0") {
+                                $('#terms-modal').modal('show');
+                                $('#terms-modal').attr("alt", resText);
+                        }
+                        else {
+                                window.location.href = "/Distributor/AccountStatement";
+                        }
+                    } else if (resText.indexOf('MasterDistributor') > -1) {
+                        $('#ActionMessage').html('<span class="">' + resText + '</span>');
+                        if (agreementAccepted == "0") {
+                            $('#terms-modal').modal('show');
+                            $('#terms-modal').attr("alt", resText);
+                        }
+                        else {
+                                window.location.href = "/MasterDistributor/AccountStatement";
+                        }
+                    }
+                        else if (resText.indexOf('WhiteLabel') > -1) {
+                            $('#ActionMessage').html('<span class="">' + resText + '</span>');
+                        window.location.href = "/WhiteLabel/Index";
+                    }
+                    if (kycMessage) {
+                         alert(kycMessage);
+                    }
+                });
+        }
+    }
+    
+    $(document).ready(function (){
+      if (localStorage && navigator.userAgent.includes('etopapp')) {
+          $("#mobileno").val(localStorage.getItem('esuserid'));
+          $("#password").val(localStorage.getItem('espassword'));
+      }
+    });
+    
+</script>
+
+</body>
+</html>

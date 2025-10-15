@@ -1,0 +1,128 @@
+@{
+    Layout = "_LayoutDistributor";
+    ViewData["title"] = "Distributor - Retailer Daily Recharge Report";
+}
+
+<form id="frmReport" method="post" action="">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">From Date<span class="text-danger">*</span></label>
+                    <input name="txtReportDate" id="txtReportDate" type="text" class="form-control flatpickr-date required">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">To Date<span class="text-danger">*</span></label>
+                    <input name="txtReportDateTo" id="txtReportDateTo" type="text" class="form-control flatpickr-date required">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="LoadRechargeReport();">Load Report</button>
+                </div>
+                <div class="col-lg-2 form-group d-none">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="LoadRechargeSummaryReport();">Load Summary</button>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="Export();">Export Excel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h6 class="card-header alert-primary" id="lblReport">
+            Report
+        </h6>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-adminreport" data-url="#">
+                <thead>
+                    <tr>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+    });
+
+    function LoadRechargeReport() {
+        const today = moment();
+        const toDate = moment($('#txtReportDateTo').val(),"YYYY-MM-DD");
+        if (today.format("YYYY-MM-DD") === $('#txtReportDateTo').val()){   
+            if (today.format("HH")<23){
+               $('#lblReport').html('Today\'s report is available after 11 P.M.');
+               return;
+            }
+        }
+        
+        $('#lblReport').html('Daily report between ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDateTo').val());
+
+        if ($.fn.DataTable.isDataTable('#datatable-adminreport')) {
+            $('#datatable-adminreport').DataTable().destroy();
+        }
+        $('#datatable-adminreport tbody').empty();
+        $('#datatable-adminreport thead').empty();
+
+        var $table = $('#datatable-adminreport');
+        $table.dataTable({
+            iDisplayLength: 100,
+            bAutoWidth: false,
+            sAjaxSource: '@Url.Action("DailyRechargeReportResult", "Distributor")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0',
+            cache: false,
+            order: [[16, "asc"], [17, "asc"]],
+            columns: [
+                { data: "Rid", title: "Id", visible: false },
+                { data: "RefundId", title: "Ref Id", visible: false }, { data: "Retailer", title: "Retailer" }, { data: "OperatorName", title: "Operator" },
+                { data: "RechargeNumber", title: "Number" }, { data: "RechargeStatus", title: "RStatus" }, { data: "PaymentType", title: "PType" },
+                { data: "OB", title: "OB" }, { data: "Amount", title: "Amount" }, { data: "Debit", title: "Debit" }, { data: "Credit", title: "Credit" }, { data: "CB", title: "CB" },
+                { data: "LiveId", title: "LiveId", visible: false }, 
+                { data: "AccountInfo", title: "AccInfo" }, { data: "BillAmount", title: "BillAmt" },{ data: "DDR", title: "DDR" },
+                { data: "CreateDate", title: "Date", render: function (data) { return moment(data).format('MM-DD-YYYY'); } },
+                { data: "CreateDate", title: "Time", render: function (data) { return moment(data).format('HH:mm:ss'); } },
+                {
+                    data: "Rid",
+                    title: "Action",
+                    render: function (data,type,row) { 
+                        if (row.IsOTS == 1) {
+                            return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS' || row["RechargeStatus"] === 'PROCESS') ? "" : "d-none") + "' title='Print Receipt' target='_blank' href='@Url.Action("ReceiptOTSUPPCL", "Home")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
+                        } else {
+                            return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS' || row["RechargeStatus"] === 'PROCESS') ? "" : "d-none") + "' title='Print Receipt' target='_blank' href='@Url.Action("ReceiptUPPCL", "Home")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
+                        }
+                    },
+                    "width": "70px"
+                }
+            ]
+        });
+    }
+
+    function Export() {
+        const today = moment();
+        const toDate = moment($('#txtReportDateTo').val(),"YYYY-MM-DD");
+        if (today.format("YYYY-MM-DD") === $('#txtReportDateTo').val()){   
+            if (today.format("HH")<21){
+               $('#lblReport').html('Today\'s report is available after 9 P.M.');
+               return;
+            }
+        }
+                
+        if ($.fn.DataTable.isDataTable('#datatable-adminreport')) {
+            $('#datatable-adminreport').DataTable().destroy();
+        }
+        $('#datatable-adminreport tbody').empty();
+        $('#datatable-adminreport thead').empty();
+
+        $('#lblReport').html('Getting report in excel ' + loaderImg);
+        $.get('@Url.Action("DailyRechargeReportResult", "Distributor")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1', function (data) {
+                $('#lblReport').html('Recharge report of date ' + $('#txtReportDate').val() + '. ' + data);
+            });
+    }
+</script>
+
+

@@ -1,0 +1,86 @@
+<form id="frmReport" method="post" action="">
+    <div class="card">
+        <h6 class="card-header" id="lblReport">
+            Margin List
+        </h6>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-grid-allretail">
+                <thead>
+                <tr>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        LoadOperatorListDdl();
+    });
+
+    function LoadOperatorListDdl() {
+        $("#loaderInfo").html("LOADING");
+        $.getJSON("@Url.Action("OperatorListForMargin", "Home")", function (data) {
+            $("#OperatorName").empty();
+            $('#OperatorName').append('<option value="">Select Operator</option>');
+            $.each(data, function (index, value) {
+                $('#OperatorName').append('<option value="' + value.OperatorName + '">' + value.DetailedOperatorName + '</option>');
+            });
+        });
+        $("#loaderInfo").html('');
+    }
+
+    function LoadDetail() {
+        if ($('#OrderNo').val().length > 0) {
+            $.get("@Url.Action("RetailUserDetail", "RetailUserCommon")?usd=" + a2hex($('#OrderNo').val()), function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    LoadMarginSheet();
+                }
+            });
+        }
+        else {
+            $('#InfoDetail').html('');
+        }
+
+    }
+
+    function LoadAmount() {
+        $.get("@Url.Action("AmountToInr", "Common")?amount=" + $('#txtAmount').val(), function (data) {
+            $("#AmountInWords").html('<span class="">&#x20B9; ' + data + '</span>');
+        });
+    }
+    
+    function LoadMarginSheet() {
+        if ($.fn.DataTable.isDataTable('#datatable-grid-allretail')) {
+            $('#datatable-grid-allretail').DataTable().destroy();
+        }
+        $('#datatable-grid-allretail tbody').empty();
+        $('#ddatatable-grid-allretail thead').empty();
+        
+
+        var $table = $('#datatable-grid-allretail');
+        $table.dataTable({
+            iDisplayLength: 10,
+            bAutoWidth: true,
+            sAjaxSource: '@Url.Action("MarginSheetListByOrderNoPV", "RetailUserCommon")?usd=' + a2hex($('#OrderNo').val()),
+            cache: false,
+            order: [[1, "asc"], [2, "asc"]],
+            columns: [
+                { data: "ID", title: "Id", visible: false } , { data: "RetailUserName", title: "User Detail" }, 
+                { data: "OperatorName", title: "Operator Name" }, { data: "OperatorCircle", title: "Operator Circle", visible: false },
+                { data: "MarginPercentUpto200", title: "Margin Percent UPTO 200 Full payment" }, { data: "FixMargin", title: "Margin Amount (201-4000 Full Payment)" },
+                { data: "MarginPercent", title: "Margin Percent" },
+                { data: "MaxMargin", title: "Max Margin" }, { data: "Active", title: "Active" }
+            ]
+        });
+
+        $('#lblReport').html('Margin Sheet of ' + $('#OrderNo').val());
+    }
+
+</script>

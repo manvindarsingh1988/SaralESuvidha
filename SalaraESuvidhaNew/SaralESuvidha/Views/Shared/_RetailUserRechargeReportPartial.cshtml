@@ -1,0 +1,224 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+<form id="frmReport" method="post" action="">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">From Date<span class="text-danger">*</span></label>
+                    <input name="txtReportDate" id="txtReportDate" type="text" class="form-control flatpickr-date required">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">To Date<span class="text-danger">*</span></label>
+                    <input name="txtReportDateTo" id="txtReportDateTo" type="text" class="form-control flatpickr-date required">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="LoadRechargeReport();">Load Report</button>
+                </div>
+                <div class="col-lg-2 form-group d-none">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="LoadRechargeSummaryReport();">Load Summary</button>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="Export();">Export Excel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h6 class="card-header alert-primary" id="lblReport">
+            Report
+        </h6>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-adminreport" data-url="#">
+                <thead>
+                    <tr>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+    });
+    
+    function printrec(idToPrint){
+         $.get('@Url.Action("PrintReceiptThermal", "RetailClient")?t=' + idToPrint + '&dt=' + Date.now() + '&x=0',
+            function(data) {        
+                RoboTemplatesWebViewApp.printThermalFromBase64(data);            
+        });
+    }
+
+    function printOTSrec(idToPrint) {
+        $.get('@Url.Action("PrintOTSReceiptThermal", "RetailClient")?t=' + idToPrint + '&dt=' + Date.now() + '&x=0',
+            function (data) {
+                RoboTemplatesWebViewApp.printThermalFromBase64(data);
+            });
+    }
+        
+    function PrintReceipt(idToPrint){
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+        
+        if (navigator.userAgent.includes('etopapp')){
+            printrec(idToPrint);
+        }else if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+             var url = window.location.origin;
+             window.open(url+'/Home/ReceiptUPPCLT?t=' + idToPrint, "_blank");
+         }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+             var url = window.location.origin;
+             window.open(url+'/Home/ReceiptUPPCLTL?t=' + idToPrint, "_blank");
+         }else{
+            var url = window.location.origin;
+            window.open(url+'/Home/ReceiptUPPCL?t=' + idToPrint, "_blank");
+        }      
+    }
+
+    function PrintReceipt1(idToPrint) {
+        var defaultPrinter = '@Context.Session.GetString("DefaultPrinter")';
+        
+        if (navigator.userAgent.includes('etopapp')) {
+            printOTSrec(idToPrint);
+        }else if (defaultPrinter === 'Thermal 4 Inch - Portrait'){
+              var url = window.location.origin;
+              window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + idToPrint, "_blank");
+        }else if (defaultPrinter === 'Thermal 4 Inch - Landscape'){
+              var url = window.location.origin;
+              window.open(url+'/Home/ReceiptOTSUPPCLT?t=' + idToPrint, "_blank");
+        }else {
+            var url = window.location.origin;
+            window.open(url + '/Home/ReceiptOTSUPPCL?t=' + idToPrint, "_blank");
+        }
+    }
+
+    function LoadRechargeReport() {
+        $('#lblReport').html('Daily report between ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDateTo').val());
+
+        if ($.fn.DataTable.isDataTable('#datatable-adminreport')) {
+            $('#datatable-adminreport').DataTable().destroy();
+        }
+        $('#datatable-adminreport tbody').empty();
+        $('#datatable-adminreport thead').empty();
+
+        var $table = $('#datatable-adminreport');
+        $table.dataTable({
+            iDisplayLength: 100,
+            bAutoWidth: false,
+            sAjaxSource: '@Url.Action("DailyRechargeReportResult", "RetailClient")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0',
+            cache: false,
+            order: [[13, "asc"], [14, "asc"]],
+            columns: [
+                { data: "Rid", title: "Id", visible: false },
+                { data: "RefundId", title: "Ref Id", visible: false }, { data: "OperatorName", title: "Operator" },
+                { data: "RechargeNumber", title: "Number" }, { data: "RechargeStatus", title: "RStatus" },
+                { data: "OB", title: "OB" }, { data: "Amount", title: "Amount" }, { data: "Debit", title: "Debit" }, { data: "Credit", title: "Credit" }, { data: "CB", title: "CB" },
+                { data: "AccountInfo", title: "AccInfo" }, { data: "BillAmount", title: "BillAmt" },{ data: "DDR", title: "DDR" },
+                { data: "CreateDate", title: "Date", render: function (data) { return moment(data).format('MM-DD-YYYY'); } },
+                { data: "CreateDate", title: "Time", render: function (data) { return moment(data).format('HH:mm:ss'); } },
+                {
+                    data: "Rid",
+                    title: "Action",
+                    render: function (data,type,row) { 
+                        if (row.IsOTS == 1) {
+                            return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS') ? "" : "d-none") + "' title='Print Receipt' onclick=PrintReceipt1('" + a2hex(data) + "')>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
+
+                        } else {
+                            return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS') ? "" : "d-none") + "' title='Print Receipt' onclick=PrintReceipt('" + a2hex(data) + "')>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
+                        }                        
+                    },
+                    "width": "70px"
+                }
+            ]
+        });
+    }
+
+    function LoadRechargeSummaryReport() {
+        $('#lblReport').html('Summary report between ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDateTo').val());
+
+        if ($.fn.DataTable.isDataTable('#datatable-adminreport')) {
+            $('#datatable-adminreport').DataTable().destroy();
+        }
+        $('#datatable-adminreport tbody').empty();
+        $('#datatable-adminreport thead').empty();
+
+        var $table = $('#datatable-adminreport');
+        $table.dataTable({
+            iDisplayLength: 100,
+            bAutoWidth: true,
+            sAjaxSource: '@Url.Action("DailyRechargeReportSummaryResult", "RetailClient")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0',
+            cache: false,
+            order: [[1, "asc"]],
+            columns: [
+                { data: "TransactionType", title: "TransactionType" },{ data: "Amount", title: "Amount" }, { data: "Debit", title: "Debit" },
+                { data: "Credit", title: "Credit" }, { data: "Margin", title: "Margin" }
+            ]
+        });
+    }
+
+    function Export() {
+        if ($.fn.DataTable.isDataTable('#datatable-adminreport')) {
+            $('#datatable-adminreport').DataTable().destroy();
+        }
+        $('#datatable-adminreport tbody').empty();
+        $('#datatable-adminreport thead').empty();
+
+        $('#lblReport').html('Getting report in excel ' + loaderImg);
+        $.get('@Url.Action("DailyRechargeReportResult", "RetailClient")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1', function (data) {
+                $('#lblReport').html('Recharge report of date ' + $('#txtReportDate').val() + '. ' + data);
+            });
+        }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

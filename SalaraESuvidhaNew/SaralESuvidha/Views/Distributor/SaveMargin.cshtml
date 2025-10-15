@@ -1,0 +1,23 @@
+﻿@model SaralESuvidha.Models.UtilityMargin
+
+@{
+    Layout = "_LayoutDistributor";
+    ViewData["title"] = "Save Margin For Retailer - Result";
+}
+
+
+<div class="callout callout-@(Model.OperationMessage.Contains("Error:") ? "danger" : "success")">
+    <h5>Retailer Name - @Model.FullName</h5>
+    <p>OperatorName - @Model.OperatorName</p>
+    <p>Margin Percent UPTO 200 Full payment - @Model.MarginPercentUpto200 %</p>
+    <p>Margin Amount (201-4000 Full Payment) - @Model.FixMargin</p>
+    <p>Margin Percent - @Model.MarginPercent %</p>
+    <p>Max Margin - @Model.MaxMargin</p>
+    <hr>
+    <p class="text-@(Model.OperationMessage.Contains("Error:") ? "danger" : "success")"><strong>@Model.OperationMessage</strong></p>
+</div>
+
+<div class="card-body" style="padding-left: 0px;">
+    <a class="btn btn-primary" asp-controller="Distributor" asp-action="Index">Dashboard</a>
+    <a class="btn btn-primary" asp-controller="Distributor" asp-action="SetMargin">Set Margin For Another Retailer</a>
+</div>

@@ -619,7 +619,7 @@ public class Program
         StatusCheckResponse statusCheckResponse = new StatusCheckResponse();
         try
         {
-            statusCheckResponse = UPPCLManager.StatusCheck(UPPCL_BillId, RechargeMobileNumber, AgentVANNo);
+            statusCheckResponse = UPPCLManager.StatusCheck(UPPCL_BillId, RechargeMobileNumber, AgentVANNo, Id);
             if (updateTransaction)
             {
                 if (statusCheckResponse.status == "FAILED") //   statusCheckResponse.message.Contains("No Record found.")

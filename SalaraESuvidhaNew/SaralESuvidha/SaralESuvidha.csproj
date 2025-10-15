@@ -1,0 +1,187 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+  </PropertyGroup>
+
+	<ItemGroup>
+    <None Include="wwwroot\assets\js\blog.js" />
+    <None Include="wwwroot\assets\js\gvars.js" />
+    <None Include="wwwroot\assets\js\landing.js" />
+    <None Include="wwwroot\assets\js\main.js" />
+    <None Include="wwwroot\assets\js\portfolio.js" />
+    <None Include="wwwroot\assets\js\shop.js" />
+    <None Include="wwwroot\assets\vendor\fonts\fontawesome\fa-brands-400.svg" />
+    <None Include="wwwroot\assets\vendor\fonts\fontawesome\fa-brands-400.woff2" />
+    <None Include="wwwroot\assets\vendor\fonts\fontawesome\fa-regular-400.svg" />
+    <None Include="wwwroot\assets\vendor\fonts\fontawesome\fa-regular-400.woff2" />
+    <None Include="wwwroot\assets\vendor\fonts\fontawesome\fa-solid-900.svg" />
+    <None Include="wwwroot\assets\vendor\fonts\fontawesome\fa-solid-900.woff2" />
+    <None Include="wwwroot\assets\vendor\fonts\ionicons\ionicons.svg" />
+    <None Include="wwwroot\assets\vendor\fonts\ionicons\ionicons.woff2" />
+    <None Include="wwwroot\assets\vendor\fonts\linearicons\Linearicons-Free.svg" />
+    <None Include="wwwroot\assets\vendor\fonts\linearicons\Linearicons-Free.woff2" />
+    <None Include="wwwroot\assets\vendor\fonts\open-iconic\open-iconic.svg" />
+    <None Include="wwwroot\assets\vendor\fonts\pe-icon-7-stroke\Pe-icon-7-stroke.svg" />
+    <None Include="wwwroot\assets\vendor\js\bootstrap.js" />
+    <None Include="wwwroot\assets\vendor\js\dropdown-hover.js" />
+    <None Include="wwwroot\assets\vendor\js\jquery.min.js" />
+    <None Include="wwwroot\assets\vendor\js\layout-helpers.js" />
+    <None Include="wwwroot\assets\vendor\js\material-ripple.js" />
+    <None Include="wwwroot\assets\vendor\js\mega-dropdown.js" />
+    <None Include="wwwroot\assets\vendor\js\pace.js" />
+    <None Include="wwwroot\assets\vendor\js\polyfills.js" />
+    <None Include="wwwroot\assets\vendor\js\sidenav.js" />
+    <None Include="wwwroot\assets\vendor\js\theme-settings.js" />
+    <None Include="wwwroot\assets\vendor\libs\autosize\autosize.js" />
+    <None Include="wwwroot\assets\vendor\libs\block-ui\block-ui.js" />
+    <None Include="wwwroot\assets\vendor\libs\blueimp-gallery\gallery-fullscreen.js" />
+    <None Include="wwwroot\assets\vendor\libs\blueimp-gallery\gallery-indicator.js" />
+    <None Include="wwwroot\assets\vendor\libs\blueimp-gallery\gallery-video.js" />
+    <None Include="wwwroot\assets\vendor\libs\blueimp-gallery\gallery-vimeo.js" />
+    <None Include="wwwroot\assets\vendor\libs\blueimp-gallery\gallery-youtube.js" />
+    <None Include="wwwroot\assets\vendor\libs\blueimp-gallery\gallery.js" />
+    <None Include="wwwroot\assets\vendor\libs\blueimp-gallery\img\error.svg" />
+    <None Include="wwwroot\assets\vendor\libs\blueimp-gallery\img\play-pause.svg" />
+    <None Include="wwwroot\assets\vendor\libs\blueimp-gallery\img\video-play.svg" />
+    <None Include="wwwroot\assets\vendor\libs\blueimp-gallery\jquery.gallery.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootbox\bootbox.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-datepicker\bootstrap-datepicker.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-daterangepicker\bootstrap-daterangepicker.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-duallistbox\bootstrap-duallistbox.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-markdown\bootstrap-markdown.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-material-datetimepicker\bootstrap-material-datetimepicker.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-maxlength\bootstrap-maxlength.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-menu\bootstrap-menu.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-select\bootstrap-select.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-slider\bootstrap-slider.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-sortable\bootstrap-sortable.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\bootstrap-table.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\accent-neutralise\accent-neutralise.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\addrbar\addrbar.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\auto-refresh\auto-refresh.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\cell-input\cell-input.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\cookie\cookie.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\copy-rows\copy-rows.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\defer-url\defer-url.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\editable\editable.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\export\export.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\filter-control\filter-control.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\fixed-columns\fixed-columns.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\group-by-v2\group-by-v2.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\i18n-enhance\i18n-enhance.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\key-events\key-events.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\mobile\mobile.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\multiple-sort\multiple-sort.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\page-jump-to\page-jump-to.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\pipeline\pipeline.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\print\print.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\reorder-columns\reorder-columns.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\reorder-rows\reorder-rows.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\resizable\resizable.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\sticky-header\sticky-header.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\toolbar\toolbar.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-table\extensions\treegrid\treegrid.js" />
+    <None Include="wwwroot\assets\vendor\libs\bootstrap-tagsinput\bootstrap-tagsinput.js" />
+    <None Include="wwwroot\assets\vendor\libs\c3\c3.js" />
+    <None Include="wwwroot\assets\vendor\libs\chartist\chartist.js" />
+    <None Include="wwwroot\assets\vendor\libs\chartjs\chartjs.js" />
+    <None Include="wwwroot\assets\vendor\libs\clipboard\clipboard.js" />
+    <None Include="wwwroot\assets\vendor\libs\cropper\cropper.js" />
+    <None Include="wwwroot\assets\vendor\libs\d3\d3.js" />
+    <None Include="wwwroot\assets\vendor\libs\datatables\datatables.js" />
+    <None Include="wwwroot\assets\vendor\libs\dragula\dragula.js" />
+    <None Include="wwwroot\assets\vendor\libs\dropzone\dropzone.js" />
+    <None Include="wwwroot\assets\vendor\libs\eve\eve.js" />
+    <None Include="wwwroot\assets\vendor\libs\flatpickr\flatpickr.js" />
+    <None Include="wwwroot\assets\vendor\libs\flot\flot.js" />
+    <None Include="wwwroot\assets\vendor\libs\flot\tooltip.js" />
+    <None Include="wwwroot\assets\vendor\libs\flow-js\flow.js" />
+    <None Include="wwwroot\assets\vendor\libs\fullcalendar\fullcalendar.js" />
+    <None Include="wwwroot\assets\vendor\libs\fullcalendar\locale-all.js" />
+    <None Include="wwwroot\assets\vendor\libs\gmaps\gmaps.js" />
+    <None Include="wwwroot\assets\vendor\libs\growl\growl.js" />
+    <None Include="wwwroot\assets\vendor\libs\idletimer\idletimer.js" />
+    <None Include="wwwroot\assets\vendor\libs\jstree\jstree.js" />
+    <None Include="wwwroot\assets\vendor\libs\knob\knob.js" />
+    <None Include="wwwroot\assets\vendor\libs\ladda\ladda.js" />
+    <None Include="wwwroot\assets\vendor\libs\mapael\mapael.js" />
+    <None Include="wwwroot\assets\vendor\libs\mapael\maps\france_departments.js" />
+    <None Include="wwwroot\assets\vendor\libs\mapael\maps\usa_states.js" />
+    <None Include="wwwroot\assets\vendor\libs\mapael\maps\world_countries.js" />
+    <None Include="wwwroot\assets\vendor\libs\mapael\maps\world_countries_mercator.js" />
+    <None Include="wwwroot\assets\vendor\libs\mapael\maps\world_countries_miller.js" />
+    <None Include="wwwroot\assets\vendor\libs\markdown\markdown.js" />
+    <None Include="wwwroot\assets\vendor\libs\masonry\masonry.js" />
+    <None Include="wwwroot\assets\vendor\libs\minicolors\minicolors.js" />
+    <None Include="wwwroot\assets\vendor\libs\moment\moment.js" />
+    <None Include="wwwroot\assets\vendor\libs\morris\morris.js" />
+    <None Include="wwwroot\assets\vendor\libs\nestable\nestable.js" />
+    <None Include="wwwroot\assets\vendor\libs\nouislider\nouislider.js" />
+    <None Include="wwwroot\assets\vendor\libs\numeral\numeral.js" />
+    <None Include="wwwroot\assets\vendor\libs\perfect-scrollbar\perfect-scrollbar.js" />
+    <None Include="wwwroot\assets\vendor\libs\photoswipe\default-skin.svg" />
+    <None Include="wwwroot\assets\vendor\libs\photoswipe\photoswipe.js" />
+    <None Include="wwwroot\assets\vendor\libs\plyr\plyr.js" />
+    <None Include="wwwroot\assets\vendor\libs\popper\popper.js" />
+    <None Include="wwwroot\assets\vendor\libs\pwstrength-bootstrap\pwstrength-bootstrap.js" />
+    <None Include="wwwroot\assets\vendor\libs\quill\quill.js" />
+    <None Include="wwwroot\assets\vendor\libs\raphael\raphael.js" />
+    <None Include="wwwroot\assets\vendor\libs\select2\select2.js" />
+    <None Include="wwwroot\assets\vendor\libs\shepherd\shepherd.js" />
+    <None Include="wwwroot\assets\vendor\libs\smartwizard\smartwizard.js" />
+    <None Include="wwwroot\assets\vendor\libs\sortablejs\sortable.js" />
+    <None Include="wwwroot\assets\vendor\libs\sparkline\sparkline.js" />
+    <None Include="wwwroot\assets\vendor\libs\spin\spin.js" />
+    <None Include="wwwroot\assets\vendor\libs\sweetalert2\sweetalert2.js" />
+    <None Include="wwwroot\assets\vendor\libs\swiper\swiper.js" />
+    <None Include="wwwroot\assets\vendor\libs\tableexport\tableexport.js" />
+    <None Include="wwwroot\assets\vendor\libs\timepicker\timepicker.js" />
+    <None Include="wwwroot\assets\vendor\libs\toastr\toastr.js" />
+    <None Include="wwwroot\assets\vendor\libs\typeahead-js\typeahead.js" />
+    <None Include="wwwroot\assets\vendor\libs\validate\validate.js" />
+    <None Include="wwwroot\assets\vendor\libs\vanilla-text-mask\text-mask-addons.js" />
+    <None Include="wwwroot\assets\vendor\libs\vanilla-text-mask\vanilla-text-mask.js" />
+    <None Include="wwwroot\assets\vendor\libs\vegas\vegas.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="EPPlus" Version="8.0.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="QRCoder" Version="1.6.0" />
+    <PackageReference Include="Razorpay" Version="3.1.3" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="SpreadsheetLight" Version="3.5.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.4" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+    <PackageReference Include="System.Net.Http.Formatting.Extension" Version="5.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\img\billers\electricity\" />
+    <Folder Include="wwwroot\assets\img\billers\gas\" />
+    <Folder Include="wwwroot\assets\img\billers\mobile\" />
+    <Folder Include="wwwroot\FileData\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="UPPCLLibrary">
+      <HintPath>bin\UPPCLLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\WhiteLabel\AccountStatement.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\WhiteLabel\DownlineMarginSheet.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\WhiteLabel\FundReport.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\WhiteLabel\FundTransfer.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\WhiteLabel\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\WhiteLabel\ListMasterDistributor.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\WhiteLabel\UserCommissionReport.cshtml" />
+  </ItemGroup>
+
+
+</Project>

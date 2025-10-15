@@ -1,0 +1,76 @@
+@{
+    Layout = "_LayoutPlain";
+    ViewData["title"] = "Monitor";
+}
+
+<!-- Content
+============================================= -->
+
+<div id="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="bg-white shadow-md rounded p-4">
+
+                    <h4 class="mb-4">Wallet Balance: <span id="bal" class="text-facebook"></span>  Balance Time: <span id="balTime" class="text-google"></span> &nbsp; ||&|| &nbsp; Transaction List</h4>
+                    <hr class="mx-n4">
+
+                    <div class="tab-content my-3" id="myTabContent">
+                        <div class="tab-pane fade show active" id="first" role="tabpanel" aria-labelledby="first-tab">
+                            <div class="table-responsive-md">
+                                <table class="table table-hover border" id="tranLog">
+                                    <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>ConsumerNumber</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-end">Amount</th>
+                                        <th class="text-center">Discom</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Content end -->
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        LoadData();
+    });
+
+    function LoadData() {
+        $('#tranLog').find('tbody').empty();
+        $('#bal').html('');
+        $('#balTime').html(''); 
+        
+        $.getJSON('TranLog?d=' + $.now(),
+        function (data) {                
+            $.each(data,
+                function (index, value) {
+                    $('#tranLog').find('tbody').append("<tr>" + '<td>' + moment(value.CreateDate).format('MM-DD-YYYY') + '</td>' + '<td>' + moment(value.CreateDate).format('HH:mm') + '</td>'+ '<td>' + value.RechargeMobileNumber + '</td>'+ '<td>' + value.RechargeStatus + '</td>'+ '<td>' + value.Amount + '</td>'+ '<td>' + value.UPPCL_Discom + '</td>' + "</tr>");
+                });            
+        });
+        
+        $.getJSON('WalletBalance?d=' + $.now(),
+        function (data) {                
+           $('#bal').html(data.Balance);
+           $('#balTime').html(moment(data.CreateDate).format('MM-DD-YYYY HH:mm')); 
+        });
+    }
+    
+    window.setInterval(function () {
+        LoadData();
+    }, 32000);
+    
+</script>

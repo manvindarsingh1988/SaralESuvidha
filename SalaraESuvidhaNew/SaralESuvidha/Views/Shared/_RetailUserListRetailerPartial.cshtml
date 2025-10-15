@@ -1,0 +1,57 @@
+<div class="card">
+    <h6 class="card-header">
+        Retailers List
+    </h6>
+    <div class="card-datatable table-responsive">
+        <table class="table table-striped table-bordered" id="datatable-grid-retailer">
+            <thead>
+            <tr>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        LoadUserRetailer();
+    });
+
+    function LoadUserRetailer() {
+        $('#datatable-grid-retailer tbody').empty();
+        $('#datatable-grid-retailer thead').empty();
+
+        var $table = $('#datatable-grid-retailer');
+        $table.dataTable({
+            destroy: true,
+            iDisplayLength: 100,
+            bProcessing: true,
+            bAutoWidth: true,
+            sAjaxSource: '@Url.Action("GetAllRetailer","Distributor")',
+            rowId: 'Id',
+            cache: false,
+            order: [[1, "asc"]],
+            columns: [
+                { data: "USL", title: "USL" }, { data: "RetailerName", title: "Retailer Name" }, { data: "Balance", title: "Balance" },
+                { data: "MobileNumber", title: "Mobile Number" }, { data: "City", title: "City" },
+                 { data: "Address", title: "Address" },
+                {
+                    data: null,
+                    title: "Action",
+                    render: function (data, type, row) {
+                        if (row.DocVerificationFailed)
+                            return "<button type='button' class='btn btn-default btn-sm btn-primary edit' onclick=Edit('" + row.Id + "')>Revisit</button>"; 
+                        else
+                            return "<div></div>";
+                    }
+                }
+            ]
+        });
+    }
+
+    function Edit(id){
+        window.location.href = '@Url.Action("UpdateRetailer", "Distributor")?id=' + id;
+    }
+</script>

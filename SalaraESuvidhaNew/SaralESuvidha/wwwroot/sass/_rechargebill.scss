@@ -1,0 +1,74 @@
+/* =================================== */
+/*  Rechare & Bill Payment
+/* =================================== */
+
+/* View Plans Link */
+.view-plans-link {
+  position: absolute;
+  right: 0px;
+  z-index: 4;
+  padding: 0 15px;
+  font-size: 13px;
+  text-decoration: underline;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+}
+
+html[dir="rtl"] .view-plans-link {
+  right: auto;
+  left: 0px;
+}
+
+/* Plans */
+.plans {
+  max-height: 380px;
+  overflow: hidden;
+  overflow-y: auto;
+  &.page {
+    max-height: 617px;
+  } 
+}
+
+@include media-breakpoint-up(md) {
+.plans {
+.table.table-lg {
+    td, th {
+      padding: 1.8rem;
+    }
+  }
+}
+}
+
+/* Operator selection */
+
+.operator-selection{
+.form-check{
+	position:relative;
+	padding-left: 0;
+.form-check-label {
+  padding-bottom: 1rem;
+  }
+  .form-check-input {
+    top: auto;
+	bottom: 0rem;
+	left: calc(50% - 0.65rem);
+	position: absolute;
+	margin: 0;
+  }
+}
+}
+
+html[dir="rtl"] .operator-selection{
+.form-check{
+	padding-right: 0;
+	  .form-check-input {
+		left: auto;
+		right: calc(50% - 0.75rem);
+	  }
+	}
+}
+
+

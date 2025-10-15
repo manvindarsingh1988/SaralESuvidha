@@ -1,0 +1,65 @@
+﻿@{
+    Layout = "_LayoutBillPay";
+}
+
+<section class="container">
+    <div class="bg-white shadow-md rounded p-4">
+        <div class="row g-4">
+
+            <!-- Electricity Bill
+            ============================================= -->
+            <div class="col-lg-4 col-xxl-5">
+                <h2 class="text-4 mb-3">Pay your Electricity Bill</h2>
+                <form id="electricityBill" method="post">
+                    <div class="mb-3">
+                        <select class="form-select" id="operator" required="">
+                            <option value="">Select Your Operator</option>
+                            <option selected="selected">PVVNL - Pashchimanchal Vidyut Vitaran Nigam Limited</option>
+                            <option>MVVNL - Madhyanchal Vidyut Vitaran Nigam Limited</option>
+                            <option>DVVNL - Dakshinanchal Vidyut Vitaran Nigam Limited</option>
+                            <option>PUVNL - Purvanchal Vidyut Vitaran Nigam Limited</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 d-none">
+                        <select class="form-select" id="yourState" required="">
+                            <option value="">Select Your State</option>
+                            <option>Andhra Pradesh</option>
+                            <option selected="selected">Uttar Pradesh</option>
+                            <option>Haryana</option>
+                            <option>Karnataka</option>
+                            <option>Madhya Pradesh</option>
+                            <option>Maharashtra</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" data-bv-field="number" id="serviceNumber" required placeholder="Enter Service Number">
+                    </div>
+                    <div class="d-grid mb-3">
+                        <button class="btn btn-primary" type="button">Check Bill</button>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">&#8377;</span>
+                        <input class="form-control" id="amount" placeholder="Enter Amount" required type="text">
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-primary" type="button">Continue</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Electricity Bill end -->
+            <!-- Slideshow
+            ============================================= -->
+            <div class="col-lg-8 col-xxl-7">
+                <div class="owl-carousel owl-theme single-slider" data-animateout="fadeOut" data-animatein="fadeIn" data-autoplay="true" data-loop="true" data-autoheight="true" data-nav="true" data-items="1">
+                    <div class="item"><a href="#"><img class="img-fluid" src="~/images/slider/banner-6.jpg" alt="banner 5" /></a></div>
+                </div>
+            </div>
+            <!-- Slideshow end -->
+
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+$('#electricity').addClass('active');
+</script>

@@ -1,0 +1,151 @@
+@model SaralESuvidha.ViewModel.RTranReportServerWise;
+@{
+  Layout = "_LayoutRetailClient";
+  ViewData["title"] = "Raise Refund Dispute";
+  //var refundStatus = Model.IsRefundProcessed ? String.IsNullOrEmpty(Model.RefundTransactionId) ? "DISAPPROVED" : "APPROVED" : (Model.RefundRequestDate == DateTime.MinValue ? "NOT INITIATED" : "PENDING");
+  var refundStatus = "";
+  var cssClass = "facebook";
+  if (Model.RefundRequestDate == DateTime.MinValue)
+  {
+    refundStatus = "NOT INITIATED";
+  }
+  else
+  {
+    if (Model.RefundResponseDate == DateTime.MinValue)
+    {
+      refundStatus = "PENDING";
+    }
+    else
+    {
+      refundStatus = Model.IsRefundProcessed ? "DISAPPROVED" : "APPROVED";
+      cssClass = Model.IsRefundProcessed ? "danger" : "success";
+    }
+  }
+}
+
+<form id="frmRaiseDispute" name="frmRaiseDispute" method="post">
+  <!-- Raise Dispute -->
+  <div class="card mb-4">
+    <h6 class="card-header with-elements">
+      <div class="card-header-title">Raise Dispute - Payment/Recharge Details <span class="text-facebook">(@Model.OperatorName - <span class="text-flickr">@Model.OperatorType</span>)</span></div>
+      <div class="card-header-elements ml-auto d-none">
+        <label class="text m-0">
+          <span class="text-light text-tiny font-weight-semibold align-middle">
+            SHOW STATS
+          </span>
+          <span class="switcher switcher-sm d-inline-block align-middle mr-0 ml-2">
+            <input type="checkbox" class="switcher-input" checked>
+            <span class="switcher-indicator">
+              <span class="switcher-yes"></span>
+              <span class="switcher-no"></span>
+            </span>
+          </span>
+        </label>
+      </div>
+    </h6>
+    <div class="row no-gutters row-bordered">
+      <div class="col-md-8 col-lg-12 col-xl-8">
+        <div class="card-body">
+          
+          <div class="row">
+            <div class="col-lg-12 form-group text-info" id="Info" name="Info">
+            </div>
+            @if (@Model.RechargeStatus == "SUCCESS" && @Model.RefundRequestDate == DateTime.MinValue)
+            {
+              <div class="col-lg-12 form-group align-middle rdispute">
+                <label class="form-form-control">Dispute Remarks: </label>
+                <input name="txtRemarks" id="txtRemarks" type="text" maxlength="120" class="form-control required"/>
+              </div>
+            }
+            else
+            {
+              <div class="col-lg-12 form-group"><span class="form-label text-big text-facebook"><i class="sidenav-icon ion ion-md-information-circle-outline"></i> Dispute already raised for this transaction.</span></div>
+              <div class="col-lg-12 form-group">
+                <span class="form-label">Payment Remarks: @Model.Remarks</span>
+              </div>
+              <div class="col-lg-12 form-group">
+                <span class="form-label">Approver Remarks: @Model.ResponseDetail</span>
+              </div>
+              <div class="col-lg-12 form-group"><span class="form-label">Dispute Remarks: @Model.RefundRemarks</span></div>
+            }
+
+          </div>
+          @if (@Model.RechargeStatus == "SUCCESS" && @Model.RefundRequestDate == DateTime.MinValue)
+          {
+            <button type="button" class="btn btn-primary rdispute" onclick="RaiseDispute();">Raise Dispute</button>
+          }
+        </div>
+      </div>
+
+      <div class="col-md-4 col-lg-12 col-xl-4">
+        <div class="card-body">
+
+          <!-- Numbers -->
+          <div class="row">
+            <div class="col-6 col-xl-5 text-muted mb-3 text-right">Account Number:</div>
+            <div class="col-6 col-xl-7 mb-3">
+              <span class="text-small text-facebook">@Model.RechargeNumber</span>
+            </div>
+            <div class="col-6 col-xl-5 text-muted mb-3 text-right">Payment Amount:</div>
+            <div class="col-6 col-xl-7 mb-3">
+              <span class="text-small text-facebook font-weight-bold">@Model.Amount</span>
+            </div>
+            <div class="col-6 col-xl-5 text-muted mb-3 text-right">Transaction Date:</div>
+            <div class="col-6 col-xl-7 mb-3">
+              <span class="text-small">@Model.CreateDate.ToString("dd-MMM-yyyy HH:mm")</span>
+            </div>
+            <div class="col-6 col-xl-5 text-muted mb-3 text-right">Live/Operator ID:</div>
+            <div class="col-6 col-xl-7 mb-3">
+              <span class="text-small">@Model.LiveId</span>
+            </div>
+            <div class="col-6 col-xl-5 text-muted mb-3 text-right">Current Status:</div>
+            <div class="col-6 col-xl-7 mb-3">
+              <span class='text-small text-@(Model.RechargeStatus=="SUCCESS"?"success":"danger")'>@Model.RechargeStatus</span>
+            </div>
+            <div class="col-6 col-xl-5 text-muted mb-3 text-right">Refund Status:</div>
+            <div class="col-6 col-xl-7 mb-3">
+              <span class="text-small text-@(@cssClass)" id="lblRefStatus" name="lblRefStatus">@refundStatus</span>
+            </div>
+          </div>
+          <!-- / Numbers -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- / Raise Dispute -->
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+    });
+  
+    function ValidateInput(){
+      if ($('#txtRemarks').val().length<10){
+        $('#Info').html('<span class="text-danger"><i class="sidenav-icon ion ion-md-close-circle"></i> Remark required, it should be long enough.<span>');
+        $('#txtRemarks').focus();
+        return false;
+      }
+      return true;
+    }
+    
+    function RaiseDispute() {
+        if (ValidateInput()){
+          $.ajax({
+              type: "POST",
+              url: "@Url.Action("SaveDispute")",
+              data: {Rid: "@Model.Rid", rem: $('#txtRemarks').val()},
+              dataType: "text",
+              success: function (msg) {
+                  $('#Info').html(msg);
+                  $('#lblRefStatus').html('PENDING');
+                  $('.rdispute').addClass('d-none');
+              },
+              error: function (req, status, error) {
+                  $('#Info').html(error);
+              }
+          });
+        }
+    }
+</script>

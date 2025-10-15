@@ -1,0 +1,55 @@
+@model SaralESuvidha.ViewModel.PaymentReceipt
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Receipt Verification</title>
+     <style type="text/css">
+        body {
+            font-family: sans-serif;
+        }
+
+        .head {
+            text-align: right;
+            padding: 10px 20px 10px 20px;
+        }
+
+        .headvalue {
+            text-align: left;
+            padding: 10px 0 10px 0;
+        }
+
+        .border_bottom {
+            border-bottom: 1px solid #CCCCCC;
+        }
+
+        .border_top {
+            border-top: 1px solid #CCCCCC;
+        }
+
+        .grey_color {
+            color: #888888;
+        }
+
+        .small_font {
+            font-size: small;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+@{
+    //var tranId = string.IsNullOrEmpty(Model.LiveId) ? "TEM1000800010" + Model.Id : Model.LiveId;
+    //tranId = (Model.TelecomOperatorName == "INVALID DETAILS") ? "" : tranId;
+    Model.Id = Model.Id; //width:1050px;
+}
+<div style="text-align: center;">
+    Receipt Verification
+</div>
+</body>
+</html>

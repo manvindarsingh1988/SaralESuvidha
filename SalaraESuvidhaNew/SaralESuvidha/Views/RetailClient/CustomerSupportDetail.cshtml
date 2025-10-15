@@ -1,0 +1,57 @@
+﻿@*
+
+*@
+@{
+    Layout = "_LayoutRetailClient";
+    ViewData["title"] = "Retailer Dashboard - CustomerSupportDetail";
+}
+
+<form id="frmReport" method="post" action="#">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-12 form-group">
+                    <label id="infoMessage" name="infoMessage" class="form-label"></label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 form-group">
+                    <label class="form-label">Receipt Message<span class="text-danger">*</span></label>
+                    <input name="txtCustomerSupportDetail" id="txtCustomerSupportDetail" type="text" class="form-control">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="Update();">UPDATE</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 form-group">
+                    <label class="form-label">Current Detail<span class="text-danger">*</span></label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 form-group">
+                    <label name="lblCustomerSupportDetail" id="lblCustomerSupportDetail" class="form-label"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</form>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.getJSON("@Url.Action("CustomerSupportDetailUpdate", "RetailUserCommon")?receiptMessage=&read=true",
+            function (data) {
+                $("#lblCustomerSupportDetail").html(data.ReceiptMessage + '<br /><span class="grey_color"><i>' + data.UpdateDetail + '</i></span>');
+            });
+    });
+
+    function Update() {
+        $.get("@Url.Action("CustomerSupportDetailUpdate", "RetailUserCommon")?receiptMessage=" + $('#txtCustomerSupportDetail').val(),
+            function (data) {
+                //console.log(data);
+                $('#infoMessage').html(data);
+            });
+
+    }
+</script>

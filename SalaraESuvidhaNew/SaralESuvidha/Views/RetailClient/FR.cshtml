@@ -1,0 +1,179 @@
+﻿@model SaralESuvidha.ViewModel.RetailUserViewModel
+@using Microsoft.AspNetCore.Http
+@{
+    Layout = "_LayoutFR";
+    ViewData["title"] = "Fund Request";
+}
+
+<div id="contentContainer">
+    <p>Loading content...</p>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $('#frmFundRequest').validate({
+                ignore: '.ignore, .select2-input',
+                focusInvalid: false,
+                rules: {
+                    'txtAmount': {
+                        required: true
+                    }
+                },
+                messages: {
+                    'txtAmount': {
+                        required: 'Amount is required.'
+                    }
+                },
+                errorPlacement: function errorPlacement(error, element) {
+                    var $parent = $(element).parents('.form-group');
+
+                    // Do not duplicate errors
+                    if ($parent.find('.jquery-validation-error').length) {
+                        return;
+                    }
+
+                    $parent.append(
+                        error.addClass('jquery-validation-error small form-text invalid-feedback')
+                    );
+                },
+                highlight: function(element) {
+                    var $el = $(element);
+                    var $parent = $el.parents('.form-group');
+                    $el.addClass('is-invalid');
+                    if ($el.hasClass('select2-hidden-accessible') || $el.attr('data-role') === 'tagsinput') {
+                        $el.parent().addClass('is-invalid');
+                    }
+                },
+                unhighlight: function(element) {
+                    $(element).parents('.form-group').find('.is-invalid').removeClass('is-invalid');
+                }
+            });
+
+            function loadPartialView() {
+                $.ajax({
+                    url: '/FR/GetContent',
+                    type: 'GET',
+                    success: function (response) {
+                        $('#contentContainer').html(response);
+                    },
+                    error: function () {
+                        $('#contentContainer').html('<p>Error loading content.</p>');
+                    }
+                });
+            }
+
+            loadPartialView();
+
+        });
+
+        function RequesrFund() {
+                if (!$('#frmFundRequest').valid()) {
+                $('#InfoMessage').html('Can not transfer fund to ' + $('#OrderNo').val() + '.').removeClass('pam-info').addClass('pam-error');
+                return;
+            } else {
+                if ($('#OrderNo').val().length > 0) {
+                        $('#InfoDetail').html('Validating fund request, please wait ' + loaderImgInner);
+                    $.get("@Url.Action("FundRequestValidate", "RetailClient")?did=" + a2hex($('#OrderNo').val()) + "&amt=" + a2hex($('#txtAmount').val()) + "&rem=" + a2hex($('#txtRemarks').val()) + "&ac=" + a2hex('dr'), function (data) {
+                        if (data.indexOf('Errors:') > -1) {
+                            $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                        } else {
+                            //success
+                            $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                        }
+                        GetBalance();
+                    });
+                }
+                else {
+                    $('#InfoDetail').html('');
+                }
+            }
+        }
+
+
+        function ShowAction(){
+            $('#ActionButton').removeClass('d-none');
+        }
+
+        function HideAction(){
+            $('#ActionButton').addClass('d-none');
+            $('#OrderNo').focus();
+        }
+
+        function LoadAmount() {
+            $.get("@Url.Action("AmountToInr", "Common")?amount=" + $('#txtAmount').val(), function (data) {
+                $("#AmountInWords").html('<span class="">&#x20B9; ' + data + '</span>');
+            });
+        }
+
+        function ValidInput() {
+            if ($('#mobileno').val() === '') {
+                $('#ActionMessage').html('<span class="text-warning">Mobile number required.</span>');
+                return false;
+            }
+
+            if ($('#password').val() === '') {
+                $('#ActionMessage').html('<span class="text-warning">Password required.</span>');
+                return false;
+            }
+
+            return true;
+        }
+
+        function IAgree() {
+            $.get("@Url.Action("UpdateAgreementAceptStatus", "Home")",
+                function (data) {
+                    if(data == "status updated.") {
+                            var resText = $('#terms-modal').attr('alt');
+                        if (resText.indexOf('Retailer') > -1) {
+                            $('#ActionMessage').html('<span class="">' + resText + '</span>');
+                            window.location.href = "/RetailClient/Index";
+                        }
+                        else if (resText.indexOf('Distributor') > -1 && resText.indexOf('Master') < 0) {
+                            $('#ActionMessage').html('<span class="">' + resText + '</span>');
+                            window.location.href = "/Distributor/Index";
+                        }
+                        else if (resText.indexOf('MasterDistributor') > -1) {
+                            $('#ActionMessage').html('<span class="">' + resText + '</span>');
+                            window.location.href = "/MasterDistributor/Index";
+                        }
+                    }
+                });
+        }
+
+        function Login() {
+            if(ValidInput()){
+                if (localStorage && navigator.userAgent.includes('etopapp')) {
+                    localStorage.setItem('esuserid', $("#mobileno").val());
+                    localStorage.setItem('espassword', $("#password").val());
+                }
+
+                $.get("@Url.Action("RetailLogin", "FR")?m=" + $('#mobileno').val() + "&p=" + $('#password').val(),
+                    function(data) {
+                        var resText = data.split("$$")[0];
+                        var kycMessage = data.split("$$")[1];
+                        var agreementAccepted = data.split("$$")[2];
+                        if (resText.indexOf('Errors:') > -1) {
+                            $('#ActionMessage').html('<span class="text-danger">' + resText + '</span>');
+                        } else if (resText.indexOf('Retailer') > -1) {
+                            $('#ActionMessage').html('<span class="">' + resText + '</span>');
+
+                            window.location.href = "/FR/DailyRechargeReport";
+                        } else if (resText.indexOf('Distributor') > -1 && resText.indexOf('Master') < 0) {
+                            $('#ActionMessage').html('<span class="">' + 'Distributor' + '</span>');
+                        } else if (resText.indexOf('MasterDistributor') > -1) {
+                            $('#ActionMessage').html('<span class="">' + 'MasterDistributor' + '</span>');
+                        }
+                        if (kycMessage) {
+                             alert(kycMessage);
+                        }
+                    });
+            }
+        }
+
+
+
+    </script>
+}

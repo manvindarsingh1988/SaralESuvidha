@@ -1,0 +1,55 @@
+﻿@{
+    Layout = "_LayoutBillPay";
+}
+
+<section class="container">
+    <div class="bg-white shadow-md rounded p-4">
+        <div class="row g-4">
+
+            <!-- Gas Bill
+            ============================================= -->
+            <div class="col-lg-4 col-xxl-5">
+                <h2 class="text-4 mb-3">Pay Your Gas Bill</h2>
+                <form id="gasBill" method="post">
+                    <div class="mb-3">
+                        <select class="form-select" id="operator" required="">
+                            <option value="">Select Your Operator</option>
+                            <option>Adani Gas Limited</option>
+                            <option>Aavantika Gas Ltd</option>
+                            <option>Gujarat Gas Limited</option>
+                            <option>Indraprastha Gas Limited</option>
+                            <option>Mahanagar Gas- Mumbai</option>
+                            <option>Tripura Natural Gas</option>
+                            <option>Vadodara Gas Limited (VGL)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" data-bv-field="number" id="consumerNumber" required placeholder="Enter Consumer Number">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">&#8377;</span>
+                        <input class="form-control" id="amount" placeholder="Enter Amount" required type="text">
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-primary" type="submit">Continue</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Gas Bill end -->
+            <!-- Slideshow
+            ============================================= -->
+            <div class="col-lg-8 col-xxl-7">
+                <div class="owl-carousel owl-theme single-slider" data-animateout="fadeOut" data-animatein="fadeIn" data-autoplay="true" data-loop="true" data-autoheight="true" data-nav="true" data-items="1">
+                    <div class="item"><a href="#"><img class="img-fluid" src="~/images/slider/banner-7.jpg" alt="banner 7" /></a></div>
+                    <div class="item"><a href="#"><img class="img-fluid" src="~/images/slider/banner-10.jpg" alt="banner 10" /></a></div>
+                </div>
+            </div>
+            <!-- Slideshow end -->
+
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+$('#gas').addClass('active');
+</script>

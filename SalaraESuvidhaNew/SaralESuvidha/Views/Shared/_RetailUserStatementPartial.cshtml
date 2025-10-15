@@ -1,0 +1,92 @@
+
+<form id="frmReport" method="post" action="">
+    <div class="card">
+        <h6 class="card-header">Account Statement Between Period<span id="InfoDetail" name="InfoDetail" class=""></span></h6>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">From Date<span class="text-danger">*</span></label>
+                    <input name="txtReportDate" id="txtReportDate" type="text" class="form-control flatpickr-date required">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">To Date<span class="text-danger">*</span></label>
+                    <input name="txtReportDateTo" id="txtReportDateTo" type="text" class="form-control flatpickr-date required">
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="javascript: LoadRechargeReport();">Load Report</button>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="javascript: Export();">Export Excel</button>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary hide" onclick="LoadRechargeSummaryReport();">Load Summary</button>
+                </div>                
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h6 class="card-header alert-primary" id="lblReport">
+            Report
+        </h6>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-adminreport" data-url="#">
+                <thead>
+                    <tr>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+
+        function LoadRechargeReport() {
+            if ($.fn.DataTable.isDataTable('#datatable-adminreport')) {
+                $('#datatable-adminreport').DataTable().destroy();
+            }
+            $('#datatable-adminreport tbody').empty();
+            $('#datatable-adminreport thead').empty();
+
+            var $table = $('#datatable-adminreport');
+            $table.dataTable({
+                iDisplayLength: 15,
+                bAutoWidth: false,
+                sAjaxSource: '@Url.Action("DailyClientStatementResult","RetailUserCommon")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0&orderNo=' + $('#OrderNo').val(),
+                cache: false,
+                order: [[12, "asc"], [13, "asc"]],
+                columns: [
+                    { data: "Rid", title: "Api Id", visible: false },
+                    { data: "RefundId", title: "Ref Id", visible: false }, { data: "OperatorName", title: "Operator" },
+                    { data: "RechargeNumber", title: "Number" }, { data: "RechargeStatus", title: "RStatus" },
+                    { data: "OB", title: "OB" }, { data: "Amount", title: "Amount" }, { data: "Debit", title: "Debit" },
+                    { data: "Credit", title: "Credit" }, { data: "CB", title: "CB" },
+                    { data: "LiveId", title: "LiveId" }, { data: "CreateDate", title: "Date", render: function (data) { return moment(data).format('MM-DD-YYYY'); } },
+                    { data: "CreateDate", title: "Time", render: function (data) { return moment(data).format('HH:mm:ss'); } }, { data: "Remarks", title: "Remarks" }
+                ]
+            });
+            $('#lblReport').html('Account report between date ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDateTo').val() + '.');
+
+        }
+
+        function Export() {
+        $('#lblReport').html('Loading report...');
+        $.get('@Url.Action("DailyClientStatementResult", "RetailUserCommon")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1&orderNo=' + $('#OrderNo').val(),
+            function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
+                } else {
+                    $('#lblReport').html('Account report between date ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDateTo').val() + '.' + data);
+                }
+            });
+    }
+
+</script>

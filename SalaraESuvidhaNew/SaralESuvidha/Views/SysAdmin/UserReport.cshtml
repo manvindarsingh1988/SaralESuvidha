@@ -1,0 +1,95 @@
+﻿@model SaralESuvidha.ViewModel.MarginPlan;
+@{
+    Layout = "_LayoutSysAdmin";
+    ViewData["title"] = "SysAdmin - User Report";
+}
+
+
+<form id="frmMain" name="frmMain" asp-action="" asp-controller="SysAdmin">
+    <h5>User Report</h5>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="form-group">
+                        <label class="form-label">User Type</label>
+                        <select id="UserType" class="form-control" data-style="btn-default">
+                            <option value="7">Master Distributor</option>
+                            <option value="6">Distributor</option>
+                            <option value="5">Retailer</option>
+                            <option value="9">White Label</option>
+                            <option value="10">All</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="LoadReport();">Load Report</button>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="Export();">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h6 class="card-header alert-primary" id="lblReport">
+            Report
+        </h6>
+        <div class="card-datatable table-responsive">
+            <table class="table table-striped table-bordered" id="datatable-adminreport" data-url="">
+                <thead>
+                    <tr>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+
+    function LoadReport() {
+        if ($.fn.DataTable.isDataTable('#datatable-adminreport')) {
+            $('#datatable-adminreport').DataTable().destroy();
+        }
+        $('#datatable-adminreport tbody').empty();
+        $('#datatable-adminreport thead').empty();
+
+        var $table = $('#datatable-adminreport');
+        $table.dataTable({
+            destroy: true,
+            iDisplayLength: 50,
+            bProcessing: true,
+            bAutoWidth: true,
+            sAjaxSource: '@Url.Action("GetRetailUserByType", "CommonAuthAction")' + '?UserType=' + $('#UserType option:selected').val() + '&ExportExcel=0',
+            rowId: 'Id',
+            cache: false,
+            order: [[2, "asc"]],
+            columns: [
+                { data: "Id", title: "Id" }, { data: "USL", title: "USL", visible: false }, { data: "RetailerName", title: "Retailer Name" }, { data: "CscId", title: "Csc Id" },
+                { data: "MobileNumber", title: "Mobile Number", visible: false }, { data: "City", title: "City" },
+                { data: "EMail", title: "E-Mail" }, { data: "Address", title: "Address" }
+            ]
+        });
+
+        $('#lblReport').html('User list of - ' + $('#UserType option:selected').text() + '.');
+    }
+    
+    function Export(){
+        $.get('@Url.Action("GetRetailUserByType", "CommonAuthAction")' + '?UserType=' + $('#UserType option:selected').val() + '&ExportExcel=1',
+        function(data) {
+            if (data.indexOf('Errors:') > -1) {
+                $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
+            } else {
+                $('#lblReport').html('Excel of ' + $('#UserType option:selected').text() + '. ' + data);
+            }
+        });
+    }
+
+
+</script>
+

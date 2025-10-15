@@ -1,0 +1,21 @@
+﻿@model SaralESuvidha.ViewModel.RetailUserViewModel
+
+@{
+    Layout = "_LayoutMasterDistributor";
+    ViewData["title"] = "Update Distributor - Result";
+}
+
+
+<div class="callout callout-success)">
+    <h5>Distributor Name - @Model.FirstName @Model.MiddleName @Model.LastName</h5>
+    <p>City - @Model.City</p>
+    <p>Mobile Number - @Model.Mobile</p>
+    <hr>
+    <p class="text-success"><strong>Documents re-uploaded successfully. Now connect with admin for activation. </strong></p>
+    @* <p class="text-danger @(Model.KYCRequired.ToString().Equals("1") ? "" : "d-none")"><strong>Account is not yet active. Please contact with admin for KYC and activation.</strong></p> *@
+</div>
+
+<div class="card-body" style="padding-left: 0px;">
+    <a class="btn btn-primary" asp-controller="MasterDistributor" asp-action="Index">Dashboard</a>
+    <a class="btn btn-primary" asp-controller="MasterDistributor" asp-action="CreateDistributor">Create New Distributor</a>
+</div>

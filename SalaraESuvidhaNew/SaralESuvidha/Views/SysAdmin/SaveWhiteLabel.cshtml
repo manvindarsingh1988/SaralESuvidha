@@ -1,0 +1,20 @@
+﻿@model SaralESuvidha.ViewModel.RetailUserViewModel
+
+@{
+    Layout = "_LayoutSysAdmin";
+    ViewData["title"] = "Create White Label- Result";
+}
+
+
+<div class="callout callout-@(Model.OperationMessage.Contains("Error:") ? "danger" : "success")">
+    <h5>White Label Name - @Model.FirstName @Model.MiddleName @Model.LastName</h5>
+    <p>City - @Model.City</p>
+    <p>Mobile Number - @Model.Mobile</p>
+    <hr>
+    <p class="text-@(Model.OperationMessage.Contains("Error:") ? "danger" : "success")"><strong>@Model.OperationMessage</strong></p>
+</div>
+
+<div class="card-body" style="padding-left: 0px;">
+    <a class="btn btn-primary" asp-controller="SysAdmin" asp-action="Index">Dashboard</a>
+    <a class="btn btn-primary" asp-controller="SysAdmin" asp-action="CreateWhiteLabel">Create New White Label</a>
+</div>
