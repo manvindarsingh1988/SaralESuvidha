@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using UPPCLLibrary;
 using UPPCLLibrary.AgentActiveInActive;
 using RTran = SaralESuvidha.Models.RTran;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace SaralESuvidha.ViewModel
 {
@@ -285,7 +286,20 @@ namespace SaralESuvidha.ViewModel
             }
         }
 
- 
+        public static bool CheckTopupServiceIsDown(string type)
+        {
+            LoadSystemSetting();
+            if (type == "Razor" && !systemSetting.RazorTopUp.GetValueOrDefault())
+            {
+                return false;
+            }
+            if (type == "SabPaisa" && !systemSetting.SabPaisaTopUp.GetValueOrDefault())
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static string OperatorListJson()
         {
             string result = "[]";
@@ -1031,6 +1045,9 @@ namespace SaralESuvidha.ViewModel
                     if (excelExport==1)
                     {
                         result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "UPPCLDailyRecharge", filePath);
+                        result = result.Replace("Download excel file", "Download excel file internal");
+                        result += "<br/>";
+                        result += DataTableToExcelEP(allDailyRecharge.ToDataTable(), "UPPCLDailyRecharge", filePath, new string[2] { "RId", "Payment_Type" });
                     }
                     else
                     {
@@ -1049,7 +1066,16 @@ namespace SaralESuvidha.ViewModel
                 aaIData = null;
             }
             return result;
-        }       
+        }
+
+        public static string DataTableToExcelEP(DataTable dataTableExcel, string fileName, string filePath, string[] removeColumns)
+        {
+            foreach (var column in removeColumns)
+            {
+                dataTableExcel.Columns.Remove(column);
+            }
+            return DataTableToExcelEP(dataTableExcel, fileName, filePath);
+        }
 
         public static string AllUserReportResult(int excelExport, string filePath = "")
         {
@@ -2541,7 +2567,7 @@ namespace SaralESuvidha.ViewModel
         }
 
         
-        public static RecordSaveResponse RazorpayOrderSave(string name, decimal amount, string razorpayAmount, string email, string mobile, string retailerId)
+        public static RecordSaveResponse RazorpayOrderSave(string name, decimal amount, string razorpayAmount, string email, string mobile, string retailerId, string provider = "Razor")
         {
             RecordSaveResponse result = new RecordSaveResponse();
             try
@@ -2558,6 +2584,7 @@ namespace SaralESuvidha.ViewModel
                     parameters.Add("@CustomerMobile", mobile);
                     parameters.Add("@CustomerEmail", email);
                     parameters.Add("@RetailerId", retailerId);
+                    parameters.Add("@Provider", provider);
                     result = con.QuerySingleOrDefault<RecordSaveResponse>("usp_RazorPayOrderInsert", parameters, commandType: System.Data.CommandType.StoredProcedure);
                 }
             }
@@ -3545,6 +3572,41 @@ namespace SaralESuvidha.ViewModel
             }
             catch (Exception ex)
             {
+            }
+            return result;
+        }
+
+        internal static Highlights GetHighlights()
+        {
+            Highlights result = new();
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<Highlights>("usp_GetHighlights", commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static bool UpdateHighlights(string message)
+        {
+            bool result = true;
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Message", message);
+                    con.Execute("usp_UpdateHighlights", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = false;
             }
             return result;
         }

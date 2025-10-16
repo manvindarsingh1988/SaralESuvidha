@@ -34,6 +34,9 @@ namespace SaralESuvidha.Models
         [DisplayName("Fix Margin"), Required(ErrorMessage = "Required")]
         public decimal? FixMargin { get; set; }
 
+        [DisplayName("Prepaid Margin Percent"), Required(ErrorMessage = "Required")]
+        public decimal? PrepaidMarginPercent { get; set; }
+
         [Required(ErrorMessage = "Required")]
         public decimal? MarginPercentUpto200 { get; set; }
         public decimal? MaxDailyLimit { get; set; }
@@ -60,6 +63,11 @@ namespace SaralESuvidha.Models
                 OperationMessage = "Error: Margin Percent for Part or more than 4000 full pament can not be greater than 0.5%.";
                 return this;
             }
+            if (PrepaidMarginPercent != null && PrepaidMarginPercent.GetValueOrDefault() > .4m)
+            {
+                OperationMessage = "Error: Prepaid Margin Percent can not be greater than 0.4%.";
+                return this;
+            }
             using (var con = new SqlConnection(StaticData.conString))
             {
                 var parameters = new DynamicParameters();
@@ -74,6 +82,7 @@ namespace SaralESuvidha.Models
                 parameters.Add("@LastUpdateDate", DateTime.Now);
                 parameters.Add("@LastUpdateMachine", LastUpdateMachine);
                 parameters.Add("@MarginPercentUpto200", MarginPercentUpto200);
+                parameters.Add("@PrepaidMarginPercent", PrepaidMarginPercent);
                 parameters.Add("@Active", true);
                 
                 return byAdmin

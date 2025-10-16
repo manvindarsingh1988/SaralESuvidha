@@ -12,6 +12,10 @@
                     <label class="form-label">From Date<span class="text-danger">*</span></label>
                     <input name="txtReportDate" id="txtReportDate" type="text" class="form-control flatpickr-date required">
                 </div>
+                <div class="col-lg-2 form-group">
+                    <label class="to-label">To Date<span class="text-danger">*</span></label>
+                    <input name="txtReportDate1" id="txtReportDate1" type="text" class="form-control flatpickr-date required">
+                </div>
                 <div class="col-lg-2 form-group d-none">
                     <label class="form-label">To Date<span class="text-danger">*</span></label>
                     <input name="txtReportDateTo" id="txtReportDateTo" type="text" class="form-control flatpickr-date required">
@@ -60,7 +64,7 @@
             $table.dataTable({
                 iDisplayLength: 50,
                 bAutoWidth: true,
-                sAjaxSource: '@Url.Action("DailyDistributorDownlineStatementResult", "Distributor")?dateFrom=' +a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDate').val()) + '&x=0',
+            sAjaxSource: '@Url.Action("DailyDistributorDownlineStatementResult", "Distributor")?dateFrom=' +a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDate1').val()) + '&x=0',
                 cache: false,
                 order: [[9, "asc"], [10, "asc"]],
                 columns: [
@@ -71,19 +75,19 @@
                 { data: "IsOTS", title: "OTS" }
                 ]
             });
-    
-            $('#lblReport').html('Daily statement of period ' + $('#txtReportDate').val() + ' to ' + $('#txtReportDate').val() + '.');
+
+        $('#lblReport').html('Daily statement of period ' + $('#txtReportDate').val() + ' to ' + $('#txtReportDate1').val() + '.');
         }
         
         
         function ExportExcel() {
             $('#lblReport').html('Loading report...');
-            $.get('@Url.Action("DailyDistributorDownlineStatementResult","Distributor")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDate').val()) + '&x=1',
+        $.get('@Url.Action("DailyDistributorDownlineStatementResult", "Distributor")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDate1').val()) + '&x=1',
             function(data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
                 } else {
-                    $('#lblReport').html('Account report between date ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDate').val() + '.' + data);
+                $('#lblReport').html('Account report between date ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDate1').val() + '.' + data);
                 }
             });
         }

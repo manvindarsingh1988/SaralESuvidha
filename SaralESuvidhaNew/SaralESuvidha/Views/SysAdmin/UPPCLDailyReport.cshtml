@@ -64,12 +64,14 @@
                 cache: false,
                 order: [[4, "asc"]],
                 columns: [
-                    { data: "Account_Number", title: "Account_Number" }, { data: "Transaction_Date", title: "Transaction_Date" }, 
+                    { data: "RId", title: "RId" },
+                    { data: "Account_Number", title: "Account_Number" }, { data: "Transaction_Date", title: "Transaction_Date" },
                     { data: "Net_Amount", title: "Net_Amount" },{ data: "Transaction_ID", title: "Transaction_ID" },
-                    { data: "Division_Name", title: "Division_Name" }, { data: "Division_Code", title: "Division_Code" }, 
-                    { data: "Discom_Code", title: "Discom_Code" }, { data: "Other_Transaction_ID", title: "Other_Transaction_ID" } 
+                    { data: "Division_Name", title: "Division_Name" }, { data: "Division_Code", title: "Division_Code" },
+                    { data: "Discom_Code", title: "Discom_Code" }, { data: "Payment_Type", title: "Payment_Type" },  
+                    { data: "Other_Transaction_ID", title: "Other_Transaction_ID" }
                 ]
-            });
+        });
     
             $('#lblReport').html('UPPCL Daily Report of period ' + $('#txtReportDate').val() + ' to ' + $('#txtReportDateTo').val() + '.');
         }

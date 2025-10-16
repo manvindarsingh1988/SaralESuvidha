@@ -2,44 +2,87 @@
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 
-<form id="frmReport" method="post" action="#">
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-lg-1 form-group">
-                    <label class="form-label">Amount<span class="text-danger">*</span></label>
-                    <input name="txtAmount" id="txtAmount" type="number" class="form-control required">
-                </div>
-                <div class="col-lg-2 form-group">
-                    <label class="form-label">Name<span class="text-danger">*</span></label>
+@if (Convert.ToBoolean(ViewData["Razor"]) == true)
+{
+    <form id="frmReport" method="post" action="#">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-1 form-group">
+                        <label class="form-label">Amount<span class="text-danger">*</span></label>
+                        <input name="txtAmount" id="txtAmount" type="number" class="form-control required">
+                    </div>
+                    <div class="col-lg-2 form-group">
+                        <label class="form-label">Name<span class="text-danger">*</span></label>
 
-                    <input name="txtName" id="txtName" type="text" value="@StaticData.FirstString(Context.Session.GetString("RetailerName"))" class="form-control required">
+                        <input name="txtName" id="txtName" type="text" value="@StaticData.FirstString(Context.Session.GetString("RetailerName"))" class="form-control required">
+                    </div>
+                    <div class="col-lg-2 form-group">
+                        <label class="form-label">Mobile<span class="text-danger">*</span></label>
+                        <input name="txtMobile" id="txtMobile" type="text" value="@StaticData.FirstString(Context.Session.GetString("RetailMobile"))" class="form-control required">
+                    </div>
+                    <div class="col-lg-2 form-group">
+                        <label class="form-label">E-Mail</label>
+                        <input name="txtEMail" id="txtEMail" type="text" class="form-control">
+                    </div>
+                    <div class="col-lg-2 form-group">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="button" id="gorder" class="form-control btn btn-primary" onclick="GenerateOrder();">Generate Order</button>
+                    </div>
+                    <div class="col-lg-2 form-group">
+                        <label>&nbsp;</label>
+                        <button id="rzp-button1" class="d-none form-control btn btn-primary"> Pay Now </button>
+                    </div>
                 </div>
-                <div class="col-lg-2 form-group">
-                    <label class="form-label">Mobile<span class="text-danger">*</span></label>
-                    <input name="txtMobile" id="txtMobile" type="text" value="@StaticData.FirstString(Context.Session.GetString("RetailMobile"))" class="form-control required">
-                </div>
-                <div class="col-lg-2 form-group">
-                    <label class="form-label">E-Mail</label>
-                    <input name="txtEMail" id="txtEMail" type="text" class="form-control">
-                </div>
-                <div class="col-lg-2 form-group">
-                    <label class="form-label">&nbsp;</label>
-                    <button type="button" id="gorder" class="form-control btn btn-primary" onclick="GenerateOrder();">Generate Order</button>
-                </div>
-                <div class="col-lg-2 form-group">
-                    <label>&nbsp;</label>
-                    <button id="rzp-button1" class="d-none form-control btn btn-primary"> Pay Now </button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 form-group">
-                    <div id="pgResponse"></div>
+                <div class="row">
+                    <div class="col-lg-12 form-group">
+                        <div id="pgResponse"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+}
+
+@if (Convert.ToBoolean(ViewData["SabPaisa"]) == true)
+{
+    <form method="post" action="#">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-1 form-group">
+                        <label class="form-label">Amount<span class="text-danger">*</span></label>
+                        <input name="txtAmount1" id="txtAmount1" type="number" class="form-control required">
+                    </div>
+                    <div class="col-lg-2 form-group">
+                        <label class="form-label">Name<span class="text-danger">*</span></label>
+                        <input name="txtName1" id="txtName1" type="text" value="@StaticData.FirstString(Context.Session.GetString("RetailerName"))" class="form-control required">
+                    </div>
+                    <div class="col-lg-2 form-group">
+                        <label class="form-label">Mobile<span class="text-danger">*</span></label>
+                        <input name="txtMobile1" id="txtMobile1" type="text" value="@StaticData.FirstString(Context.Session.GetString("RetailMobile"))" class="form-control required">
+                    </div>
+                    <div class="col-lg-2 form-group">
+                        <label class="form-label">E-Mail</label>
+                        <input name="txtEMail1" id="txtEMail1" type="text" class="form-control">
+                    </div>
+                    <div class="col-lg-2 form-group">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="button" id="initiate" class="form-control btn btn-primary" onclick="Initiate();">Generate Order</button>
+                    </div>
+                    <div class="col-lg-2 form-group" id="formDiv">
+                        <label>&nbsp;</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 form-group">
+                        <div id="pgResponse"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script type="text/javascript">
@@ -49,11 +92,11 @@
         $.get("@Url.Action("GenerateOrder", "RetailUserCommon")?name=" + $('#txtName').val() + "&amount=" + $('#txtAmount').val() + "&email=" + $('#txtEMail').val() + "&mobile=" + $('#txtMobile').val(), function (data) {
             console.log(data);
             if (data.indexOf("Error")>-1){
-                $("#InfoMessage").html('<span class="text-facebook">' + data + '</span>');      
+                $("#InfoMessage").html('<span class="text-facebook">' + data + '</span>');
                 $('#gorder').removeClass("d-none");
             }else{
                 var respData = JSON.parse(data);
-                
+
                 var options = {
                     "key": "@StaticData.rzp_ApiKey",
                     "amount": "",
@@ -72,11 +115,11 @@
                             $('#pgResponse').html('<span class="text-facebook">' + datar + '</span>');
                             $('#rzp-button1').addClass('d-none');
                         });
-                        
+
                     },
                     "prefill": {
                         "name": "",
-                        "email": "", 
+                        "email": "",
                         "contact": ""
                     },
                     "notes": {
@@ -84,9 +127,15 @@
                     },
                     "theme": {
                         "color": "#3399cc"
+                    },
+                    "method": {
+                        "netbanking": false,
+                        "card": true,
+                        "upi": true,
+                        "wallet": false
                     }
                 };
-                
+
                 options.amount = respData.RazorpayAmount;
                 options.order_id = respData.razorpay_order_id;
                 options.description = 'Account topup for ' + respData.RetailerId;
@@ -94,7 +143,7 @@
                 options.prefill.name = respData.CustomerName;
                 options.prefill.contact = respData.CustomerMobile;
                 $('#rzp-button1').removeClass('d-none');
-                
+
                 var rzp1 = new Razorpay(options);
                 rzp1.on('payment.failed', function (response){
                     console.log(response);
@@ -113,9 +162,30 @@
             }
         });
     }
-    
+
+    function Initiate() {
+        $('#initiate').addClass("d-none");
+        var url = "@Url.Action("Initiate", "RetailUserCommon")"
+        + "?name=" + encodeURIComponent($('#txtName1').val())
+        + "&amount=" + encodeURIComponent($('#txtAmount1').val())
+        + "&email=" + encodeURIComponent($('#txtEMail1').val())
+        + "&mobile=" + encodeURIComponent($('#txtMobile1').val());
+
+         $.get(url, function (data) {
+            console.log(data);
+            if (data.indexOf("Error")>-1){
+                $("#InfoMessage").html('<span class="text-facebook">' + data + '</span>');
+                $('#initiate').removeClass("d-none");
+            }else {
+                $("#formDiv").append(data);
+            }
+        });
+
+    }
+
     $(document).ready(function () {
         $('#txtAmount').focus();
+        $('#txtAmount1').focus();
     });
 
 </script>

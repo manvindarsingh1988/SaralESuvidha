@@ -94,6 +94,7 @@ namespace SaralESuvidha.ViewModel
         public string DistributorType { get; set; }
 
         public string FailureReason { get; set; }
+        public string Discom { get; set; }
 
         public RetailUserViewModel Save()
         {
@@ -125,6 +126,7 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@DistributorType", DistributorType);                
                 parameters.Add("@ParmanentAddress", ParmanentAddress);                
                 parameters.Add("@CounterLocation", CounterLocation);                
+                parameters.Add("@Discom", Discom);                
 
                 var saveResponse = con.QuerySingleOrDefault<dynamic>("usp_RetailUserInsert", parameters, commandType: System.Data.CommandType.StoredProcedure);
                 OperationMessage = saveResponse.OperationMessage;
@@ -148,6 +150,7 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@Address", Address);
                 parameters.Add("@CounterLocation", CounterLocation);
                 parameters.Add("@DistributorType", DistributorType);
+                parameters.Add("@Discom", Discom);
 
                 OperationMessage = con.QuerySingleOrDefault<string>("usp_RetailUserUpdate", parameters, commandType: System.Data.CommandType.StoredProcedure);                
             }

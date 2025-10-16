@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using SaralESuvidha.Models;
 using SaralESuvidha.ViewModel;
 using Microsoft.AspNetCore.Builder;
@@ -9,9 +6,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json.Serialization;
 using UPPCLLibrary;
 using Microsoft.AspNetCore.Http;
+using SaralESuvidha.Filters;
+using SaralESuvidha.Services;
 
 namespace SaralESuvidha
 {
@@ -64,7 +62,10 @@ namespace SaralESuvidha
             });
 
 
-            services.AddControllersWithViews()
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add(new GlobalHighlightFilter());
+            })
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
@@ -78,6 +79,10 @@ namespace SaralESuvidha
             {
                 options.ForwardClientCertificate = false;
             });
+
+            services.Configure<SabPaisaOptions>(Configuration.GetSection("SabPaisa"));
+            services.AddScoped<SabPaisaService>();
+            services.AddHttpClient();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

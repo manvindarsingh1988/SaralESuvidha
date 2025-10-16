@@ -20,7 +20,9 @@ namespace SaralESuvidha.ViewModel
         public bool? IsDown { get; set; }
         public bool? IsOTSDown { get; set; }
         public String IsDownMessage { get; set; }
-        
+        public bool? RazorTopUp { get; set; }
+        public bool? SabPaisaTopUp { get; set; }
+
         public string SaveSystemMaintain()
         {
             string result = string.Empty;
@@ -32,6 +34,8 @@ namespace SaralESuvidha.ViewModel
                     parameters.Add("@IsDownMessage", IsDownMessage);
                     parameters.Add("@IsDown", IsDown);
                     parameters.Add("@IsOTSDown", IsOTSDown);
+                    parameters.Add("@RazorTopUp", RazorTopUp);
+                    parameters.Add("@SabPaisaTopUp", SabPaisaTopUp);
                     var res = con.Query<string>("usp_SystemSettingUpdate", parameters,
                         commandType: System.Data.CommandType.StoredProcedure).SingleOrDefault();
                     result = res;
@@ -50,5 +54,9 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
         
+    }
+    public class Highlights
+    {
+        public string GlobalHighlights { get; set; }
     }
 }

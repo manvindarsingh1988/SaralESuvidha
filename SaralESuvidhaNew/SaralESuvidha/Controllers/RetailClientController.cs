@@ -10,18 +10,11 @@ using SaralESuvidha.Filters;
 using SaralESuvidha.ViewModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Session;
-using Newtonsoft.Json;
-using OfficeOpenXml;
-using Razorpay.Api;
-using UPPCLLibrary;
 using RTran = SaralESuvidha.Models.RTran;
-using Microsoft.VisualBasic;
-using QRCoder;
 using SaralESuvidha.Models;
+using Microsoft.AspNetCore.Authorization;
+using SaralESuvidha.Services;
 
 namespace SaralESuvidha.Controllers
 {
@@ -29,10 +22,12 @@ namespace SaralESuvidha.Controllers
     public class RetailClientController : Controller
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly SabPaisaService _sabPaisaService;
 
-        public RetailClientController(IWebHostEnvironment hostingEnvironment)
+        public RetailClientController(IWebHostEnvironment hostingEnvironment, SabPaisaService sabPaisaService)
         {
             _hostingEnvironment = hostingEnvironment;
+            _sabPaisaService = sabPaisaService;
         }
 
         public IActionResult Index()
@@ -349,6 +344,8 @@ namespace SaralESuvidha.Controllers
         
         public IActionResult AccountTopup()
         {
+            ViewData["Razor"] = StaticData.CheckTopupServiceIsDown("Razor");
+            ViewData["SabPaisa"] = StaticData.CheckTopupServiceIsDown("SabPaisa");
             return View();
         }
         
@@ -443,6 +440,42 @@ namespace SaralESuvidha.Controllers
             return Content(result);
         }
 
+        [AllowAnonymous] // 🚀 important
+        [IgnoreAntiforgeryToken]
+        public IActionResult SabPaisaCallback()
+        {
+            try
+            {
+                string query = Request.Form["encResponse"];
+                TempData["encResponse"] = query;
+                return Redirect(Url.Action(action: "SabPaisaCallback1", controller: "RetailClient"));
+            }
+            catch
+            {
+                return Redirect(Url.Action(action: "Index", controller: "RetailClient"));
+            }
+        }
 
+        public async Task<IActionResult> SabPaisaCallback1()
+        {
+            var query = TempData["encResponse"] as string;
+            if (string.IsNullOrEmpty(query))
+            {
+                return Redirect(Url.Action(action: "Index", controller: "RetailClient"));
+            }
+            string result = string.Empty;
+            try
+            {
+                var requestIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                var requestMachine = HttpContext.Request.Headers["User-Agent"].ToString();
+                var orderNo = (int)HttpContext.Session.GetInt32("RetailUserOrderNo");
+                var verified = await SabPaisaHelper.PostOrder(_sabPaisaService, query, requestIp, requestMachine, orderNo);
+                return View("SabPaisaCallback", verified);
+            }
+            finally
+            {
+                TempData["encResponse"] = "";
+            }
+        }
     }
 }

@@ -24,6 +24,7 @@ public class AllUserWithBalance
     public int Salary { get; set; }
     public string Amount { get; set; }
     public string CommissionPercentage { get; set; }
+    public string PrepaidCount { get; set; }
     public string Count1 { get; set; }
     public string Count2 { get; set; }
     public string Count3 { get; set; }

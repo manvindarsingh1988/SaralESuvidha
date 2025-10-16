@@ -17,7 +17,8 @@ public class UPPCLReport
     public string Discom_Code { get; set; }
     
     public string Other_Transaction_ID { get; set; }
-    
-    
-    
+
+    public string RId { get; set; }
+    public string Payment_Type { get; set; }
+
 }
