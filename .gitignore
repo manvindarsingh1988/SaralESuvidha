@@ -29,7 +29,6 @@ SaralESuvidha/bin/*
 /SaralESuvidhaNew/SaralESuvidha/bin/UPPCLLibrary.dll
 /SaralESuvidhaNew/SaralESuvidha/bin/UPPCLLibrary.pdb
 /SaralESuvidhaNew/SaralESuvidha/obj/*
-/SaralESuvidhaNew/SaralESuvidha/wwwroot/*
 /SaralESuvidhaNew/UPPCLLibrary/.vs/*
 /SaralESuvidhaNew/UPPCLLibrary/bin/*
 /SaralESuvidhaNew/UPPCLLibrary/obj/*
@@ -59,3 +58,5 @@ SaralESuvidha/UPPCLLibrary/.vs/
 UPPCLLibrary/.vs/
 SaralESuvidhaNew/SaralESuvidha/Properties/PublishProfiles/
 SaralESuvidhaNew/SaralESuvidha/bin/Release/
+/SaralESuvidhaNew/SaralESuvidha/wwwroot/FileData/*
+/SaralESuvidhaNew/SaralESuvidha/wwwroot/KYCDocFiles/*
