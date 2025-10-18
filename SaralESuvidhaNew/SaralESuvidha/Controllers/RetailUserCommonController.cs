@@ -1,18 +1,20 @@
-﻿using System;
+﻿using Dapper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Razorpay.Api;
+using SaralESuvidha.Filters;
+using SaralESuvidha.Models;
+using SaralESuvidha.Services;
+using SaralESuvidha.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using SaralESuvidha.Filters;
-using SaralESuvidha.Models;
-using SaralESuvidha.ViewModel;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting;
-using System.IO;
-using Newtonsoft.Json;
-using Razorpay.Api;
-using SaralESuvidha.Services;
 
 namespace SaralESuvidha.Controllers
 {
@@ -340,7 +342,46 @@ namespace SaralESuvidha.Controllers
 
             return Content(result);
         }
-        
+
+        public IActionResult GetBalanceUWalletByOrderNo()
+        {
+            string result = string.Empty;
+            try
+            {
+                using (var connection = new SqlConnection(StaticData.conString))
+                {
+                    var balance = connection.ExecuteScalar<decimal>("SELECT dbo.RetailUserUBalanceByOrderNo(@RetailUserId)", new { RetailUserId = HttpContext.Session.GetInt32("RetailUserOrderNo") });
+                    return Content(balance.ToString("N2"));
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: Can not get balance details." + ex.Message;
+            }
+
+            return Content(result);
+        }
+
+        public IActionResult GetBalanceSWalletByOrderNo()
+        {
+            string result = string.Empty;
+            try
+            {
+                using (var connection = new SqlConnection(StaticData.conString))
+                {
+                    var balance = connection.ExecuteScalar<decimal>("SELECT dbo.RetailUserSBalanceByOrderNo(@RetailUserId)", new { RetailUserId = HttpContext.Session.GetInt32("RetailUserOrderNo") });
+                    return Content(balance.ToString("N2"));
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: Can not get balance details." + ex.Message;
+            }
+
+            return Content(result);
+        }
+
+
         public IActionResult DailyClientStatementResult(string dateFrom, string dateTo, int x)
         {
             string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");

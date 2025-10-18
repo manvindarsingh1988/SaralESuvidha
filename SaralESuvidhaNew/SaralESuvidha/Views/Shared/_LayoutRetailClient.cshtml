@@ -198,7 +198,22 @@
     <script src="~/assets/js/main.js?1"></script>
     <script src="~/js/site.js"></script>
 
-    @{await Html.RenderPartialAsync("_ScriptRetailUserBalancePartial");}
+    <script type="text/javascript">
+        function GetBalanceBothWallet() {
+            $.get("@Url.Action("GetBalanceSWalletByOrderNo", "RetailUserCommon")", function (data) {
+                $("#BalMessage").html('<span class="text-facebook text-dark">[SW &#8377; ' + data + ']</span>');
+                $.get("@Url.Action("GetBalanceUWalletByOrderNo", "RetailUserCommon")", function (data) {
+                $("#BalMessage").append('<span class="text-flickr">[UW &#8377; ' + data + ']</span>');
+            });
+            });
+        }
+
+        $(document).ready(function () {
+            GetBalanceBothWallet();
+        });
+    </script>
+
+    @* @{await Html.RenderPartialAsync("_ScriptRetailUserBalancePartial");} *@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     @RenderSection("Scripts", required: false)

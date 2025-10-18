@@ -1,0 +1,179 @@
+﻿@model SaralESuvidha.ViewModel.RetailUserViewModel
+
+@{
+    Layout = "_LayoutSysAdmin";
+    ViewData["title"] = "Fund Transfer To U-Wallet";
+}
+
+<form id="frmFundTransfer" name="frmFundTransfer" method="post" action="#">
+    <div class="card mb-4">
+        <h6 class="card-header">Fund Transfer (U-Wallet) To Retail User Account <span id="InfoDetail" name="InfoDetail" class=""></span></h6>
+        <div class="card-body">
+            @*<div class="row">
+            <div class="col-lg-12">
+
+            </div>
+        </div>*@
+            <div class="row">
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">User USL</label>
+                    <input asp-for="OrderNo" class="form-control" onblur="javascript: LoadDetail();" data-style="btn-default" required>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">Amount<span class="text-danger">*</span></label>
+                    <input name="txtAmount" id="txtAmount" type="text" onblur="javascript: LoadAmount();" class="form-control number required">
+                </div>
+                <div class="col-lg-5 form-group">
+                    <label class="form-label">Amount In Words</label>
+                    <span id="AmountInWords" name="AmountInWords" class="form-control text-primary"></span>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label class="form-label">Remarks<span class="text-danger">*</span></label>
+                    <input name="txtRemarks" id="txtRemarks" type="text" class="form-control required" />
+                </div>
+            </div>
+            <div id="ActionButton" name="ActionButton">
+                <button type="button" class="btn btn-primary" onclick="TransferFund();">Transfer</button>
+                <button type="button" class="btn btn-primary" onclick="DeductFund();">Deduct</button>
+                <button type="button" class="btn btn-default hide" onclick="FetchBalance();">Fetch Balance</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#frmFundTransfer').validate({
+            ignore: '.ignore, .select2-input',
+            focusInvalid: false,
+            rules: {
+                'txtAmount': {
+                    //minlength: 2,
+                    required: true,
+                    digits: true
+                },
+                'txtRemarks': {
+                    minlength: 5,
+                    required: true
+                }
+
+            },
+            messages: {
+                'txtAmount': {
+                    //minlength: 'Please enter amount.',
+                    required: 'Amount is required.',
+                    digits: 'Please enter a valid amount in integer (whole number only).'
+                },
+                'txtRemarks': {
+                    minlength: 'Please enter sufficient remarks details.',
+                    required: 'Remarks is required.'
+                }
+            },
+            errorPlacement: function errorPlacement(error, element) {
+                var $parent = $(element).parents('.form-group');
+
+                // Do not duplicate errors
+                if ($parent.find('.jquery-validation-error').length) {
+                    return;
+                }
+
+                $parent.append(
+                    error.addClass('jquery-validation-error small form-text invalid-feedback')
+                );
+            },
+            highlight: function(element) {
+                var $el = $(element);
+                var $parent = $el.parents('.form-group');
+
+                $el.addClass('is-invalid');
+
+                // Select2 and Tagsinput
+                if ($el.hasClass('select2-hidden-accessible') || $el.attr('data-role') === 'tagsinput') {
+                    $el.parent().addClass('is-invalid');
+                }
+            },
+            unhighlight: function(element) {
+                $(element).parents('.form-group').find('.is-invalid').removeClass('is-invalid');
+            }
+        });
+
+    });
+
+    function ShowAction() {
+        $('#ActionButton').removeClass('d-none');
+    }
+
+    function HideAction() {
+        $('#ActionButton').addClass('d-none');
+        $('#OrderNo').focus();
+    }
+
+    function TransferFund() {
+        if (!$('#frmFundTransfer').valid()) {
+            $('#InfoMessage').html('Can not transfer fund to ' + $('#OrderNo').val() + '.').removeClass('pam-info').addClass('pam-error');
+            return;
+        } else {
+            if ($('#OrderNo').val().length > 0) {
+                $.get("@Url.Action("TransferValidate", "SysAdmin")?id=" + a2hex($('#OrderNo').val()) + "&amt=" + a2hex($('#txtAmount').val()) + "&rem=" + a2hex($('#txtRemarks').val()) + "&ac=" + a2hex('cr'), function (data) {
+                    if (data.indexOf('Errors:') > -1) {
+                        $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                    } else {
+                        //success
+                        $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    }
+                });
+            }
+            else {
+                $('#InfoDetail').html('');
+            }
+        }
+    }
+
+    function DeductFund() {
+        if (!$('#frmFundTransfer').valid()) {
+            $('#InfoMessage').html('Can not transfer fund to ' + $('#OrderNo').val() + '.').removeClass('pam-info').addClass('pam-error');
+            return;
+        } else {
+            if ($('#OrderNo').val().length > 0) {
+                $.get("@Url.Action("TransferValidate", "SysAdmin")?id=" + a2hex($('#OrderNo').val()) + "&amt=" + a2hex($('#txtAmount').val()) + "&rem=" + a2hex($('#txtRemarks').val()) + "&ac=" + a2hex('dr'), function (data) {
+                    if (data.indexOf('Errors:') > -1) {
+                        $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                    } else {
+                        //success
+                        $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    }
+                });
+            }
+            else {
+                $('#InfoDetail').html('');
+            }
+        }
+    }
+
+    function LoadDetail() {
+        if ($('#OrderNo').val().length > 0) {
+            $.get("@Url.Action("RetailUserDetail", "CommonAuthAction")?usd=" + a2hex($('#OrderNo').val()) + "&fundTransfer=1", function (data) {
+                if (data.indexOf('Errors:') > -1) {
+                    $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                    HideAction();
+                } else {
+                    //success
+                    $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                    ShowAction();
+                }
+            });
+        }
+        else {
+            $('#InfoDetail').html('');
+        }
+
+    }
+
+    function LoadAmount() {
+        $.get("@Url.Action("AmountToInr", "Common")?amount=" + $('#txtAmount').val(), function (data) {
+            $("#AmountInWords").html('<span class="">&#x20B9; ' + data + '</span>');
+        });
+    }
+
+</script>

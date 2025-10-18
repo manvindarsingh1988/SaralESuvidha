@@ -249,6 +249,11 @@ namespace SaralESuvidha.Controllers
             return View();
         }
         
+        public IActionResult TransferFundToUWallet()
+        {
+            return View();
+        }
+        
         public IActionResult TransferFund()
         {
             return View();

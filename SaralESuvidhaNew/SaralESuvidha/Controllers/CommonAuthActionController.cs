@@ -655,6 +655,71 @@ namespace SaralESuvidha.Controllers
         {
             return Content(StaticData.DistributorListJson(id));
         }
+
+        public IActionResult GetBalanceUWalletByOrderNo(int retailerUSL)
+        {
+            string result = string.Empty;
+            try
+            {
+                using (var connection = new SqlConnection(StaticData.conString))
+                {
+                    var balance = connection.ExecuteScalar<decimal>("SELECT dbo.RetailUserUBalanceByOrderNo(@RetailUserId)", new { RetailUserId = retailerUSL });
+                    return Content(balance.ToString("N2"));
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: Can not get balance details." + ex.Message;
+            }
+
+            return Content(result);
+        }
+
+        public IActionResult GetBalanceSWalletByOrderNo(int retailerUSL)
+        {
+            string result = string.Empty;
+            try
+            {
+                using (var connection = new SqlConnection(StaticData.conString))
+                {
+                    var balance = connection.ExecuteScalar<decimal>("SELECT dbo.RetailUserSBalanceByOrderNo(@RetailUserId)", new { RetailUserId = retailerUSL });
+                    return Content(balance.ToString("N2"));
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: Can not get balance details." + ex.Message;
+            }
+
+            return Content(result);
+        }
+
+        public IActionResult GetBalanceSWallet(SignInResult retailerUSL)
+        {
+            string result = string.Empty;
+            try
+            {
+                var balResponse = StaticData.retailUser.GetBalanceWithName(HttpContext.Session.GetInt32("RetailUserOrderNo"));
+                if (!balResponse.OperationMessage.Contains("Errors"))
+                {
+                    //ViewData["Error"] = "0";
+                    return Content(balResponse.Balance.ToString("N2"));
+                }
+                else
+                {
+                    //ViewData["Error"] = "1";
+                    return Content("NA");
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: Can not get balance details." + ex.Message;
+            }
+
+            return Content(result);
+        }
+
+
     }
 
     public class ActivateUser
