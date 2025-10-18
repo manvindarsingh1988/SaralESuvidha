@@ -248,6 +248,51 @@ namespace SaralESuvidha.Models
             return result;
         }
 
+        public string TransferFundToUWalletRetailUser()
+        {
+            string result = "Info: Starting transfer process";
+
+            using (var con = new SqlConnection(StaticData.conString))
+            {
+                try
+                {
+                    var queryParameters = new DynamicParameters();
+                    queryParameters.Add("@RetailUserOrderNo", RetailUserOrderNo);
+                    queryParameters.Add("@Amount", Amount);
+                    queryParameters.Add("@Deduction", Deduction);
+                    queryParameters.Add("@FinalAmount", FinalAmount);
+                    queryParameters.Add("@OpeningBalance", OpeningBalance);
+                    queryParameters.Add("@DebitAmount", DebitAmount);
+                    queryParameters.Add("@CreditAmount", CreditAmount);
+                    queryParameters.Add("@ClosingBalance", ClosingBalance);
+                    queryParameters.Add("@Margin", Margin);
+                    queryParameters.Add("@RequestIp", RequestIp);
+                    queryParameters.Add("@RequestMachine", RequestMachine);
+                    queryParameters.Add("@RequestGeoCode", RequestGeoCode);
+                    queryParameters.Add("@RequestNumber", RequestNumber);
+                    queryParameters.Add("@RequestMessage", RequestMessage);
+                    queryParameters.Add("@RequestTime", RequestTime);
+                    queryParameters.Add("@TranType", TranType);
+                    queryParameters.Add("@Remarks", Remarks);
+                    queryParameters.Add("@Extra1", Extra1);
+                    queryParameters.Add("@Extra2", Extra2);
+                    queryParameters.Add("@CreateDate", CreateDate);
+                    queryParameters.Add("@ConfirmDate", ConfirmDate);
+
+
+                    RTranApiFundTransfer au = con.QuerySingle<RTranApiFundTransfer>("usp_RetailClientFundTransferToUWallet", queryParameters, commandType: System.Data.CommandType.StoredProcedure);
+
+                    result = au == null  ? "Errors: Can not transfer fund. Error in transferring fund to UWALLET."  : au.OperationMessage;
+                }
+                catch (Exception ex)
+                {
+                    result = "Errors: Ex148 " + ex.Message;
+                }
+            }
+
+            return result;
+        }
+
         public string TransferFundByData(string userRole)
         {
             string result = string.Empty;
@@ -268,6 +313,36 @@ namespace SaralESuvidha.Models
                     CreateDate = null;
                     ConfirmDate = null;
                     result = TransferFundToRetailUser();
+                }
+                else
+                {
+                    result = "Can not transfer fund. Not authorized.";
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Error: Ex Error in transferring fund. " + ex.Message;
+            }
+
+            return result;
+        }
+
+        public string TransferFundTuUWalletByData(string userRole)
+        {
+            string result = string.Empty;
+            try
+            {
+                if (userRole == "admin")
+                {
+                    Deduction = 0;
+                    FinalAmount = null;
+                    OpeningBalance = null;
+                    ClosingBalance = null;
+                    Margin = null;
+                    RequestTime = DateTime.UtcNow.AddHours(5.5);
+                    CreateDate = null;
+                    ConfirmDate = null;
+                    result = TransferFundToUWalletRetailUser();
                 }
                 else
                 {

@@ -306,6 +306,52 @@ namespace SaralESuvidha.Controllers
             return Content("[ " + result + " ]");
         }
 
+        public IActionResult TransferValidateUWallet(string id, string amt, string rem, string ac)
+        {
+            string result = string.Empty;
+            RTran fundTransferRTran = new RTran();
+            try
+            {
+                string tranType = StaticData.ConvertHexToString(ac);
+
+                fundTransferRTran.RequestIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                fundTransferRTran.RequestMachine = HttpContext.Request.Headers["User-Agent"].ToString();
+                fundTransferRTran.RetailUserOrderNo = Convert.ToInt32(StaticData.ConvertHexToString(id));
+                fundTransferRTran.Amount = Convert.ToDecimal(StaticData.ConvertHexToString(amt));
+                if (tranType == "cr")
+                {
+                    fundTransferRTran.CreditAmount = fundTransferRTran.Amount;
+                    fundTransferRTran.TranType = 11;
+                }
+                if (tranType == "dr")
+                {
+                    fundTransferRTran.DebitAmount = fundTransferRTran.Amount;
+                    fundTransferRTran.TranType = 12;
+                }
+                fundTransferRTran.Remarks = StaticData.ConvertHexToString(rem);
+                fundTransferRTran.RequestMessage = "WEBPORTAL";
+
+                if (fundTransferRTran.Amount > 0)
+                {
+                    result = fundTransferRTran.TransferFundTuUWalletByData("admin");
+                }
+                else
+                {
+                    result = "Errors: Invalid amount, can not process transfer.";
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: " + ex.Message;
+            }
+            finally
+            {
+                fundTransferRTran = null;
+            }
+
+            return Content("[ " + result + " ]");
+        }
+
         public IActionResult SalesReportResult(string dateFrom, string dateTo, int x)
         {
             string result = string.Empty;

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -38,8 +39,9 @@ namespace SaralESuvidha.Controllers
                 if (!balResponse.OperationMessage.Contains("Errors"))
                 {
                     //ViewData["Error"] = "0";
-                    return Content(" [" + balResponse.Order.ToString() + " - " + balResponse.OperationMessage +
-                                   "is &#x20B9; " + balResponse.Balance.ToString("N2") + "]");
+                    var ubalance = GetBalanceUWalletByOrderNo(Id) as ContentResult;
+                    return Content(" [" + balResponse.Order.ToString() + " - " + balResponse.OperationMessage + 
+                                   "is &#x20B9; " + balResponse.Balance.ToString("N2") + ", UWallet - &#x20B9; " + ubalance.Content.ToString() + "]");
                 }
                 else
                 {
