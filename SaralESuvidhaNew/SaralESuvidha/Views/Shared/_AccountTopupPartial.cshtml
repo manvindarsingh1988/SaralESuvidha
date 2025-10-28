@@ -6,6 +6,9 @@
 {
     <form id="frmReport" method="post" action="#">
         <div class="card">
+            <div class="card-header" style="background-color:#0c2f55;color:white;font-weight:bold;">
+                Razor pay Gateway
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-1 form-group">
@@ -46,8 +49,11 @@
 
 @if (Convert.ToBoolean(ViewData["SabPaisa"]) == true)
 {
-    <form method="post" action="#">
+    <form method="post" action="#" style="margin-top:10px">
         <div class="card">
+            <div class="card-header" style="background-color:#0c2f55;color:white;font-weight:bold;">
+                Sabpaisa Gateway
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-1 form-group">
@@ -103,7 +109,7 @@
                     "currency": "INR",
                     "name": "Saral E-Commerce Pvt Ltd",
                     "description": "Account topup",
-                    "image": "https://saralesuvidha.com/images/logo.png",
+                    "image": "https://up.saralesuvidha.com/images/logo.png",
                     "order_id": "",
                     "handler": function (response){
                         console.log(response);
