@@ -14,6 +14,7 @@ namespace SaralESuvidha.ViewModel
         public string ClientName { get; set; }
         public int USL { get; set; }
         public string RetailerDetail { get; set; }
+        public string Retailer { get; set; }
         public string ParentName { get; set; }
 
         public string OperatorName { get; set; }

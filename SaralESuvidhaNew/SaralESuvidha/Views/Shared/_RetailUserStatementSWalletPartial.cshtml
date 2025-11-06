@@ -1,7 +1,7 @@
-
+﻿
 <form id="frmReport" method="post" action="">
     <div class="card">
-        <h6 class="card-header">Account Statement U-Wallet Between Period<span id="InfoDetail" name="InfoDetail" class=""></span></h6>
+        <h6 class="card-header">Account Statement S-Wallet Between Period<span id="InfoDetail" name="InfoDetail" class=""></span></h6>
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-2 form-group">
@@ -23,7 +23,7 @@
                 <div class="col-lg-2 form-group">
                     <label class="form-label">&nbsp;</label>
                     <button type="button" class="form-control btn btn-primary hide" onclick="LoadRechargeSummaryReport();">Load Summary</button>
-                </div>                
+                </div>
             </div>
         </div>
     </div>
@@ -60,16 +60,15 @@
             $table.dataTable({
                 iDisplayLength: 15,
                 bAutoWidth: false,
-                sAjaxSource: '@Url.Action("DailyClientStatementResult","RetailUserCommon")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0&orderNo=' + $('#OrderNo').val(),
+                sAjaxSource: '@Url.Action("DailyClientStatementSWalletResult", "RetailUserCommon")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0&orderNo=' + $('#OrderNo').val(),
                 cache: false,
-                order: [[12, "asc"], [13, "asc"]],
+                order: [[9, "asc"], [10, "asc"]],
                 columns: [
                     { data: "Rid", title: "Api Id", visible: false },
                     { data: "RefundId", title: "Ref Id", visible: false }, { data: "OperatorName", title: "Operator" },
-                    { data: "RechargeNumber", title: "Number" }, { data: "RechargeStatus", title: "RStatus" },
+                    { data: "RechargeNumber", title: "Number" }, 
                     { data: "OB", title: "OB" }, { data: "Amount", title: "Amount" }, { data: "Debit", title: "Debit" },
-                    { data: "Credit", title: "Credit" }, { data: "CB", title: "CB" },
-                    { data: "LiveId", title: "LiveId" }, { data: "CreateDate", title: "Date", render: function (data) { return moment(data).format('MM-DD-YYYY'); } },
+                    { data: "Credit", title: "Credit" }, { data: "CB", title: "CB" },{ data: "CreateDate", title: "Date", render: function (data) { return moment(data).format('MM-DD-YYYY'); } },
                     { data: "CreateDate", title: "Time", render: function (data) { return moment(data).format('HH:mm:ss'); } }, { data: "Remarks", title: "Remarks" }
                 ]
             });
@@ -79,7 +78,7 @@
 
         function Export() {
         $('#lblReport').html('Loading report...');
-        $.get('@Url.Action("DailyClientStatementResult", "RetailUserCommon")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1&orderNo=' + $('#OrderNo').val(),
+        $.get('@Url.Action("DailyClientStatementSWalletResult", "RetailUserCommon")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1&orderNo=' + $('#OrderNo').val(),
             function (data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
