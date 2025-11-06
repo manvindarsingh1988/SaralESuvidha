@@ -43,6 +43,7 @@ namespace SaralESuvidha.ViewModel
         public string UPPCL_PaymentType { get; set; }
         public DateTime UPPCL_TransactionDate { get; set; }
         public decimal UPPCL_Amount { get; set; }
+        public decimal UPPCL_BillAmount { get; set; }
         public string UPPCL_ConnectionType { get; set; }
 
         public string Remarks { get; set; }
