@@ -10,6 +10,8 @@ using UPPCLLibrary;
 using Microsoft.AspNetCore.Http;
 using SaralESuvidha.Filters;
 using SaralESuvidha.Services;
+using Quartz;
+using SaralESuvidha.QuartzJobs;
 
 namespace SaralESuvidha
 {
@@ -83,6 +85,31 @@ namespace SaralESuvidha
             services.Configure<SabPaisaOptions>(Configuration.GetSection("SabPaisa"));
             services.AddScoped<SabPaisaService>();
             services.AddHttpClient();
+            services.AddQuartz(q =>
+            {
+
+                // Register the job
+                var jobKey = new JobKey("CheckAndUpdateRazorpayStatusjob");
+                var jobKey1 = new JobKey("SabpaisaStatusCheckJob");
+                q.AddJob<CheckAndUpdateRazorpayStatusjob>(opts => opts.WithIdentity(jobKey));
+                q.AddJob<SabpaisaStatusCheckJob>(opts => opts.WithIdentity(jobKey1));
+
+                // Create a trigger for the job (every 10 seconds)
+                q.AddTrigger(opts => opts
+                    .ForJob(jobKey)
+                    .WithIdentity("CheckAndUpdateRazorpayStatusjob-trigger")
+                    .WithSimpleSchedule(x => x
+                        .WithIntervalInHours(2)
+                        .RepeatForever()));
+                q.AddTrigger(opts => opts
+                    .ForJob(jobKey1)
+                    .WithIdentity("SabpaisaStatusCheckJob-trigger")
+                    .WithSimpleSchedule(x => x
+                        .WithIntervalInHours(2)
+                        .RepeatForever()));
+            });
+            services.AddQuartzHostedService(
+                q => q.WaitForJobsToComplete = true);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
