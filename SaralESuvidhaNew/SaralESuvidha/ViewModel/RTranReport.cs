@@ -14,6 +14,7 @@ namespace SaralESuvidha.ViewModel
         public string ClientName { get; set; }
         public int USL { get; set; }
         public string RetailerDetail { get; set; }
+        public string Retailer { get; set; }
         public string ParentName { get; set; }
 
         public string OperatorName { get; set; }
@@ -43,6 +44,7 @@ namespace SaralESuvidha.ViewModel
         public string UPPCL_PaymentType { get; set; }
         public DateTime UPPCL_TransactionDate { get; set; }
         public decimal UPPCL_Amount { get; set; }
+        public decimal UPPCL_BillAmount { get; set; }
         public string UPPCL_ConnectionType { get; set; }
 
         public string Remarks { get; set; }

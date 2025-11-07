@@ -112,13 +112,13 @@
             bAutoWidth: false,
             sAjaxSource: '@Url.Action("DailyRechargeReportResult", "RetailClient")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0',
             cache: false,
-            order: [[13, "asc"], [14, "asc"]],
+            order: [[11, "asc"], [12, "asc"]],
             columns: [
                 { data: "Rid", title: "Id", visible: false },
                 { data: "RefundId", title: "Ref Id", visible: false }, { data: "OperatorName", title: "Operator" },
                 { data: "RechargeNumber", title: "Number" }, { data: "RechargeStatus", title: "RStatus" },
                 { data: "OB", title: "OB" }, { data: "Amount", title: "Amount" }, { data: "Debit", title: "Debit" }, { data: "Credit", title: "Credit" }, { data: "CB", title: "CB" },
-                { data: "AccountInfo", title: "AccInfo" }, { data: "BillAmount", title: "BillAmt" },{ data: "DDR", title: "DDR" },
+                { data: "UPPCL_BillAmount", title: "BillAmt" },
                 { data: "CreateDate", title: "Date", render: function (data) { return moment(data).format('MM-DD-YYYY'); } },
                 { data: "CreateDate", title: "Time", render: function (data) { return moment(data).format('HH:mm:ss'); } },
                 {
@@ -126,10 +126,10 @@
                     title: "Action",
                     render: function (data,type,row) { 
                         if (row.IsOTS == 1) {
-                            return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS') ? "" : "d-none") + "' title='Print Receipt' onclick=PrintReceipt1('" + a2hex(data) + "')>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
+                            return (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
 
                         } else {
-                            return "<a class='" + ((row["RechargeStatus"] === 'SUCCESS') ? "" : "d-none") + "' title='Print Receipt' onclick=PrintReceipt('" + a2hex(data) + "')>" + "<span class='lnr lnr-printer linear-datatable-icon text-success btnPrint' title='Print Receipt'></span></a>" + (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
+                            return (row["RechargeStatus"] === 'SUCCESS' ? " <a class='' title='Raise Dispute' target='_blank' href='@Url.Action("RaiseDispute", "RetailClient")?t=" + a2hex(data) + "'>" + "<span class='lnr lnr-hand linear-datatable-icon text-info btnRaiseDispute d-none' title='Raise  Dispute'></span></a>" : '');
                         }                        
                     },
                     "width": "70px"

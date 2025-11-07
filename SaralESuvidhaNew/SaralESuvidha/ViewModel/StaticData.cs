@@ -1030,6 +1030,45 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
         
+        public static string RechargeReportSWalletRetailClientByDate(int retailClientOrderNo, DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
+        {
+            var aaIData = new RTranReport();
+            string result = JsonConvert.SerializeObject(aaIData);
+            try
+            {
+                if (retailClientOrderNo > -1)
+                {
+                    using (var con = new SqlConnection(StaticData.conString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@TranDateFrom", reportDateFrom.ToString("MM-dd-yyyy"));
+                        parameters.Add("@TranDateTo", reportDateTo.ToString("MM-dd-yyyy"));
+                        parameters.Add("@OrderNo", retailClientOrderNo);
+                        List<RTranReport> allDailyRecharge = con.Query<RTranReport>("usp_RechargeReportSWalletRetailClientByDate", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                        if (excelExport==1)
+                        {
+                            result = DataTableToExcelEP(allDailyRecharge.ToDataTable(), "DailyRecharge_S-Wallet", filePath);
+                        }
+                        else
+                        {
+                            var aaData = new { data = allDailyRecharge };
+                            result = JsonConvert.SerializeObject(aaData);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                aaIData.Remarks = ex.Message;
+                result = JsonConvert.SerializeObject(aaIData);
+            }
+            finally
+            {
+                aaIData = null;
+            }
+            return result;
+        }
+        
         public static string RechargeReportUPPCLByDate(DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
         {
             var aaIData = new UPPCLReport();

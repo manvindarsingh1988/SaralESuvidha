@@ -15,7 +15,7 @@ public class RTranAdminReport
 
     public string TransactionType { get; set; }
 
-    ///public string OperatorName { get; set; }
+    public string OperatorName { get; set; }
 
 
     //public string RechargeNumber { get; set; }

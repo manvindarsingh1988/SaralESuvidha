@@ -1,11 +1,11 @@
 @{
     Layout = "_LayoutDistributor";
-    ViewData["title"] = "Distributor - Client Statement";
+    ViewData["title"] = "Distributor - Client Statement - SWallet";
 }
 
 <form id="frmReport" method="post" action="">
     <div class="card">
-        <h6 class="card-header">Daily Statement Between Period<span id="InfoDetail" name="InfoDetail" class=""></span></h6>
+        <h6 class="card-header">Daily SWallet Statement Between Period<span id="InfoDetail" name="InfoDetail" class=""></span></h6>
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-2 form-group">
@@ -19,14 +19,14 @@
                 <div class="col-lg-2 form-group d-none">
                     <label class="form-label">To Date<span class="text-danger">*</span></label>
                     <input name="txtReportDateTo" id="txtReportDateTo" type="text" class="form-control flatpickr-date required">
-                </div>
-                <div class="col-lg-2 form-group">
-                    <label class="form-label">&nbsp;</label>
-                    <button type="button" class="form-control btn btn-primary" onclick="ExportExcel();">Export Excel</button> 
-                </div>
+                </div>               
                 <div class="col-lg-2 form-group">
                     <label class="form-label">&nbsp;</label>
                     <button type="button" class="form-control btn btn-primary" onclick="LoadReport();">Load Report</button>
+                </div>
+                <div class="col-lg-2 form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="form-control btn btn-primary" onclick="ExportExcel();">Export Excel</button>
                 </div>
             </div>
         </div>
@@ -66,17 +66,17 @@
                 bAutoWidth: true,
             sAjaxSource: '@Url.Action("DailyDistributorDownlineStatementResult", "Distributor")?dateFrom=' +a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDate1').val()) + '&x=0',
                 cache: false,
-                order: [[9, "asc"], [10, "asc"]],
+                order: [[5, "asc"], [6, "asc"]],
                 columns: [
-                    { data: "Rid", title: "Id", visible: "false" }, { data: "RetailerDetail", title: "RetailerDetail" }, { data: "OperatorName", title: "OperatorName" },{ data: "RechargeNumber", title: "RechargeNumber" },
-                    { data: "RechargeStatus", title: "RechargeStatus" }, { data: "Amount", title: "Amount" }, { data: "LiveId", title: "LiveId" }, { data: "PaymentType", title: "PType" },
+                    { data: "Rid", title: "Id", visible: "false" }, { data: "RetailerDetail", title: "RetailerDetail" }, 
+                    { data: "OB", title: "OB" }, { data: "Amount", title: "Amount" }, { data: "Debit", title: "Debit" }, { data: "Credit", title: "Credit" }, { data: "Margin", title: "Margin" }, { data: "CB", title: "CB" },
+                    { data: "LiveId", title: "LiveId" },
                     { data: "Remarks", title: "Remarks" }, { data: "CreateDate", title: "Date", type: 'datetime', render: function(data) { return moment(data).format('MM-DD-YYYY'); } },
-                    { data: "CreateDate", title: "Time", type: 'time', render: function(data) { return moment(data).format('HH:mm:ss'); } },
-                { data: "IsOTS", title: "OTS" }
+                    { data: "CreateDate", title: "Time", type: 'time', render: function(data) { return moment(data).format('HH:mm:ss'); } }
                 ]
             });
 
-        $('#lblReport').html('Daily statement of period ' + $('#txtReportDate').val() + ' to ' + $('#txtReportDate1').val() + '.');
+    $('#lblReport').html('Daily SWallet statement of period ' + $('#txtReportDate').val() + ' to ' + $('#txtReportDate1').val() + '.');
         }
         
         
@@ -87,7 +87,7 @@
                 if (data.indexOf('Errors:') > -1) {
                     $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
                 } else {
-                $('#lblReport').html('Account report between date ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDate1').val() + '.' + data);
+                $('#lblReport').html('SWallet Account report between date ' + $('#txtReportDate').val() + ' and ' + $('#txtReportDate1').val() + '.' + data);
                 }
             });
         }

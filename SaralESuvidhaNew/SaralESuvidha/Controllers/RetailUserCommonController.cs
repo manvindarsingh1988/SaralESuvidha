@@ -401,6 +401,25 @@ namespace SaralESuvidha.Controllers
         }
 
         
+        public IActionResult DailyClientStatementSWalletResult(string dateFrom, string dateTo, int x)
+        {
+            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, "FileData/");
+            string result = string.Empty;
+            try
+            {
+                int orderNo = (int) HttpContext.Session.GetInt32("RetailUserOrderNo");
+                DateTime dateF = Convert.ToDateTime(StaticData.ConvertHexToString(dateFrom));
+                DateTime dateT = Convert.ToDateTime(StaticData.ConvertHexToString(dateTo));
+                result = StaticData.RechargeReportSWalletRetailClientByDate(orderNo, dateF, dateT, x, filePath);
+            }
+            catch (Exception ex)
+            {
+                result = "Errors: Exception: " + ex.Message;
+            }
+            return Content(result);
+        }
+
+        
         public IActionResult FundReportResult(string dateFrom, string dateTo)
         {
             string result = string.Empty;

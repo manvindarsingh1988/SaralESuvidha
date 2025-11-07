@@ -1412,7 +1412,7 @@ namespace UPPCLLibrary
             return eventResponse;
         }
 
-        public static AgentStatusCheckByMobileResponse AgentStatusByMobile(string mobileNumber)
+        public static AgentStatusCheckByMobileResponse AgentStatusByMobile(string mobileNumber, string agentId)
         {
             CheckTokenExpiry();
 
@@ -1423,7 +1423,7 @@ namespace UPPCLLibrary
 
             try
             {
-                string mobile = uppclConfig.AgentStatusByMobile_Url.Replace("_mobile_", mobileNumber);
+                string mobile = uppclConfig.AgentStatusByMobile_Url.Replace("_mobile_", mobileNumber).Replace("_ruid_",agentId);
                 RestClientOptions restClientOptions = new RestClientOptions();
                 restClientOptions.MaxTimeout = 15000;
                 restClientOptions.BaseUrl = new Uri(mobile);
@@ -1441,7 +1441,7 @@ namespace UPPCLLibrary
                 response = client.Execute<AgentStatusCheckByMobileResponse>(request);
 
 
-                SaveHitLog("S", null, null, "", "AgentStatusByMobile_0", mobile + " " + postData, basicAuth, response?.Content, DateTime.Now, null);
+                SaveHitLog("S", null, null, "", "AgentStatusByMobile_0", mobile + " " + agentId + " >> " + postData, basicAuth, response?.Content, DateTime.Now, null);
 
                 var respData = response?.Content;
                 if (respData != null)
@@ -1490,7 +1490,7 @@ namespace UPPCLLibrary
                     nullResponse = "NULL_RESP";
                 }
 
-                SaveHitLog("S", "", nullResponse, "", "AgentStatusByMobile", mobile + " " + postData, basicAuth, response?.Content, DateTime.Now, null);
+                SaveHitLog("S", "", nullResponse, "", "AgentStatusByMobile", mobile + " " + agentId + " >> " + postData, basicAuth, response?.Content, DateTime.Now, null);
 
             }
             catch (Exception ex)
@@ -1802,7 +1802,7 @@ namespace UPPCLLibrary
                     {
                         if (retailUser.UserType == 5)
                         {
-                            var agentStatusByMobile = AgentStatusByMobile(retailUser.Mobile);
+                            var agentStatusByMobile = AgentStatusByMobile(retailUser.Mobile, retailUser.Id);
 
                             if (agentStatusByMobile != null)
                             {
