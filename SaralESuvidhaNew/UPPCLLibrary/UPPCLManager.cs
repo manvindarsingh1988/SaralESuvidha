@@ -1061,6 +1061,10 @@ namespace UPPCLLibrary
                             string? errorCode = GetRegExFirstMatch(respData, "am:message>(.*)</am:message>");
                             wr.nextPageToken = "Exception: Server: Error Code-" + errorCode + ", Error:" + respData;
                         }
+                        else
+                        {
+                            wr = JsonConvert.DeserializeObject<WalletTransferByDateRangeResponse>(response?.Content);
+                        }
                     }
                     else
                     {
