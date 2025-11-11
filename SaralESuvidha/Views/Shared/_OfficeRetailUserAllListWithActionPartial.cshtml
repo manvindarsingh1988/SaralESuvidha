@@ -69,7 +69,7 @@
                         <div class="row">
                             <div class="col-sm-8 form-group">
                                 <label for="userId" class="form-label">User Id or USL or Mobile:</label>
-                                <input type="text" id="userId" name="userId" class="form-control">
+                                <input type="text" id="userId" name="userId" class="form-control" oninput="onUserIdChange(this.value)">
                             </div>
                             <div class="col-sm-4 form-group">
                                 <label class="form-label">&nbsp;</label>
@@ -204,6 +204,17 @@
             closeOnSelect: true
         });
     });
+
+    function onUserIdChange(val) {
+      if ($.fn.DataTable.isDataTable('#datatable-grid-searchuser')) {
+            $('#datatable-grid-searchuser').DataTable().destroy();
+        }
+        $('#datatable-grid-searchuser tbody').empty();
+        $('#datatable-grid-searchuser thead').empty();
+        $("#submitButton").attr("disabled", true);
+        $('#userId').attr("alt", '');
+        $("#distributor").empty();
+    }
 
     function formatResult(item) {
         if (item.loading) {
@@ -513,7 +524,6 @@
     }
 
     function SwitchDistributer() {
-        LoadDistributers();
 
         if ($.fn.DataTable.isDataTable('#datatable-grid-searchuser')) {
             $('#datatable-grid-searchuser').DataTable().destroy();
@@ -527,6 +537,7 @@
     }
 
     function ShowUserDetails() {
+        $("#distributor").empty();
         if ($('#userId').val().length > 0) {
             if ($.fn.DataTable.isDataTable('#datatable-grid-searchuser')) {
                 $('#datatable-grid-searchuser').DataTable().destroy();
@@ -565,6 +576,7 @@
                     if (json.data.length) {
                         $("#submitButton").attr("disabled", false);
                         console.log(json.data);
+                        LoadDistributers(json.data[0].UserType);
                         $('#userId').attr("alt", json.data[0].Id);
                     }
                     else {
@@ -577,13 +589,17 @@
         }
     }
 
-    function LoadDistributers() {
-        $.getJSON("@Url.Action("DistributorList", "CommonAuthAction", new { id = 6 })", function (data) {
-            $("#distributor").empty();
-            $.each(data, function (index, value) {
-                $('#distributor').append('<option value="' + value.Id + '">' + value.DistributorName + '</option>');
+    function LoadDistributers(userType) {
+        console.log(userType);
+        let id = parseInt(userType) + 1;
+        if(id < 8) {
+            $.getJSON('@Url.Action("DistributorList", "CommonAuthAction")?id=' + id, function (data) {
+                $("#distributor").empty();
+                $.each(data, function (index, value) {
+                    $('#distributor').append('<option value="' + value.Id + '">' + value.DistributorName + '</option>');
+                });
             });
-        });
+        }
     }
 
     function Edit(id){
