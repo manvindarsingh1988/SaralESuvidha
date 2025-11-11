@@ -1,21 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using SaralESuvidha.Filters;
-using SaralESuvidha.Models;
-using SaralESuvidha.ViewModel;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting;
-using System.IO;
-using System.Text;
 using Newtonsoft.Json;
-using Razorpay.Api;
-using SaralESuvidha.Services;
-using System.Net.NetworkInformation;
 using Org.BouncyCastle.Crypto;
+using Quartz;
+using Razorpay.Api;
+using SaralESuvidha.Filters;
+using SaralESuvidha.Models;
+using SaralESuvidha.QuartzJobs;
+using SaralESuvidha.Services;
+using SaralESuvidha.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.NetworkInformation;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace SaralESuvidha.Controllers
 {
@@ -24,11 +26,13 @@ namespace SaralESuvidha.Controllers
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly SabPaisaService _sabPaisaService;
+        private readonly ISchedulerFactory _schedulerFactory;
 
-        public RetailUserCommonController(IWebHostEnvironment hostingEnvironment, SabPaisaService sabPaisaService)
+        public RetailUserCommonController(IWebHostEnvironment hostingEnvironment, SabPaisaService sabPaisaService, ISchedulerFactory schedulerFactory)
         {
             _hostingEnvironment = hostingEnvironment;
             _sabPaisaService = sabPaisaService;
+            _schedulerFactory = schedulerFactory;
         }
 
         public IActionResult Index()
@@ -710,6 +714,36 @@ namespace SaralESuvidha.Controllers
                 result = "Errors: " + ex.Message;
             }
             
+            return Content(result);
+        }
+
+        public IActionResult CheckAndUpdatePendingTopup()
+        {
+            string result = string.Empty;
+            Task.Run(async () =>
+            {
+                var scheduler = await _schedulerFactory.GetScheduler();
+                var executingJobs = await scheduler.GetCurrentlyExecutingJobs();
+                if (executingJobs != null && executingJobs.Any())
+                {
+                    result = "Errors: Failed to update the status. Please try again after sometime.";
+                }
+                else
+                {
+                    var userId = HttpContext.Session.GetString("RetailerId");
+                    try
+                    {
+                        SabpaisaStatusCheckJob.CheckAndUpdateSabpaisaStatus(userId);
+                        CheckAndUpdateRazorpayStatusjob.CheckAndUpdateRazorpayStatus(userId);
+                        CheckAndUpdateRazorpayStatusjob.CheckAndCreditAmountIfRazorResponseWasSuccess(userId);
+                        result = "Status updated successfully";
+                    }
+                    catch
+                    {
+                        result = "Errors: Failed to update the status. Please try again after sometime.";
+                    }
+                }
+            }).Wait();
             return Content(result);
         }
     }

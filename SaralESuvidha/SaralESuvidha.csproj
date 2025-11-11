@@ -159,9 +159,12 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <PackageReference Include="System.Net.Http.Formatting.Extension" Version="5.2.3" />
+	<PackageReference Include="Quartz" Version="3.15.1" />
+	<PackageReference Include="Quartz.Extensions.Hosting" Version="3.15.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="QuartzJobs\" />
     <Folder Include="wwwroot\assets\img\billers\electricity\" />
     <Folder Include="wwwroot\assets\img\billers\gas\" />
     <Folder Include="wwwroot\assets\img\billers\mobile\" />

@@ -6,6 +6,9 @@
 {
     <form id="frmReport" method="post" action="#">
         <div class="card">
+            <div class="card-header" style="background-color:#0c2f55;color:white;font-weight:bold;">
+                Razor pay Gateway
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-1 form-group">
@@ -48,6 +51,9 @@
 {
     <form method="post" action="#">
         <div class="card">
+            <div class="card-header" style="background-color:#0c2f55;color:white;font-weight:bold;">
+                Sabpaisa Gateway
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-1 form-group">
@@ -83,6 +89,43 @@
         </div>
     </form>
 }
+<div class="revalidate-tile">
+    <button onclick="CheckAndUpdatePendingTopup();" class="btn btn-primary">Revalidate all failed and pending top-ups from today (up to 30 minutes ago).</button>
+</div>
+<style>
+    .revalidate-tile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 24px 32px;
+        width: 100%;
+        margin: 20px auto;
+        text-align: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .revalidate-tile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .revalidate-tile .form-label {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .revalidate-tile .btn {
+            padding: 8px 24px;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+</style>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script type="text/javascript">
@@ -181,6 +224,15 @@
             }
         });
 
+    }
+
+    function CheckAndUpdatePendingTopup() {
+        var url = "@Url.Action("CheckAndUpdatePendingTopup", "RetailUserCommon")";
+
+         $.get(url, function (data) {
+            console.log(data);
+            $("#InfoMessage").html('<span class="text-facebook">' + data + '</span>');
+        });
     }
     
     $(document).ready(function () {
