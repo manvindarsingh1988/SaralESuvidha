@@ -12,8 +12,8 @@ namespace SaralESuvidha.QuartzJobs
 {
     public class SabpaisaStatusCheckJob : IJob
     {
-        string constring = string.Empty;
-        private readonly SabPaisaService _sabPaisaService;
+        static string constring = string.Empty;
+        private static SabPaisaService _sabPaisaService;
         public SabpaisaStatusCheckJob(IConfiguration configuration, SabPaisaService sabPaisaService)
         {
             constring = configuration.GetConnectionString("DefaultConnection");
@@ -30,12 +30,22 @@ namespace SaralESuvidha.QuartzJobs
             catch (Exception ex) { }
         }
 
-        private void CheckAndUpdateSabpaisaStatus()
-        {
+        public static void CheckAndUpdateSabpaisaStatus(string userId = "")
+        {            
+            var con = new SqlConnection(constring);
             var date = DateTime.Now.ToString("yyyyMMdd");
             var date1 = DateTime.Now.AddMinutes(-30).ToString("yyyy-MM-dd HH:mm:ss");
-            var con = new SqlConnection(constring);
-            var query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo, OrderStatus from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId  where CreateDate > '{date}' and CreateDate < '{date1}' and (OrderStatus is null or (OrderStatus = 'SUCCESS' and CreditTranId is null)) and Provider = 'SabPaisa'";
+            var query = string.Empty;
+            if (userId != "")
+            {
+                query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo, OrderStatus from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId  where CreateDate > '{date}' and CreateDate < '{date1}' " +
+                        $"and (OrderStatus is null or (OrderStatus = 'SUCCESS' and CreditTranId is null) or OrderStatus not in ('SUCCESS', 'ABORTED')) and Provider = 'SabPaisa' and RetailerId = '{userId}'";
+            }
+            else
+            {
+                query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo, OrderStatus from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId  where CreateDate > '{date}' " +
+                    $"and CreateDate < '{date1}' and (OrderStatus is null or (OrderStatus = 'SUCCESS' and CreditTranId is null) or OrderStatus not in ('SUCCESS', 'ABORTED')) and Provider = 'SabPaisa'";
+            }
             var result = con.Query<RazorpayOrderLite>(query, commandType: System.Data.CommandType.Text); ;
             // Optional: verify with status API
             foreach (var item in result)
@@ -115,7 +125,7 @@ namespace SaralESuvidha.QuartzJobs
             }
         }
 
-        public void RazorpayOrderUpdateStausToFailed(string id, string pstatus)
+        public static void RazorpayOrderUpdateStausToFailed(string id, string pstatus)
         {
             try
             {

@@ -17,7 +17,7 @@ namespace SaralESuvidha.QuartzJobs
 {
     public class CheckAndUpdateRazorpayStatusjob : IJob
     {
-        string constring = string.Empty;
+        static string constring = string.Empty;
         public CheckAndUpdateRazorpayStatusjob(IConfiguration configuration)
         {
             constring = configuration.GetConnectionString("DefaultConnection");
@@ -39,13 +39,21 @@ namespace SaralESuvidha.QuartzJobs
             await Task.CompletedTask;
         }
 
-        private void CheckAndCreditAmountIfRazorResponseWasSuccess()
+        public static void CheckAndCreditAmountIfRazorResponseWasSuccess(string userId = "")
         {
             RazorpayClient client = new RazorpayClient(StaticData.rzp_ApiKey, StaticData.rzp_ApiSecret);
             var date = DateTime.Now.ToString("yyyyMMdd");
             var date1 = DateTime.Now.AddMinutes(-30).ToString("yyyy-MM-dd HH:mm:ss");
             var con = new SqlConnection(constring);
-            var query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId and RPO.OrderStatus = 'captured' and CreateDate > '{date}' and CreateDate < '{date1}' and CreditTranId is null";
+            var query = string.Empty;
+            if (userId != "")
+            {
+                query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId and RPO.OrderStatus = 'captured' and CreateDate > '{date}' and CreateDate < '{date1}' and CreditTranId is null and RetailerId = '{userId}'";
+            }
+            else
+            {
+                query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId and RPO.OrderStatus = 'captured' and CreateDate > '{date}' and CreateDate < '{date1}' and CreditTranId is null";
+            }                
             var result = con.Query<RazorpayOrderLite>(query, commandType: System.Data.CommandType.Text);
             foreach (var item in result)
             {
@@ -140,14 +148,22 @@ namespace SaralESuvidha.QuartzJobs
             }
         }
 
-        private void CheckAndUpdateRazorpayStatus()
+        public static void CheckAndUpdateRazorpayStatus(string userId = "")
         {
             var date = DateTime.Now.ToString("yyyyMMdd");
             var date1 = DateTime.Now.AddMinutes(-30).ToString("yyyy-MM-dd HH:mm:ss");// Your API secret
             RazorpayClient client = new RazorpayClient(StaticData.rzp_ApiKey, StaticData.rzp_ApiSecret);
             var con = new SqlConnection(constring);
             var queryParameters = new DynamicParameters();
-            var query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId  where CreateDate > '{date}' and CreateDate < '{date1}' and OrderStatus is null and Provider = 'Razor'";
+            var query = string.Empty;
+            if (userId != "")
+            {
+                query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId  where CreateDate > '{date}' and CreateDate < '{date1}' and OrderStatus is null and Provider = 'Razor' and RetailerId = '{userId}'";
+            }
+            else
+            {
+                query = $"Select RPO.Id, RPO.RetailerId, RU.OrderNo from RazorPayOrder RPO inner join RetailUser RU on RU.Id = RPO.RetailerId  where CreateDate > '{date}' and CreateDate < '{date1}' and OrderStatus is null and Provider = 'Razor'";
+            }
             var result = con.Query<RazorpayOrderLite>(query, queryParameters, commandType: System.Data.CommandType.Text);
 
             foreach (var item in result)
@@ -280,7 +296,7 @@ namespace SaralESuvidha.QuartzJobs
             }
         }
 
-        public void RazorpayOrderUpdateStausToFailed(string id, string pstatus)
+        public static void RazorpayOrderUpdateStausToFailed(string id, string pstatus)
         {
             try
             {
