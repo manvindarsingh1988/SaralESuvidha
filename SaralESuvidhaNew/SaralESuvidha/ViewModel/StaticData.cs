@@ -3348,17 +3348,52 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        public static LiabilityInfo GetLiabilityAmountByRetailerId(string userId, DateTime date)
+        public static LiabilityInfo GetLiabilityAmountByRetailerId(string userId)
         {
             LiabilityInfo result = new LiabilityInfo();
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
                 parameters.Add("@UserId", userId);
                 using (var con = new SqlConnection(conString))
                 {
                     result = con.QuerySingleOrDefault<LiabilityInfo>("Usp_GetLiabilityAmountByRetailerId", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        public static LiabilityInfo GetLiabilityAmountByCollectorId(string userId)
+        {
+            LiabilityInfo result = new LiabilityInfo();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", userId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<LiabilityInfo>("Usp_GetLiabilityAmountByCollectorId", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        public static LiabilityInfo GetLiabilityAmountByCashierId(string userId)
+        {
+            LiabilityInfo result = new LiabilityInfo();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", userId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<LiabilityInfo>("Usp_GetLiabilityAmountByCashierId", parameters, commandType: CommandType.StoredProcedure);
                 }
             }
             catch (Exception ex)
@@ -3416,6 +3451,8 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@Date", ladger.Date);
                 parameters.Add("@GivenOn", ladger.GivenOn);
                 parameters.Add("@Comment", ladger.Comment);
+                parameters.Add("@CashierId", ladger.CashierId);
+                parameters.Add("@DocId", ladger.DocId);
                 using (var con = new SqlConnection(conString))
                 {
                     con.Execute("Usp_AddLadgerInfo", parameters, commandType: CommandType.StoredProcedure);
@@ -3442,6 +3479,8 @@ namespace SaralESuvidha.ViewModel
                 parameters.Add("@Date", ladger.Date);
                 parameters.Add("@GivenOn", ladger.GivenOn);
                 parameters.Add("@Comment", ladger.Comment);
+                parameters.Add("@DocId", ladger.DocId);
+                parameters.Add("@CashierId", ladger.CashierId);
                 using (var con = new SqlConnection(conString))
                 {
                     con.Execute("Usp_UpdateLadgerInfo", parameters, commandType: CommandType.StoredProcedure);
@@ -3454,13 +3493,13 @@ namespace SaralESuvidha.ViewModel
             return true;
         }
 
-        internal static List<Ladger> GetLadgerInfoByRetailerid(DateTime date, string retailerId)
+        internal static List<Ladger> GetLadgerInfoByRetailerid(bool all, string retailerId)
         {
             List<Ladger> result = new();
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
+                parameters.Add("@All", all);
                 parameters.Add("@RetailerId", retailerId);
                 using (var con = new SqlConnection(conString))
                 {
@@ -3473,13 +3512,13 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        internal static List<Ladger> GetLadgerInfoByCollectorId(DateTime date, string collectorId)
+        internal static List<Ladger> GetLadgerInfoByCollectorId(bool all, string collectorId)
         {
             List<Ladger> result = new();
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
+                parameters.Add("@All", all);
                 parameters.Add("@CollectorId", collectorId);
                 using (var con = new SqlConnection(conString))
                 {
@@ -3492,13 +3531,32 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
 
-        internal static List<Ladger> GetLadgerInfoByRetaileridAndCollectorId(DateTime date, string retailerId, string collectorId)
+        internal static List<Ladger> GetLadgerInfoCreatedByCashierId(bool all, string cashierId)
         {
             List<Ladger> result = new();
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Date", date);
+                parameters.Add("@All", all);
+                parameters.Add("@CashierId", cashierId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<Ladger>("Usp_GetLadgerInfoCreatedByCashierId", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<Ladger> GetLadgerInfoByRetaileridAndCollectorId(bool all, string retailerId, string collectorId)
+        {
+            List<Ladger> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@All", all);
                 parameters.Add("@RetailerId", retailerId);
                 parameters.Add("@CollectorId", collectorId);
                 using (var con = new SqlConnection(conString))
@@ -3607,6 +3665,330 @@ namespace SaralESuvidha.ViewModel
                 using (var con = new SqlConnection(conString))
                 {
                     result = con.Query<Ladger>("usp_GetLadgerInfosCreatedByCollectors", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<LiabilityInfo> GetCollectorLiabilities()
+        {
+            List<LiabilityInfo> result = new();
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<LiabilityInfo>("usp_GetCollectorLiabilities", commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<Ladger> GetCollectorLiabilityDetails(string collectorId)
+        {
+            List<Ladger> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CollectorId", collectorId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<Ladger>("usp_GetCollectorLiabilityDetails", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<Ladger> GetCashierLiabilityDetails(string cashierId)
+        {
+            List<Ladger> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CashierId", cashierId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<Ladger>("usp_GetCashierLiabilityDetails", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<Ladger> GetCollectorLedgerDetails(string collectorId)
+        {
+            List<Ladger> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CollectorId", collectorId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<Ladger>("usp_GetCollectorLedgerDetails", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<Ladger> GetCashierLedgerDetails(string cashierId)
+        {
+            List<Ladger> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CashierId", cashierId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<Ladger>("usp_GetCashierLedgerDetails", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<Ladger> GetPendingApprovalLedgers(bool showAll, int userType)
+        {
+            List<Ladger> result = new();
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ShowAll", showAll);
+                    parameters.Add("@UserType", userType);
+                    result = con.Query<Ladger>("usp_GetPendingApprovalLedgers", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<UserEx> GetUserExtendedInfo()
+        {
+            List<UserEx> result = new();
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<UserEx>("usp_GetUserExtendedData", commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<CollectorInfo> GetLinkedCollectors(string userId)
+        {
+            List<CollectorInfo> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", userId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<CollectorInfo>("usp_GetLinkedCollectors", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static bool UpdateIsSelfSubmitterFlag(SubmitterFlagData data)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", data.UserId);
+                parameters.Add("@IsSelfSubmitter", data.IsSelfSubmitter);
+                using (var con = new SqlConnection(conString))
+                {
+                    con.Execute("usp_InsertOrUpdateIsSelfSubmitter", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        internal static bool UpdateIsThirdPartyFlag(ThirdpartyFlagData data)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", data.UserId);
+                parameters.Add("@IsThirdParty", data.IsThirdParty);
+                using (var con = new SqlConnection(conString))
+                {
+                    con.Execute("usp_InsertOrUpdateIsThirdParty", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        internal static bool UpdateOpeningBalanceData(OpeningBalanceData data)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", data.UserId);
+                parameters.Add("@OpeningBalance", data.OpeningBalance);
+                parameters.Add("@OpeningBalanceDate", data.OpeningBalanceDate);
+                using (var con = new SqlConnection(conString))
+                {
+                    con.Execute("usp_InsertOrUpdateOpeningBalance", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        internal static bool LinkAllRetailesToNewCollector(LinkingInfo data)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@FromCollectorId", data.FromCollectorId);
+                parameters.Add("@ToCollectorId", data.ToCollectorId);
+                using (var con = new SqlConnection(conString))
+                {
+                    con.Execute("usp_LinkAllRetailesToNewCollector", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static List<LiabilityInfo> GetLiabilityAmountOfAllRetailers()
+        {
+            List<LiabilityInfo> result = new();
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<LiabilityInfo>("Usp_GetLiabilityAmountOfAllRetailers", commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<LiabilityInfo> GetLiabilityAmountOfAllRetailersByCollectorId(string collectorId)
+        {
+            List<LiabilityInfo> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CollectorId", collectorId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<LiabilityInfo>("Usp_GetLiabilityAmountOfAllRetailersByCollectorId", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<Ladger> GetPendingApprovalLedgersByCollectorId(string collectorId, bool showAll)
+        {
+            List<Ladger> result = new();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CollectorId", collectorId);
+                parameters.Add("@ShowAll", showAll);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<Ladger>("usp_GetPendingApprovalLedgersByCollectorId", parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static string GetPassword(string userId)
+        {
+            string result = string.Empty;
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", userId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<OperationResponse>("usp_GetPassword", parameters, commandType: CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static string DeleteLinking(CollectorRetailerMapping data)
+        {
+            string result = string.Empty;
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CollectorId", data.CollectorId);
+                parameters.Add("@RetailerId", data.RetailerId);
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.QuerySingleOrDefault<OperationResponse>("Usp_DeleteLinking", parameters, commandType: CommandType.StoredProcedure).OperationMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+
+        internal static List<LiabilityInfo> GetCashierLiabilities()
+        {
+            List<LiabilityInfo> result = new();
+            try
+            {
+                using (var con = new SqlConnection(conString))
+                {
+                    result = con.Query<LiabilityInfo>("usp_GetCashierLiabilities", commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)
