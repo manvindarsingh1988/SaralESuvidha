@@ -262,7 +262,7 @@ namespace SaralESuvidha.Controllers
             try
             {
                 var retailUser = UPPCLManager.RetailUserDetail(id);
-                var agentStatusByMobile = UPPCLManager.AgentStatusByMobile(retailUser.Mobile);
+                var agentStatusByMobile = UPPCLManager.AgentStatusByMobile(retailUser.Mobile, retailUser.Id);
                 string agentCurrentStatus = retailUser.UPPCL_Active == true ? "ACTIVE" : "INACTIVE";
 
                 if (agentStatusByMobile != null)
@@ -301,7 +301,7 @@ namespace SaralESuvidha.Controllers
             try
             {
                 var retailUser = UPPCLManager.RetailUserDetail(id);
-                var agentStatusByMobile = UPPCLManager.AgentStatusByMobile(retailUser.Mobile);
+                var agentStatusByMobile = UPPCLManager.AgentStatusByMobile(retailUser.Mobile, retailUser.Id);
                 string agentCurrentStatus = retailUser.UPPCL_Active == true ? "ACTIVE" : "INACTIVE";
 
                 if (agentStatusByMobile != null)
