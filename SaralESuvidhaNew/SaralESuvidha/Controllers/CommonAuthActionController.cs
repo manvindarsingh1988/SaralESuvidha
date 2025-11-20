@@ -57,7 +57,7 @@ namespace SaralESuvidha.Controllers
         
         
 
-        public IActionResult DailyAllClientStatementResult(string dateFrom, string dateTo, int x)
+        public IActionResult DailyAllClientStatementResult(string dateFrom, string dateTo, int x, int orderNo = 0)
         {
             string result = string.Empty;
             try
@@ -68,7 +68,7 @@ namespace SaralESuvidha.Controllers
                 //string fileName = "FundReport" + "_" + DateTime.Now.ToString("ddMMMyy-HHmmss") + "_" + Guid.NewGuid().ToString() + ".xlsx";
                 string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "FileData/"); //+ fileName   FileData
 
-                result = StaticData.RechargeReportAllRetailClientByDate(dateF, dateT, x, filePath);
+                result = StaticData.RechargeReportAllRetailClientByDate(dateF, dateT, x, filePath, orderNo);
             }
             catch (Exception ex)
             {

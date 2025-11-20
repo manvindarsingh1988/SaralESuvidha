@@ -9,6 +9,10 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-2 form-group">
+                    <label class="form-label">User USL</label>
+                    <input id="OrderNo" name="OrderNo" class="form-control" onblur="javascript: LoadDetail();" data-style="btn-default" required>
+                </div>
+                <div class="col-lg-2 form-group">
                     <label class="form-label">From Date<span class="text-danger">*</span></label>
                     <input name="txtReportDate" id="txtReportDate" type="text" class="form-control flatpickr-date required">
                 </div>
@@ -60,7 +64,7 @@
             $table.dataTable({
                 iDisplayLength: 50,
                 bAutoWidth: true,
-                sAjaxSource: '@Url.Action("DailyAllClientStatementResult", "CommonAuthAction")?dateFrom=' +a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0',
+                sAjaxSource: '@Url.Action("DailyAllClientStatementResult", "CommonAuthAction")?dateFrom=' +a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=0&orderNo=' + $('#OrderNo').val(),
                 cache: false,
                 order: [[11, "asc"], [12, "asc"]],
                 columns: [
@@ -80,7 +84,7 @@
         
         function ExportExcel() {
             $('#lblReport').html('Loading report...');
-            $.get('@Url.Action("DailyAllClientStatementResult","CommonAuthAction")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1',
+            $.get('@Url.Action("DailyAllClientStatementResult", "CommonAuthAction")?dateFrom=' + a2hex($('#txtReportDate').val()) + '&dateTo=' + a2hex($('#txtReportDateTo').val()) + '&x=1&orderNo=' + $('#OrderNo').val(),
             function(data) {
                 if (data.indexOf('Errors:') > -1) {
                     $('#lblReport').html(data).removeClass('text-success').addClass('text-danger');
@@ -90,7 +94,23 @@
             });
         }
         
-        
+    function LoadDetail() {
+            if ($('#OrderNo').val().length > 0) {
+                $.get("@Url.Action("RetailUserDetail", "CommonAuthAction")?usd=" + a2hex($('#OrderNo').val()), function (data) {
+                    if (data.indexOf('Errors:') > -1) {
+                        $('#InfoDetail').html(data).removeClass('text-success').addClass('text-danger');
+                        HideAction();
+                    } else {
+                        $('#InfoDetail').html(data).removeClass('text-danger').addClass('text-success');
+                        ShowAction();
+                    }
+                });
+            }
+            else {
+                $('#InfoDetail').html('');
+            }
+
+        }
         
 
 </script>

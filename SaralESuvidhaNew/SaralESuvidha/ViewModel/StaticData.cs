@@ -1354,7 +1354,7 @@ namespace SaralESuvidha.ViewModel
             return result;
         }
         
-        public static string RechargeReportAllRetailClientByDate(DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "")
+        public static string RechargeReportAllRetailClientByDate(DateTime reportDateFrom, DateTime reportDateTo, int excelExport, string filePath = "", int orderNo = 0)
         {
             var aaIData = new RTranReport();
             string result = JsonConvert.SerializeObject(aaIData);
@@ -1365,6 +1365,7 @@ namespace SaralESuvidha.ViewModel
                     var parameters = new DynamicParameters();
                     parameters.Add("@TranDateFrom", reportDateFrom.ToString("MM-dd-yyyy"));
                     parameters.Add("@TranDateTo", reportDateTo.ToString("MM-dd-yyyy"));
+                    parameters.Add("@OrderNo", orderNo);
                     List<RTranAdminReport> allDailyRecharge = con.Query<RTranAdminReport>("usp_RechargeReportAllRetailClientAdminByDate", parameters, commandType: System.Data.CommandType.StoredProcedure).ToList();
                     if (excelExport==1)
                     {
